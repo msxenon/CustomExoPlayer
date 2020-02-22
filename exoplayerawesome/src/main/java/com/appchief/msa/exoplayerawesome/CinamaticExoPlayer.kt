@@ -73,11 +73,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 var playerUiFinalListener: PlayerUiFinalListener? = null
 
 	 override fun onDetachedFromWindow() {
-		  playerUiFinalListener?.savePlayPosition(
-			   nowPlaying,
-			   player?.currentPosition ?: 0,
-			   player?.duration ?: 0
-		  )
+		  savePlayData()
 		  this.player?.playWhenReady = false
 		  this.player?.stop(true)
 		  mPlayer?.stop()
@@ -100,6 +96,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   return
 		  if (playerUiFinalListener == null)
 			   throw Exception("playerUiFinalListener not setted")
+		  savePlayData()
 		  nowPlaying = NowPlaying(movieId, episodeId, playerType)
 
 		  initializePlayer(videoLink.encodeUrl(), SrtLink?.encodeUrl())
@@ -114,7 +111,18 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   this.setErrorMessageProvider(PlayerErrorMessageProvider())
 		  }
 	 }
-
+	 fun savePlayData(){
+		  val cp = player?.currentPosition ?: 0
+		  val ttl = player?.duration ?: 0
+		  if (cp > 0)
+		  nowPlaying?.let {
+			   playerUiFinalListener?.savePlayPosition(
+					nowPlaying,
+					cp,
+					ttl
+			   )
+		  }
+	 }
 	 private fun initializePlayer(url: String, srtLink: String?) {
 		  mediaSource = null
 

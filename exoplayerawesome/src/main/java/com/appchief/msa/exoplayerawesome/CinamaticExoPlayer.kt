@@ -153,6 +153,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 							  if (playbackState == ExoPlayer.STATE_BUFFERING) {
 								   playProgressBar?.visibility = View.VISIBLE
 								   this@CinamaticExoPlayer.hideController()
+							  }else if (playbackState == ExoPlayer.STATE_ENDED){
+								   mPlayer?.seekTo(0)
+								   mPlayer?.setPlayWhenReady(false)
 							  } else {
 								   playProgressBar?.visibility = View.GONE
 							  }

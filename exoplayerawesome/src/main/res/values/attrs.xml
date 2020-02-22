@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CinamaticExoPlayer">
+        <attr name="progressLayout" format="reference"/>
+        <attr name="customController" format="reference"/>
+    </declare-styleable>
+</resources>

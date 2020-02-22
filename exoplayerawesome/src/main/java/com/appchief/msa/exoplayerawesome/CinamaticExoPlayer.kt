@@ -171,6 +171,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 										player?.playWhenReady = false
 										seekTo(0)
 								   }
+								   if (playbackState == ExoPlayer.STATE_READY)
+										checkHasSettings()
+
 							  } else {
 								   playProgressBar?.visibility = View.GONE
 							  }
@@ -191,7 +194,6 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					mPlayer?.prepare(mediaSource!!, !haveStartPosition, false)
 					mPlayer?.seekTo(sp)
 			   }
-			   checkHasSettings()
 		  } catch (e: Exception) {
 			   playerUiFinalListener?.onMessageRecived(e.localizedMessage, PlayerStatus.CantPlay)
 			   e.printStackTrace()

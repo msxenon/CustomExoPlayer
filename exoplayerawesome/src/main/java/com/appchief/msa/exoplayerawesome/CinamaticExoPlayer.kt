@@ -64,6 +64,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 private var playProgressBar: View? = null
 	 var customController: View? = null
 	 var playerUiFinalListener: PlayerUiFinalListener? = null
+	 var hasSettingsListener:SettingsListener? = null
 
 	 override fun onDetachedFromWindow() {
 		  savePlayData()
@@ -130,7 +131,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 override fun isControllerVisible(): Boolean {
 		  return super.isControllerVisible()
 	 }
- 
+	 var hasSettings = false
 
 	 private fun initializePlayer(url: String, srtLink: String?) {
 		  mediaSource = null
@@ -175,6 +176,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 							  }
 						 }
 					})
+
+
 			   }
 			   player?.playWhenReady = true
 
@@ -188,10 +191,16 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					mPlayer?.prepare(mediaSource!!, !haveStartPosition, false)
 					mPlayer?.seekTo(sp)
 			   }
+			   checkHasSettings()
 		  } catch (e: Exception) {
 			   playerUiFinalListener?.onMessageRecived(e.localizedMessage, PlayerStatus.CantPlay)
 			   e.printStackTrace()
 		  }
+	 }
+	 private fun checkHasSettings() {
+		 val m =  SettingsUtil.willHaveContent(trackSelector)
+		  hasSettings = m
+		  hasSettingsListener?.hasSettings(m)
 	 }
 
 	 private fun isSreaming(): Boolean {

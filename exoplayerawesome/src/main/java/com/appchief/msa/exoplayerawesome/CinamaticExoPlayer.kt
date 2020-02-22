@@ -114,6 +114,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 fun savePlayData(){
 		  val cp = player?.currentPosition ?: 0
 		  val ttl = player?.duration ?: 0
+
 		  if (cp > 0)
 		  nowPlaying?.let {
 			   playerUiFinalListener?.savePlayPosition(
@@ -153,9 +154,14 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 							  if (playbackState == ExoPlayer.STATE_BUFFERING) {
 								   playProgressBar?.visibility = View.VISIBLE
 								   this@CinamaticExoPlayer.hideController()
-							  }else if (playbackState == ExoPlayer.STATE_ENDED){
-								   mPlayer?.seekTo(0)
-								   mPlayer?.setPlayWhenReady(false)
+							  }else if (playbackState == ExoPlayer.STATE_READY){
+								   playProgressBar?.visibility = View.GONE
+
+								   val isEnded = player?.currentPosition?:0 > player?.duration?:-1
+								   if (playWhenReady && playbackState == ExoPlayer.STATE_READY && isEnded ){
+										player?.playWhenReady = false
+										seekTo(0)
+								   }
 							  } else {
 								   playProgressBar?.visibility = View.GONE
 							  }

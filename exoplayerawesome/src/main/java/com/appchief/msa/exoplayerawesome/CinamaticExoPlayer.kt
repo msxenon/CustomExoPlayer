@@ -58,7 +58,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 private var nowPlaying: NowPlaying? = null
 	 private var mPlayer: ExoPlayer? = null
 	 private var mediaSource: MediaSource? = null
-	 internal var trackSelector: DefaultTrackSelector? = null
+	  var trackSelector: DefaultTrackSelector? = null
 	 private var trackSelectorParameters: DefaultTrackSelector.Parameters? = null
 	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
 	 private var playProgressBar: View? = null

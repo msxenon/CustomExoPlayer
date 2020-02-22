@@ -46,6 +46,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   if (progressLayoutId > -1) {
 					playProgressBar =
 						 LayoutInflater.from(context).inflate(progressLayoutId, this, false)
+					playProgressBar?.visibility = View.GONE
 					addView(playProgressBar)
 			   }
 //			   val clid =
@@ -145,7 +146,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 								   playProgressBar?.visibility = View.VISIBLE
 								   this@CinamaticExoPlayer.hideController()
 							  } else {
-								   playProgressBar?.visibility = View.INVISIBLE
+								   playProgressBar?.visibility = View.GONE
 							  }
 						 }
 					})

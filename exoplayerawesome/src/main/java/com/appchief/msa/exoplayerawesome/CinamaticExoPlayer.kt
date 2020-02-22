@@ -21,7 +21,7 @@ import com.google.android.exoplayer2.util.MimeTypes
 
 class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.VisibilityListener,
 	 MediaPlayerControl {
-
+	 var controllerViiablilityListener:PlayerControlView.VisibilityListener? = null
 	 constructor(context: Context) : super(context)
 	 constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
 		  initAttrs(context, attrs)
@@ -49,13 +49,6 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					playProgressBar?.visibility = View.GONE
 					addView(playProgressBar)
 			   }
-//			   val clid =
-//					attributeArray.getResourceId(R.styleable.CinamaticExoPlayer_customController, -1)
-//			   if (progressLayoutId > -1){
-//					customController = LayoutInflater.from(context).inflate(clid,this,false)
-//					addView(customController)
-//
-//			   }
 			   attributeArray.recycle()
 		  }
 	 }
@@ -111,6 +104,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   this.setErrorMessageProvider(PlayerErrorMessageProvider())
 		  }
 	 }
+
 	 fun savePlayData(){
 		  val cp = player?.currentPosition ?: 0
 		  val ttl = player?.duration ?: 0
@@ -124,6 +118,20 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   )
 		  }
 	 }
+
+	 override fun hideController() {
+		  super.hideController()
+	 }
+
+	 override fun showController() {
+		  super.showController()
+	 }
+
+	 override fun isControllerVisible(): Boolean {
+		  return super.isControllerVisible()
+	 }
+ 
+
 	 private fun initializePlayer(url: String, srtLink: String?) {
 		  mediaSource = null
 
@@ -151,7 +159,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 							  playWhenReady: Boolean,
 							  playbackState: Int
 						 ) {
-							  if (playbackState == ExoPlayer.STATE_BUFFERING) {
+ 							  if (playbackState == ExoPlayer.STATE_BUFFERING) {
 								   playProgressBar?.visibility = View.VISIBLE
 								   this@CinamaticExoPlayer.hideController()
 							  }else if (playbackState == ExoPlayer.STATE_READY){
@@ -223,6 +231,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 override fun onVisibilityChange(visibility: Int) {
 		  Log.e("msdmdsmd", "$visibility")
 		  customController?.visibility = visibility
+		  controllerViiablilityListener?.onVisibilityChange(visibility)
 	 }
 
 	 override fun start() {
@@ -264,4 +273,6 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 override fun toggleFullScreen() {
 	 }
+
+
 }

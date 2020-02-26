@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/motionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:applyMotionScene="true"
+        app:layoutDescription="@xml/floating_player_scene"
+        app:showPaths="false">
+
+
+    <View
+            android:id="@+id/motionInteractView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
+            android:id="@+id/playerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:keepScreenOn="true"
+            android:tag="player"
+            app:controller_layout_id="@layout/empty_layout_nothing"
+            app:layout_constraintBottom_toBottomOf="@id/motionInteractView"
+            app:layout_constraintEnd_toEndOf="@id/motionInteractView"
+            app:layout_constraintStart_toStartOf="@id/motionInteractView"
+            app:layout_constraintTop_toTopOf="@id/motionInteractView"
+            app:use_controller="true" />
+
+    <TextView
+            android:id="@+id/close_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeMinTextSize="1sp"
+            android:autoSizeTextType="uniform"
+            android:background="#000000"
+            android:gravity="center"
+            android:text="إغلاق"
+            android:textColor="#fff"
+            app:layout_constraintBottom_toBottomOf="@id/motionInteractView"
+            app:layout_constraintEnd_toEndOf="@id/motionInteractView"
+            app:layout_constraintStart_toStartOf="@+id/motionInteractView"
+            app:layout_constraintTop_toTopOf="@id/motionInteractView" />
+
+    <FrameLayout
+            android:id="@+id/detailsView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="@id/motionInteractView"
+            app:layout_constraintStart_toStartOf="@id/motionInteractView"
+            app:layout_constraintTop_toTopOf="@id/motionInteractView" />
+
+    <Space
+            android:id="@+id/bottom_nav_spacer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="1" />
+
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

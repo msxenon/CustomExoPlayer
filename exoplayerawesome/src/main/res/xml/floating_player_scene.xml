@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+            motion:constraintSetEnd="@id/end"
+            motion:constraintSetStart="@id/start"
+            motion:duration="50"
+            motion:motionInterpolator="linear">
+
+        <OnSwipe
+                motion:dragDirection="dragDown"
+                motion:maxAcceleration="20"
+                motion:onTouchUp="autoComplete"
+                motion:touchRegionId="@id/motionInteractView" />
+        <KeyFrameSet>
+
+            <!--            <KeyPosition-->
+            <!--                    motion:curveFit="spline"-->
+            <!--                    motion:framePosition="50"-->
+            <!--                    motion:motionTarget="@id/motionInteractView"-->
+            <!--                    motion:percentWidth="0" />-->
+
+            <!--            <KeyPosition-->
+            <!--                    motion:curveFit="spline"-->
+            <!--                    motion:framePosition="50"-->
+            <!--                    motion:motionTarget="@id/detailsView"-->
+            <!--                    motion:percentWidth="0" />-->
+        </KeyFrameSet>
+    </Transition>
+    <Transition
+            motion:constraintSetEnd="@id/finish_left"
+            motion:constraintSetStart="@id/end"
+            motion:duration="50"
+            motion:motionInterpolator="linear">
+
+        <OnSwipe
+                motion:dragDirection="dragLeft"
+                motion:maxAcceleration="20"
+                motion:onTouchUp="autoComplete"
+                motion:touchRegionId="@id/motionInteractView" />
+        <KeyFrameSet>
+
+            <KeyAttribute
+                    android:alpha="0"
+                    motion:framePosition="0"
+                    motion:motionTarget="@id/close_view" />
+
+            <KeyAttribute
+                    android:alpha="1"
+                    motion:framePosition="100"
+                    motion:motionTarget="@id/close_view" />
+            <!--            <KeyPosition-->
+            <!--                    motion:curveFit="spline"-->
+            <!--                    motion:framePosition="50"-->
+            <!--                    motion:motionTarget="@id/motionInteractView"-->
+            <!--                    motion:percentWidth="0" />-->
+
+
+            <!--            <KeyPosition-->
+            <!--                    motion:curveFit="spline"-->
+            <!--                    motion:framePosition="50"-->
+            <!--                    motion:motionTarget="@id/detailsView"-->
+            <!--                    motion:percentWidth="0" />-->
+
+
+        </KeyFrameSet>
+    </Transition>
+    <ConstraintSet android:id="@+id/start">
+
+        <Constraint
+                android:id="@id/motionInteractView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                motion:layout_constraintDimensionRatio="16:9"
+                motion:layout_constraintEnd_toEndOf="parent"
+                motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintTop_toTopOf="parent" />
+        <Constraint
+                android:id="@id/detailsView"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintEnd_toEndOf="@id/motionInteractView"
+                motion:layout_constraintStart_toStartOf="@id/motionInteractView"
+                motion:layout_constraintTop_toBottomOf="@id/motionInteractView"
+                motion:layout_constraintVertical_bias="0.0" />
+        <!--        <Constraint android:id="@id/playerView">-->
+        <!--            <PropertySet motion:visibilityMode="ignore" android:alpha="1" />-->
+        <!--        </Constraint>-->
+
+
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+
+        <Constraint
+                android:id="@id/motionInteractView"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                motion:layout_constraintBottom_toTopOf="@id/bottom_nav_spacer"
+                motion:layout_constraintDimensionRatio="16:9"
+                motion:layout_constraintEnd_toEndOf="parent"
+                motion:layout_constraintHorizontal_bias="1.0"
+                motion:layout_constraintStart_toStartOf="parent" />
+        <!--        <Constraint android:id="@id/playerView">-->
+        <!--            <PropertySet motion:visibilityMode="ignore" android:alpha="1" />-->
+        <!--        </Constraint>-->
+
+        <Constraint
+                android:id="@id/detailsView"
+                android:layout_height="0px"
+                motion:layout_constraintEnd_toEndOf="@id/motionInteractView"
+                motion:layout_constraintStart_toStartOf="@id/motionInteractView"
+                motion:layout_constraintTop_toBottomOf="@id/motionInteractView"
+                motion:layout_constraintVertical_bias="0.0">
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
+
+
+    </ConstraintSet>
+    <ConstraintSet android:id="@+id/finish_left">
+
+        <Constraint
+                android:id="@id/motionInteractView"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                motion:layout_constraintBottom_toTopOf="@id/bottom_nav_spacer"
+                motion:layout_constraintDimensionRatio="16:9"
+                motion:layout_constraintEnd_toEndOf="parent"
+                motion:layout_constraintHorizontal_bias="0.0"
+                motion:layout_constraintStart_toStartOf="parent" />
+
+
+        <Constraint
+                android:id="@id/detailsView"
+                android:layout_height="0px"
+                motion:layout_constraintEnd_toEndOf="@id/motionInteractView"
+                motion:layout_constraintStart_toStartOf="@id/motionInteractView"
+                motion:layout_constraintTop_toBottomOf="@id/motionInteractView"
+                motion:layout_constraintVertical_bias="0.0" />
+
+
+    </ConstraintSet>
+</MotionScene>

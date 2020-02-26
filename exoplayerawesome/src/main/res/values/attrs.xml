@@ -4,4 +4,10 @@
         <attr name="progressLayout" format="reference"/>
         <attr name="customController" format="reference"/>
     </declare-styleable>
+    <declare-styleable name="FloatingLayout">
+        <attr name="closeBtn" format="reference" />
+        <attr name="headerView" format="reference" />
+        <attr name="descView" format="reference" />
+
+    </declare-styleable>
 </resources>

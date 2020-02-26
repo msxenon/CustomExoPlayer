@@ -4,10 +4,10 @@ import android.content.Context
 import android.net.Uri
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
- import com.appchief.msa.exoplayerawesome.listeners.*
-import com.appchief.msa.exoplayerawesome.listeners.PlayerErrorMessageProvider
+import com.appchief.msa.exoplayerawesome.listeners.*
+import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MergingMediaSource
@@ -15,42 +15,45 @@ import com.google.android.exoplayer2.source.SingleSampleMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.MimeTypes
 
-class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.VisibilityListener,
+open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.VisibilityListener,
 	 MediaPlayerControl {
 	 var controllerViiablilityListener:PlayerControlView.VisibilityListener? = null
+
 	 constructor(context: Context) : super(context)
-	 constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-		  initAttrs(context, attrs)
-	 }
+	 constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
 	 constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
 		  context,
 		  attrs,
 		  defStyleAttr
-	 ) {
-		  initAttrs(context, attrs)
+	 )
+
+	 private fun loadingView(): View? {
+		  return playerUiFinalListener?.loadingView()
 	 }
 
-	 fun initAttrs(context: Context, attrs: AttributeSet?) {
-		  if (attrs != null) {
-			   val attributeArray = context.obtainStyledAttributes(
-					attrs,
-					R.styleable.CinamaticExoPlayer
-			   )
-			   val progressLayoutId =
-					attributeArray.getResourceId(R.styleable.CinamaticExoPlayer_progressLayout, -1)
-			   if (progressLayoutId > -1) {
-					playProgressBar =
-						 LayoutInflater.from(context).inflate(progressLayoutId, this, false)
-					playProgressBar?.visibility = View.GONE
-					addView(playProgressBar)
+	 private fun setController(title: String?) {
+		  customController = VideoControllerView(context!!)
+		  customController?.setAnchorView(this, title, playerUiFinalListener?.ControllerLayout())
+
+		  customController?.show()
+
+		  controllerViiablilityListener =
+			   PlayerControlView.VisibilityListener { visibility ->
+					controlController(visibility)
 			   }
-			   attributeArray.recycle()
-		  }
+	 }
+
+	 private fun controlController(visibility: Int) {
+		  if (visibility == View.VISIBLE)
+			   customController?.show()
+		  else
+			   customController?.hide()
 	 }
 
 	 //start
@@ -61,9 +64,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	  var trackSelector: DefaultTrackSelector? = null
 	 private var trackSelectorParameters: DefaultTrackSelector.Parameters? = null
 	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
-	 private var playProgressBar: View? = null
-	 var customController: View? = null
-	 var playerUiFinalListener: PlayerUiFinalListener? = null
+	 var customController: VideoControllerView? = null
+	 var playerUiFinalListener: CineamaticPlayerScreen? = null
 	 var hasSettingsListener:SettingsListener? = null
 
 	 override fun onDetachedFromWindow() {
@@ -106,30 +108,18 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  }
 	 }
 
-	 fun savePlayData(){
+	 fun savePlayData() {
 		  val cp = player?.currentPosition ?: 0
 		  val ttl = player?.duration ?: 0
 
 		  if (cp > 0)
-		  nowPlaying?.let {
-			   playerUiFinalListener?.savePlayPosition(
-					nowPlaying,
-					cp,
-					ttl
-			   )
-		  }
-	 }
-
-	 override fun hideController() {
-		  super.hideController()
-	 }
-
-	 override fun showController() {
-		  super.showController()
-	 }
-
-	 override fun isControllerVisible(): Boolean {
-		  return super.isControllerVisible()
+			   nowPlaying?.let {
+					playerUiFinalListener?.savePlayPosition(
+						 nowPlaying,
+						 cp,
+						 ttl
+					)
+			   }
 	 }
 	 var hasSettings = false
 
@@ -160,11 +150,12 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 							  playWhenReady: Boolean,
 							  playbackState: Int
 						 ) {
+							  customController?.updateViews()
  							  if (playbackState == ExoPlayer.STATE_BUFFERING) {
-								   playProgressBar?.visibility = View.VISIBLE
+								   loadingView()?.visibility = View.VISIBLE
 								   this@CinamaticExoPlayer.hideController()
 							  }else if (playbackState == ExoPlayer.STATE_READY){
-								   playProgressBar?.visibility = View.GONE
+								   loadingView()?.visibility = View.GONE
 
 								   val isEnded = player?.currentPosition?:0 > player?.duration?:-1
 								   if (playWhenReady && playbackState == ExoPlayer.STATE_READY && isEnded ){
@@ -175,11 +166,12 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 										checkHasSettings()
 
 							  } else {
-								   playProgressBar?.visibility = View.GONE
+								   loadingView()?.visibility = View.GONE
 							  }
 						 }
 					})
-
+					this.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
+					this.setShowBuffering(SHOW_BUFFERING_NEVER)
 
 			   }
 			   player?.playWhenReady = true
@@ -194,6 +186,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					mPlayer?.prepare(mediaSource!!, !haveStartPosition, false)
 					mPlayer?.seekTo(sp)
 			   }
+			   hasSettings = false
+			   hasSettingsListener?.hasSettings(false)
+			   setController(null)
 		  } catch (e: Exception) {
 			   playerUiFinalListener?.onMessageRecived(e.localizedMessage, PlayerStatus.CantPlay)
 			   e.printStackTrace()
@@ -240,9 +235,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 override fun onVisibilityChange(visibility: Int) {
-		  Log.e("msdmdsmd", "$visibility")
-		  customController?.visibility = visibility
-		  controllerViiablilityListener?.onVisibilityChange(visibility)
+		  Log.e("msdmdsmd", "$visibility $useController ${customController != null}")
+		  controlController(visibility)
 	 }
 
 	 override fun start() {
@@ -251,6 +245,11 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 override fun pause() {
 		  mPlayer?.playWhenReady = false
+	 }
+
+	 override fun onPauseSave() {
+		  pause()
+		  savePlayData()
 	 }
 
 	 override val duration: Long
@@ -279,11 +278,55 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  return !isSreaming()
 	 }
 
-	 override val isFullScreen: Boolean
-		  get() = true
+	 override fun hasNext(): Boolean {
+		  return false
+	 }
+
+	 override fun isFirstItem(): Boolean {
+		  return true
+	 }
+
+	 override val canHaveFullScreen: Boolean
+		  get() = playerUiFinalListener?.canMinimize() != true
+
 
 	 override fun toggleFullScreen() {
 	 }
 
+	 override fun canShowController(useController: Boolean) {
+		  Log.e("canShowController", "$useController")
+		  this.useController = useController
+		  if (!useController)
+			   controlController(View.GONE)
+	 }
 
+	 override fun minimizeAble(): Boolean {
+		  return playerUiFinalListener?.canMinimize() == true
+	 }
+
+	 override fun minmize() {
+		  playerUiFinalListener?.doMinimizePlayer()
+	 }
+
+	 fun init(finaluilistener: CineamaticPlayerScreen) {
+		  playerUiFinalListener = finaluilistener
+	 }
+
+	 override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+		  Log.e("CEP", "dispatchTouchEvent")
+		  for (i in 0..childCount) {
+			   getChildAt(i)?.let {
+					val consumed = it.dispatchTouchEvent(ev)
+					if (consumed) {
+						 return consumed
+					}
+			   }
+		  }
+
+		  return super.dispatchTouchEvent(ev)
+	 }
+
+	 override fun onTouchEvent(event: MotionEvent): Boolean {
+		  return false
+	 }
 }

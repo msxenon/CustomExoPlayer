@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.appchief.msa.floating_player.VideoOverlayView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/videoOverlayView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+</com.appchief.msa.floating_player.VideoOverlayView>

@@ -2,8 +2,8 @@ package com.appchief.msa.exoplayerawesome
 
 import android.content.Context
 import android.util.Log
+import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.appchief.msa.exoplayerawesome.listeners.PlayerStatus
-import com.appchief.msa.exoplayerawesome.listeners.PlayerUiFinalListener
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
@@ -14,7 +14,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 class PlayerEventListener(
 	 private val context: Context?,
 	 private val cinemPlayer: CinamaticExoPlayer?,
-	 private val playerUiFinalListener: PlayerUiFinalListener?
+	 private val playerUiFinalListener: CineamaticPlayerScreen?
 ) : Player.EventListener {
 
 	 private var lastSeenTrackGroupArray: TrackGroupArray? = null

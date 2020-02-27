@@ -8,8 +8,7 @@
         android:layout_gravity="bottom"
         android:background="#6F000000"
         android:layoutDirection="ltr"
-        android:orientation="vertical"
-        tools:targetApi="28">
+        android:orientation="vertical">
 
 
     <ImageButton
@@ -142,7 +141,7 @@
             app:srcCompat="@drawable/ic_settings_black_24dp"
             tools:visibility="visible" />
 
-    <View
+    <androidx.mediarouter.app.MediaRouteButton
             android:id="@+id/exo_cast"
             android:layout_width="40dp"
             android:layout_height="40dp"

@@ -177,7 +177,7 @@
             app:srcCompat="@drawable/ic_settings_black_24dp"
             tools:visibility="visible" />
 
-    <View
+    <androidx.mediarouter.app.MediaRouteButton
             android:id="@+id/exo_cast"
             android:layout_width="50dp"
             android:layout_height="50dp"

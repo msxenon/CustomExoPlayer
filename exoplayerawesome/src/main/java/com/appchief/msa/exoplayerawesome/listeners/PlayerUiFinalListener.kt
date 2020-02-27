@@ -3,7 +3,7 @@ package com.appchief.msa.exoplayerawesome.listeners
 import android.view.View
 
 interface CineamaticPlayerScreen {
-	 fun onMessageRecived(msg: String?, state: PlayerStatus)
+	 fun onMessageRecived(msg: String?, state: Int)
 	 fun getLastPosition(modelId: NowPlaying?): Long
 	 fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long)
 	 fun ControllerLayout(): Int?
@@ -13,10 +13,11 @@ interface CineamaticPlayerScreen {
 	 fun isFirstItem(): Boolean
 	 fun isPlayList(): Boolean
 	 fun loadingView(): View?
+	 fun setScreenOrentation(inFullScreenMode: Boolean)
 }
 
 enum class PlayerStatus {
-	 Playing, CantPlay, Error, JustMSG
+	 Playing, CantPlay, Error, JustMSG, InternalError
 }
 
 enum class CloseReason {

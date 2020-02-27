@@ -3,7 +3,6 @@ package com.appchief.msa.exoplayerawesome
 import android.content.Context
 import android.util.Log
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
-import com.appchief.msa.exoplayerawesome.listeners.PlayerStatus
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
@@ -20,12 +19,12 @@ class PlayerEventListener(
 	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
 
 	 override fun onPlayerError(error: ExoPlaybackException) {
-		  Log.e("PlayerEventListener", "err")
+		  Log.e("PlayerEventListener", "err ${error.type}")
 		  error.printStackTrace()
 		  cinemPlayer?.useController = false
 		  playerUiFinalListener?.onMessageRecived(
 			   context?.getString(R.string.videonotav),
-			   PlayerStatus.CantPlay
+			   error.type
 		  )
 	 }
 
@@ -39,13 +38,13 @@ class PlayerEventListener(
 					if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO) == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
 						 playerUiFinalListener?.onMessageRecived(
 							  context?.getString(R.string.error_unsupported_video),
-							  PlayerStatus.Error
+							  ExoPlaybackException.TYPE_RENDERER
 						 )
 					}
 					if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_AUDIO) == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
 						 playerUiFinalListener?.onMessageRecived(
 							  context?.getString(R.string.error_unsupported_audio),
-							  PlayerStatus.Error
+							  ExoPlaybackException.TYPE_RENDERER
 						 )
 					}
 			   }

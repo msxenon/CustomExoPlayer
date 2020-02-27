@@ -14,7 +14,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
 import com.appchief.msa.exoplayerawesome.R
-import com.appchief.msa.exoplayerawesome.listeners.MediaPlayerControl
+import com.google.android.gms.cast.framework.CastButtonFactory
+import kotlinx.android.synthetic.main.controllerui.view.*
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.max
@@ -51,7 +52,7 @@ import kotlin.math.max
  */
 class VideoControllerView : FrameLayout {
 
-	 private var mPlayer: MediaPlayerControl? =
+	 private var mPlayer: CinamaticExoPlayer? =
 		  null
 	 private var mContext: Context
 	 private var mAnchor: ViewGroup? = null
@@ -70,6 +71,7 @@ class VideoControllerView : FrameLayout {
 	 private var mPrevListener: OnClickListener? = null
 	 var mFormatBuilder: StringBuilder? = null
 	 var mFormatter: Formatter? = null
+	 private var fullscreenBtn: ImageButton? = null
 	 private var mPauseButton: ImageButton? = null
 	 private var mFfwdButton: ImageButton? = null
 	 private var mRewButton: ImageButton? = null
@@ -107,7 +109,7 @@ class VideoControllerView : FrameLayout {
 		  if (mRoot != null) initControllerView(mRoot!!)
 	 }
 
-	 fun setMediaPlayer(player: MediaPlayerControl?) {
+	 fun setMediaPlayer(player: CinamaticExoPlayer?) {
 		  mPlayer = player
 	 }
 
@@ -138,6 +140,7 @@ class VideoControllerView : FrameLayout {
 	  * @param view The view to which to anchor the controller when it is visible.
 	  */
 	 fun setAnchorView(view: CinamaticExoPlayer, title: String?, controllerLayout: Int?) {
+		  setMediaPlayer(view)
 		  mAnchor = view
 		  val frameParams = LayoutParams(
 			   ViewGroup.LayoutParams.MATCH_PARENT,
@@ -152,7 +155,6 @@ class VideoControllerView : FrameLayout {
 					visibility = View.VISIBLE
 			   }
 		  }
-		  setMediaPlayer(view)
 	 }
 
 	 /**
@@ -161,12 +163,17 @@ class VideoControllerView : FrameLayout {
 	  * @return The controller view.
 	  * @hide This doesn't work as advertised
 	  */
-	 protected fun makeControllerView(controllerLayout: Int?): View? {
+	 internal fun makeControllerView(controllerLayout: Int?): View? {
 		  val inflate = LayoutInflater.from(mContext)
 
 		  mRoot = inflate.inflate(controllerLayout ?: R.layout.controllerui, null)
 
 		  initControllerView(mRoot!!)
+		  try {
+			   CastButtonFactory.setUpMediaRouteButton(mRoot!!.context, mRoot!!.exo_cast)
+		  } catch (e: Exception) {
+			   e.printStackTrace()
+		  }
 		  return mRoot
 	 }
 
@@ -193,7 +200,16 @@ class VideoControllerView : FrameLayout {
 			   }
 		  }
 
-
+		  fullscreenBtn = v.findViewById(R.id.toggle_fullscreen)
+		  Log.e(
+			   "VCV",
+			   "hass full screen ${fullscreenBtn != null} && ${mPlayer!!.canHaveFullScreen}"
+		  )
+		  if (mPlayer!!.canHaveFullScreen) {
+			   fullscreenBtn?.setOnClickListener(mFullscreenListener)
+		  } else {
+			   fullscreenBtn?.visibility = View.GONE
+		  }
 		  mProgress =
 			   v.findViewById<View>(R.id.exo_progress) as SeekBar
 		  if (mProgress != null) {
@@ -385,6 +401,7 @@ class VideoControllerView : FrameLayout {
 		  }
 	 private val mFullscreenListener =
 		  OnClickListener {
+			   Log.e("VCV", "fulls clicklistener")
 			   doToggleFullscreen()
 			   show(sDefaultTimeout)
 		  }

@@ -1,11 +1,15 @@
 package com.appchief.msa
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.appchief.msa.awesomeplayer.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
+	 override fun isCastConnected(isConnected: Boolean) {
+	 }
+
+	 override fun isCastAvailable(isAvailable: Boolean) {
+	 }
 
 	 override fun onCreate(savedInstanceState: Bundle?) {
 		  super.onCreate(savedInstanceState)

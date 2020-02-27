@@ -105,6 +105,7 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 					.setPreferredTextLanguage("en").build()
 			   this.setControllerVisibilityListener(this)
 			   this.setErrorMessageProvider(PlayerErrorMessageProvider())
+
 		  }
 	 }
 
@@ -190,7 +191,10 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 			   hasSettingsListener?.hasSettings(false)
 			   setController(null)
 		  } catch (e: Exception) {
-			   playerUiFinalListener?.onMessageRecived(e.localizedMessage, PlayerStatus.CantPlay)
+			   playerUiFinalListener?.onMessageRecived(
+					e.localizedMessage,
+					ExoPlaybackException.TYPE_UNEXPECTED
+			   )
 			   e.printStackTrace()
 		  }
 	 }
@@ -287,10 +291,11 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 	 }
 
 	 override val canHaveFullScreen: Boolean
-		  get() = playerUiFinalListener?.canMinimize() != true
-
-
+		  get() = playerUiFinalListener?.canMinimize() != false
+	 var isInFullScreenMode: Boolean = false
+		  internal set
 	 override fun toggleFullScreen() {
+		  playerUiFinalListener?.setScreenOrentation(isInFullScreenMode)
 	 }
 
 	 override fun canShowController(useController: Boolean) {

@@ -1,15 +1,14 @@
 package com.appchief.msa
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.updateLayoutParams
 import com.appchief.msa.awesomeplayer.R
 import com.appchief.msa.awesomeplayer.databinding.LoadingScBinding
-import com.appchief.msa.exoplayerawesome.listeners.CloseReason
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
-import com.appchief.msa.exoplayerawesome.listeners.PlayerStatus
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
 import com.appchief.msa.floating_player.FloatingPLayerFragment
 
@@ -38,8 +37,11 @@ class MainActivityFragment : FloatingPLayerFragment() {
 		  setDetails(DetailsFrag())
 	 }
 
-	 override fun onMessageRecived(msg: String?, state: PlayerStatus) {
+	 override fun onMessageRecived(msg: String?, state: Int) {
+		  Log.e("main", "$msg $state")
 	 }
+
+
 
 	 override fun getLastPosition(modelId: NowPlaying?): Long {
 		  return 0
@@ -56,13 +58,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 		  return true
 	 }
 
-	 override fun onDissmiss(reason: CloseReason) {
-		  fragmentManager?.beginTransaction()?.remove(this)?.commit()
-	 }
 
-	 override fun doMinimizePlayer() {
-		  binding.videoOverlayView.minimize()
-	 }
 
 	 override fun isFirstItem(): Boolean {
 		  return false

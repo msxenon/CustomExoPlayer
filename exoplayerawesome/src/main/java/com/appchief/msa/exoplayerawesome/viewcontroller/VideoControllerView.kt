@@ -131,7 +131,7 @@ class VideoControllerView : FrameLayout {
 			   mPrevButton?.visibility = View.GONE
 		  }
 		  setProgress()
-		  mDownPlayer?.visibility = mPlayer?.minimizeAble().controlVisibility()
+		  updateDownBtn()
 	 }
 
 	 /**
@@ -205,11 +205,7 @@ class VideoControllerView : FrameLayout {
 			   "VCV",
 			   "hass full screen ${fullscreenBtn != null} && ${mPlayer!!.canHaveFullScreen}"
 		  )
-		  if (mPlayer!!.canHaveFullScreen) {
-			   fullscreenBtn?.setOnClickListener(mFullscreenListener)
-		  } else {
-			   fullscreenBtn?.visibility = View.GONE
-		  }
+		  updateFullScreen()
 		  mProgress =
 			   v.findViewById<View>(R.id.exo_progress) as SeekBar
 		  if (mProgress != null) {
@@ -418,6 +414,17 @@ class VideoControllerView : FrameLayout {
 	 }
 
 	 fun updateFullScreen() {
+		  if (mPlayer!!.canHaveFullScreen) {
+			   fullscreenBtn?.setOnClickListener(mFullscreenListener)
+		  } else {
+			   fullscreenBtn?.visibility = View.GONE
+		  }
+		  updateDownBtn()
+	 }
+
+	 private fun updateDownBtn() {
+		  mDownPlayer?.visibility =
+			   if (mPlayer?.isInFullScreenMode == false && mPlayer?.minimizeAble() == true) View.VISIBLE else View.GONE
 	 }
 
 	 private fun doPauseResume() {
@@ -513,7 +520,6 @@ class VideoControllerView : FrameLayout {
 
 	 fun updateViews() {
 		  updatePausePlay()
-		  updateFullScreen()
 		  controlVis()
 	 }
 

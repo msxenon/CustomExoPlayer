@@ -14,6 +14,7 @@ interface CineamaticPlayerScreen {
 	 fun isPlayList(): Boolean
 	 fun loadingView(): View?
 	 fun setScreenOrentation(inFullScreenMode: Boolean)
+	 fun isConnectedToCast(): Boolean
 }
 
 enum class PlayerStatus {
@@ -21,10 +22,28 @@ enum class PlayerStatus {
 }
 
 enum class CloseReason {
-	 Swipe, BackButton
+	 Swipe, BackButton, Casting
 }
 enum class PlayerType {
 	 CHANNEL, MOVIE, EPISODE
 }
 
-data class NowPlaying(val movieId: Long?, val episodeId: Long?, val type: PlayerType)
+data class NowPlaying(
+	 val movieId: Long?,
+	 val episodeId: Long?,
+	 val type: PlayerType,
+	 val poster: String,
+	 val videoLink: String?,
+	 val geners: String,
+	 val title: String,
+	 val runtime: Long
+) {
+
+	 fun nowPlayingId(): Long {
+		  return when (type) {
+			   PlayerType.CHANNEL -> 0L
+			   PlayerType.MOVIE -> movieId ?: 0
+			   PlayerType.EPISODE -> episodeId ?: 0
+		  }
+	 }
+}

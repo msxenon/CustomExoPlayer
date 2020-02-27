@@ -86,16 +86,22 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 		  episodeId: Long?,
 		  movieId: Long?,
 		  playerType: PlayerType,
-		  SrtLink: String?
+		  SrtLink: String?,
+		  poster: String,
+		  geners: String, title: String, runtime: Long
 	 ) {
 		  if (videoLink == null)
 			   return
 		  if (playerUiFinalListener == null)
 			   throw Exception("playerUiFinalListener not setted")
 		  savePlayData()
-		  nowPlaying = NowPlaying(movieId, episodeId, playerType)
-
-		  initializePlayer(videoLink.encodeUrl(), SrtLink?.encodeUrl())
+		  nowPlaying =
+			   NowPlaying(movieId, episodeId, playerType, poster, videoLink, geners, title, runtime)
+		  if (playerUiFinalListener?.isConnectedToCast() != true) {
+			   initializePlayer(videoLink.encodeUrl(), SrtLink?.encodeUrl())
+		  } else {
+			   castCurrent()
+		  }
 	 }
 
 	 private fun setupPlayer() {
@@ -336,5 +342,21 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 
 	 override fun onTouchEvent(event: MotionEvent): Boolean {
 		  return false
+	 }
+
+	 fun castCurrent() {
+		  if (nowPlaying != null) {
+			   CastUtil.castThis(
+					context,
+					nowPlaying?.title,
+					nowPlaying?.videoLink,
+					nowPlaying!!.geners,
+					nowPlaying!!.poster,
+					nowPlaying!!.runtime,
+					isSreaming(),
+					playerUiFinalListener?.getLastPosition(nowPlaying)
+			   )
+			   playerUiFinalListener?.onDissmiss(CloseReason.Casting)
+		  }
 	 }
 }

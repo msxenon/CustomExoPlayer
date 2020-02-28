@@ -19,6 +19,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.MimeTypes
+import kotlin.math.abs
 
 open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.VisibilityListener,
 	 MediaPlayerControl {
@@ -163,8 +164,8 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 								   this@CinamaticExoPlayer.hideController()
 							  }else if (playbackState == ExoPlayer.STATE_READY){
 								   loadingView()?.visibility = View.GONE
-
-								   val isEnded = player?.currentPosition?:0 > player?.duration?:-1
+								   val isEnded =
+										player?.currentPosition ?: 0 >= player?.duration ?: -1
 								   if (playWhenReady && playbackState == ExoPlayer.STATE_READY && isEnded ){
 										player?.playWhenReady = false
 										seekTo(0)
@@ -186,7 +187,7 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 
 			   mediaSource =
 					buildMediaSource(Uri.parse(url), srtLink)
-			   val sp = playerUiFinalListener?.getLastPosition(nowPlaying) ?: 0
+			   val sp = getLastPos(nowPlaying)
 			   val haveStartPosition = sp > 0L
 
 			   if (mediaSource != null) {
@@ -210,6 +211,18 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 		  hasSettingsListener?.hasSettings(m)
 	 }
 
+	 fun getLastPos(nowPlaying: NowPlaying?): Long {
+		  var res = 0L
+		  playerUiFinalListener?.getLastPosition(nowPlaying)?.let {
+			   if (nowPlaying!!.runtime - it >= 5000) {
+					res = it
+					if (reachedEndOfVideo())
+						 res = 0
+			   }
+		  }
+		  Log.e("lastpos", "$nowPlaying $res")
+		  return res
+	 }
 	 private fun isSreaming(): Boolean {
 		  return nowPlaying?.type == PlayerType.CHANNEL
 	 }
@@ -250,6 +263,14 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 	 }
 
 	 override fun start() {
+		  Log.e(
+			   "msdmdsmd start",
+			   "${reachedEndOfVideo()}${player?.currentPosition} ${player?.duration} "
+		  )
+
+		  if (reachedEndOfVideo()) {
+			   seekTo(0)
+		  }
 		  mPlayer?.playWhenReady = true
 	 }
 
@@ -257,6 +278,15 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 		  mPlayer?.playWhenReady = false
 	 }
 
+	 fun reachedEndOfVideo(): Boolean {
+		  var res = false
+		  player?.let {
+			   val x = it.duration - it.currentPosition
+			   res = abs(x) <= 1000
+		  }
+
+		  return res
+	 }
 	 override fun onPauseSave() {
 		  pause()
 		  savePlayData()
@@ -354,7 +384,7 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 					nowPlaying!!.poster,
 					nowPlaying!!.runtime,
 					isSreaming(),
-					playerUiFinalListener?.getLastPosition(nowPlaying)
+					getLastPos(nowPlaying)
 			   )
 			   playerUiFinalListener?.onDissmiss(CloseReason.Casting)
 		  }

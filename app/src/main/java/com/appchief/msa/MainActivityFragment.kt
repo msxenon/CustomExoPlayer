@@ -32,7 +32,8 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   null,
 			   null,
 			   PlayerType.MOVIE,
-			   null
+			   null,
+			   "null", "", "", 596000
 		  )
 		  setDetails(DetailsFrag())
 	 }
@@ -44,7 +45,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 
 	 override fun getLastPosition(modelId: NowPlaying?): Long {
-		  return 0
+		  return 591000
 	 }
 
 	 override fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long) {
@@ -70,5 +71,9 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 	 override fun loadingView(): View? {
 		  return loadingView
+	 }
+
+	 override fun isConnectedToCast(): Boolean {
+		  return false
 	 }
 }

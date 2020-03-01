@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
-import com.appchief.msa.exoplayerawesome.R
 import com.appchief.msa.exoplayerawesome.databinding.AppchiefFloatingPlayerBinding
 
 // https://medium.com/vrt-digital-studio/picture-in-picture-video-overlay-with-motionlayout-a9404663b9e7
@@ -32,7 +31,8 @@ class VideoOverlayView @JvmOverloads constructor(
 			   motionLayout = AppchiefFloatingPlayerBinding.inflate(LayoutInflater.from(context))
 					.containerMotionLayout
 			   addView(motionLayout)
-			   player = motionLayout?.findViewById(R.id.playerView)
+			   player =
+					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.playerView)
 			   //   player = playerView//motionLayout?.findViewById(R.id.playerView)
 		  }
 	 }
@@ -88,7 +88,7 @@ class VideoOverlayView @JvmOverloads constructor(
 								   val endX = ev.x
 								   val endY = ev.y
 								   if (isClick(startX!!, endX, startY!!, endY)) {
-										if (motionLayout!!.currentState == motionLayout!!.startState || motionLayout!!.currentState == R.id.fullScreen) {
+										if (motionLayout!!.currentState == motionLayout!!.startState || motionLayout!!.currentState == com.appchief.msa.exoplayerawesome.R.id.fullScreen) {
 											 Log.e("VVO", "dispatchTouchEvent preform pte ")
 											 player!!.performClick()
 										}

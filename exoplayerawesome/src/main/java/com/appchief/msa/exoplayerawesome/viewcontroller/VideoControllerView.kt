@@ -140,6 +140,7 @@ class VideoControllerView : FrameLayout {
 	  * @param view The view to which to anchor the controller when it is visible.
 	  */
 	 fun setAnchorView(view: CinamaticExoPlayer, title: String?, controllerLayout: Int?) {
+		  Log.e("VCV", "setAnchorView start")
 		  setMediaPlayer(view)
 		  mAnchor = view
 		  val frameParams = LayoutParams(
@@ -155,6 +156,7 @@ class VideoControllerView : FrameLayout {
 					visibility = View.VISIBLE
 			   }
 		  }
+		  Log.e("VCV", "setAnchorView end")
 	 }
 
 	 /**
@@ -166,7 +168,9 @@ class VideoControllerView : FrameLayout {
 	 internal fun makeControllerView(controllerLayout: Int?): View? {
 		  val inflate = LayoutInflater.from(mContext)
 
-		  mRoot = inflate.inflate(controllerLayout ?: R.layout.controllerui, null)
+		  mRoot = inflate.inflate(
+			   controllerLayout ?: com.appchief.msa.exoplayerawesome.R.layout.controllerui, null
+		  )
 
 		  initControllerView(mRoot!!)
 		  try {
@@ -407,9 +411,9 @@ class VideoControllerView : FrameLayout {
 			   return
 		  }
 		  if (mPlayer!!.isPlaying) {
-			   mPauseButton!!.setImageResource(R.drawable.exo_controls_pause)
+			   mPauseButton!!.setImageResource(com.appchief.msa.exoplayerawesome.R.drawable.exo_controls_pause)
 		  } else {
-			   mPauseButton!!.setImageResource(R.drawable.exo_icon_play)
+			   mPauseButton!!.setImageResource(com.appchief.msa.exoplayerawesome.R.drawable.exo_icon_play)
 		  }
 	 }
 

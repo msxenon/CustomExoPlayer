@@ -23,7 +23,7 @@ class PlayerEventListener(
 		  error.printStackTrace()
 		  cinemPlayer?.useController = false
 		  playerUiFinalListener?.onMessageRecived(
-			   context?.getString(R.string.videonotav),
+			   context?.getString(com.appchief.msa.exoplayerawesome.R.string.videonotav),
 			   error.type
 		  )
 	 }
@@ -37,13 +37,13 @@ class PlayerEventListener(
 			   if (mappedTrackInfo != null) {
 					if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO) == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
 						 playerUiFinalListener?.onMessageRecived(
-							  context?.getString(R.string.error_unsupported_video),
+							  context?.getString(com.appchief.msa.exoplayerawesome.R.string.error_unsupported_video),
 							  ExoPlaybackException.TYPE_RENDERER
 						 )
 					}
 					if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_AUDIO) == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
 						 playerUiFinalListener?.onMessageRecived(
-							  context?.getString(R.string.error_unsupported_audio),
+							  context?.getString(com.appchief.msa.exoplayerawesome.R.string.error_unsupported_audio),
 							  ExoPlaybackException.TYPE_RENDERER
 						 )
 					}

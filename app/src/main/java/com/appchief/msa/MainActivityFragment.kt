@@ -6,7 +6,6 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.updateLayoutParams
-import com.appchief.msa.awesomeplayer.R
 import com.appchief.msa.awesomeplayer.databinding.LoadingScBinding
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
@@ -52,7 +51,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 override fun ControllerLayout(): Int? {
-		  return R.layout.exo_player_controller
+		  return null// R.layout.exo_player_controller
 	 }
 
 	 override fun canMinimize(): Boolean {
@@ -70,7 +69,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 override fun loadingView(): View? {
-		  return loadingView
+		  return null//loadingView
 	 }
 
 	 override fun isConnectedToCast(): Boolean {

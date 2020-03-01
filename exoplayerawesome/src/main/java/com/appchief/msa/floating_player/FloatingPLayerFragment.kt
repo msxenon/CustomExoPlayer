@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
-import com.appchief.msa.exoplayerawesome.R
 import com.appchief.msa.exoplayerawesome.databinding.VideoOverViewBinding
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.appchief.msa.exoplayerawesome.listeners.CloseReason
@@ -107,17 +106,18 @@ abstract class FloatingPLayerFragment : Fragment(),
 
 			   override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
 					Log.e("FPF", "onTransitionChange second$p2 prog=$p3")
-					if (p2 == R.id.finish_left && p3 > 0.8) {
+					if (p2 == com.appchief.msa.exoplayerawesome.R.id.finish_left && p3 > 0.8) {
 						 Log.e("FPF", "onTransitionChange dissmisscall prog=$p3")
 						 callDissmiss()
 					}
 			   }
 
 			   override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-					if (p1 == R.id.finish_left) {
+					if (p1 == com.appchief.msa.exoplayerawesome.R.id.finish_left) {
 						 callDissmiss()
 					}
-					val isMain = p1 == R.id.start || p1 == R.id.fullScreen
+					val isMain =
+						 p1 == com.appchief.msa.exoplayerawesome.R.id.start || p1 == com.appchief.msa.exoplayerawesome.R.id.fullScreen
 					Log.e("FPF", "onTransitionCompleted $isMain")
 
 					binding.videoOverlayView.player?.canShowController(isMain)
@@ -136,7 +136,8 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 fun setDetails(fragment: Fragment) {
-		  childFragmentManager.beginTransaction().replace(R.id.detailsView, fragment).commit()
+		  childFragmentManager.beginTransaction()
+			   .replace(com.appchief.msa.exoplayerawesome.R.id.detailsView, fragment).commit()
 	 }
 
 	 override fun onConfigurationChanged(newConfig: Configuration) {
@@ -159,7 +160,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 //			   m.layoutParams = params
 //			   m.requestLayout()
 			   binding.videoOverlayView.player?.isInFullScreenMode = true
-			   binding.videoOverlayView.motionLayout?.transitionToState(R.id.fullScreen)
+			   binding.videoOverlayView.motionLayout?.transitionToState(com.appchief.msa.exoplayerawesome.R.id.fullScreen)
 			   // binding.videoOverlayView.motionLayout?.loadLayoutDescription(0)
 		  } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 			   //unhide your objects here.

@@ -13,6 +13,7 @@
             android:id="@+id/motionInteractView"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="#000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -38,7 +39,6 @@
             android:autoSizeMaxTextSize="20sp"
             android:autoSizeMinTextSize="1sp"
             android:autoSizeTextType="uniform"
-            android:background="#000000"
             android:gravity="center"
             android:text="إغلاق"
             android:textColor="#fff"

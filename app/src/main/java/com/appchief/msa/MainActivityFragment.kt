@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.updateLayoutParams
+import com.appchief.msa.awesomeplayer.R
 import com.appchief.msa.awesomeplayer.databinding.LoadingScBinding
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
@@ -27,7 +28,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   this.gravity = Gravity.CENTER
 		  }
 		  binding.videoOverlayView.player?.playLinkNSub(
-			   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/t1Ak5ejQKKHiwf4/,t1Ak5ejQKKHiwf4_720.mp4,t1Ak5ejQKKHiwf4_480.mp4,t1Ak5ejQKKHiwf4.srt,.urlset/master.m3u8",//"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
 			   null,
 			   null,
 			   PlayerType.MOVIE,
@@ -51,7 +52,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 override fun ControllerLayout(): Int? {
-		  return null// R.layout.exo_player_controller
+		  return R.layout.exo_player_controller
 	 }
 
 	 override fun canMinimize(): Boolean {
@@ -69,7 +70,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 override fun loadingView(): View? {
-		  return null//loadingView
+		  return loadingView
 	 }
 
 	 override fun isConnectedToCast(): Boolean {

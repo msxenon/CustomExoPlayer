@@ -99,6 +99,7 @@ abstract class BaseActivity : AppCompatActivity() {
 			   )
 			   mCastContext.addCastStateListener(castStateListener)
 		  } catch (e: Exception) {
+			   e.printStackTrace()
 		  }
 	 }
 
@@ -109,6 +110,7 @@ abstract class BaseActivity : AppCompatActivity() {
 			   )
 			   mCastContext.removeCastStateListener(castStateListener)
 		  } catch (e: Exception) {
+			   e.printStackTrace()
 		  }
 
 		  super.onPause()

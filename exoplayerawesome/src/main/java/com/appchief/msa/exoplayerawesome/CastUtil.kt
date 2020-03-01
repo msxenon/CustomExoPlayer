@@ -104,6 +104,7 @@ object CastUtil {
 			   try {
 					type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: type
 			   } catch (e: Exception) {
+					e.printStackTrace()
 			   }
 		  }
 		  return type

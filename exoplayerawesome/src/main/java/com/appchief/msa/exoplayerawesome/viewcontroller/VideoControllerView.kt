@@ -249,7 +249,9 @@ class VideoControllerView : FrameLayout {
 			   if (mFfwdButton != null && !mPlayer!!.canSeekForward()) {
 					mFfwdButton!!.isEnabled = false
 			   }
-		  } catch (ex: IncompatibleClassChangeError) { // We were given an old version of the interface, that doesn't have
+		  } catch (ex: IncompatibleClassChangeError) {
+			   ex.printStackTrace()
+			   // We were given an old version of the interface, that doesn't have
 // the canPause/canSeekXYZ methods. This is OK, it just means we
 // assume the media can be paused and seeked, and so we don't disable
 // the buttons.
@@ -298,6 +300,7 @@ class VideoControllerView : FrameLayout {
 			   mAnchor!!.removeView(this)
 			   mHandler.removeMessages(SHOW_PROGRESS)
 		  } catch (ex: IllegalArgumentException) {
+			   ex.printStackTrace()
 			   Log.w("MediaController", "already removed")
 		  }
 		  isShowing = false

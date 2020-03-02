@@ -329,7 +329,7 @@ open class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.
 	 override val canHaveFullScreen: Boolean
 		  get() = playerUiFinalListener?.canMinimize() != false
 	 var isInFullScreenMode: Boolean = false
-		  internal set(value) {
+		  set(value) {
 			   field = value
 			   customController?.updateFullScreen()
 		  }

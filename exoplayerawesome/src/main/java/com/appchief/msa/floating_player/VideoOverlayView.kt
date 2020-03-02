@@ -19,7 +19,7 @@ class VideoOverlayView @JvmOverloads constructor(
 	 defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-	 internal var motionLayout: MotionLayout? = null
+	 var motionLayout: MotionLayout? = null
 	 var player: CinamaticExoPlayer? = null
 	 private var startX: Float? = null
 	 private var startY: Float? = null

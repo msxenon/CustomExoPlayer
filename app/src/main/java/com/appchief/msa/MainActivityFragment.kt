@@ -2,12 +2,7 @@ package com.appchief.msa
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.widget.FrameLayout
-import androidx.core.view.updateLayoutParams
-import com.appchief.msa.awesomeplayer.R
-import com.appchief.msa.awesomeplayer.databinding.LoadingScBinding
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
 import com.appchief.msa.floating_player.FloatingPLayerFragment
@@ -17,16 +12,17 @@ import com.appchief.msa.floating_player.FloatingPLayerFragment
  */
 class MainActivityFragment : FloatingPLayerFragment() {
 
-	 private var loadingView: View? = null
+	 //	 private var loadingView: View? = null
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		  super.onViewCreated(view, savedInstanceState)
-		  loadingView = LoadingScBinding.inflate(layoutInflater).root
-		  binding.videoOverlayView.player?.addView(loadingView)
-		  loadingView?.updateLayoutParams<FrameLayout.LayoutParams> {
-			   width = 160
-			   width = 160
-			   this.gravity = Gravity.CENTER
-		  }
+//		  loadingView = LoadingScBinding.inflate(layoutInflater).root
+//		  binding.videoOverlayView.player?.addView(loadingView)
+//		  loadingView?.updateLayoutParams<FrameLayout.LayoutParams> {
+//			   width = 160
+//			   width = 160
+//			   this.gravity = Gravity.CENTER
+//		  }
+		  binding.videoOverlayView.player?.cinematicPlayerViews = CinematicOnce()
 		  binding.videoOverlayView.player?.playLinkNSub(
 			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/t1Ak5ejQKKHiwf4/,t1Ak5ejQKKHiwf4_720.mp4,t1Ak5ejQKKHiwf4_480.mp4,t1Ak5ejQKKHiwf4.srt,.urlset/master.m3u8",//"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
 			   null,
@@ -51,9 +47,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 override fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long) {
 	 }
 
-	 override fun ControllerLayout(): Int? {
-		  return R.layout.exo_player_controller
-	 }
+
 
 	 override fun canMinimize(): Boolean {
 		  return true
@@ -67,10 +61,6 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 	 override fun isPlayList(): Boolean {
 		  return false
-	 }
-
-	 override fun loadingView(): View? {
-		  return loadingView
 	 }
 
 	 override fun isConnectedToCast(): Boolean {

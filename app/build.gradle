@@ -15,6 +15,8 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        proguardFiles
+        multiDexEnabled = false
     }
     buildTypes {
         release {
@@ -22,14 +24,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
     android {
+        kotlinOptions {
+            jvmTarget = '1.8'
+        }
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
         }
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-        }
+//        kotlinOptions {
+//            jvmTarget = JavaVersion.VERSION_1_8.toString()
+//        }
         viewBinding {
             enabled = true
         }
@@ -49,4 +58,5 @@ dependencies {
     implementation project(path: ':exoplayerawesome')
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
+
 }

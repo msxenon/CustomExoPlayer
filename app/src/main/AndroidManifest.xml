@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         package="com.appchief.msa.awesomeplayer">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,13 +17,22 @@
                 android:name="com.appchief.msa.MainActivity"
                 android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
                 android:label="@string/title_activity_main"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:launchMode="singleInstance"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar"
+                tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+                android:name="com.appchief.msa.exoplayerawesome.FullScreenPlayer"
+                android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection|keyboard|keyboardHidden|fontScale"
+                android:launchMode="singleInstance"
+                android:screenOrientation="sensorLandscape"
+                tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>

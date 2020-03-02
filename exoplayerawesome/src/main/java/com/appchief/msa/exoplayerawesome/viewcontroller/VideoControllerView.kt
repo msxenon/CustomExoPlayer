@@ -13,6 +13,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
+import com.appchief.msa.exoplayerawesome.ExoIntent
 import com.appchief.msa.exoplayerawesome.R
 import com.google.android.gms.cast.framework.CastButtonFactory
 import kotlinx.android.synthetic.main.controllerui.view.*
@@ -140,7 +141,7 @@ class VideoControllerView : FrameLayout {
 	  * @param view The view to which to anchor the controller when it is visible.
 	  */
 	 fun setAnchorView(view: CinamaticExoPlayer, title: String?, controllerLayout: Int?) {
-		  Log.e("VCV", "setAnchorView start")
+		  Log.e("VCV", "setAnchorView start $controllerLayout")
 		  setMediaPlayer(view)
 		  mAnchor = view
 		  val frameParams = LayoutParams(
@@ -148,6 +149,7 @@ class VideoControllerView : FrameLayout {
 			   ViewGroup.LayoutParams.MATCH_PARENT
 		  )
 		  removeAllViews()
+
 		  val v = makeControllerView(controllerLayout)
 		  addView(v, frameParams)
 		  title?.let {
@@ -431,7 +433,7 @@ class VideoControllerView : FrameLayout {
 
 	 private fun updateDownBtn() {
 		  mDownPlayer?.visibility =
-			   if (mPlayer?.isInFullScreenMode == false && mPlayer?.minimizeAble() == true) View.VISIBLE else View.GONE
+			   if (!ExoIntent.isInFullScreen && mPlayer?.minimizeAble() == true) View.VISIBLE else View.GONE
 	 }
 
 	 private fun doPauseResume() {
@@ -452,28 +454,10 @@ class VideoControllerView : FrameLayout {
 		  }
 		  mPlayer?.toggleFullScreen()
 	 }
-
-	 // There are two scenarios that can trigger the seekbar listener to trigger:
-//
-// The first is the user using the touchpad to adjust the posititon of the
-// seekbar's thumb. In this case onStartTrackingTouch is called followed by
-// a number of onProgressChanged notifications, concluded by onStopTrackingTouch.
-// We're setting the field "mDragging" to true for the duration of the dragging
-// session to avoid jumps in the position in case of ongoing playback.
-//
-// The second scenario involves the user operating the scroll ball, in this
-// case there WON'T BE onStartTrackingTouch/onStopTrackingTouch notifications,
-// we will simply apply the updated position without suspending regular updates.
 	 private val mSeekListener: OnSeekBarChangeListener = object : OnSeekBarChangeListener {
 		  override fun onStartTrackingTouch(bar: SeekBar) {
 			   show(3600000)
 			   mDragging = true
-			   // By removing these pending progress messages we make sure
-// that a) we won't update the progress while the user adjusts
-// the seekbar and b) once the user is done dragging the thumb
-// we will post one of these messages to the queue again and
-// this ensures that there will be exactly one message queued up.
-			   //  mHandler.removeMessages(SHOW_PROGRESS)
 		  }
 
 		  override fun onProgressChanged(
@@ -505,24 +489,6 @@ class VideoControllerView : FrameLayout {
 // no-op if we are already showing.
 			   // mHandler.sendEmptyMessage(SHOW_PROGRESS)
 		  }
-	 }
-
-	 override fun setEnabled(enabled: Boolean) {
-		  if (mPauseButton != null) {
-			   mPauseButton?.isEnabled = enabled
-		  }
-		  if (mFfwdButton != null) {
-			   mFfwdButton?.isEnabled = enabled
-		  }
-		  if (mRewButton != null) {
-			   mRewButton?.isEnabled = enabled
-		  }
-
-		  if (mProgress != null) {
-			   mProgress?.isEnabled = enabled
-		  }
-		  disableUnsupportedButtons()
-		  super.setEnabled(enabled)
 	 }
 
 	 fun updateViews() {

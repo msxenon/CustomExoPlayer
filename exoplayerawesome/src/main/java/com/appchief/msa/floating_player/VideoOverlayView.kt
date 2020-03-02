@@ -3,7 +3,6 @@ package com.appchief.msa.floating_player
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -38,12 +37,12 @@ class VideoOverlayView @JvmOverloads constructor(
 	 }
 
 	 override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-		  Log.e("VVO", "onInterceptTouchEvent ${motionLayout == null} ")
+//		  Log.e("VVO", "onInterceptTouchEvent ${motionLayout == null} ")
 		  if (motionLayout == null)
 			   return false
 		  val isInProgress = (motionLayout!!.progress > 0.0f && motionLayout!!.progress < 1.0f)
 		  val isInTarget = touchEventInsideTargetViewExceptTop(player!!, ev)
-		  Log.e("VVO", "onInterceptTouchEvent 2 $isInProgress} ${isInTarget}")
+//		  Log.e("VVO", "onInterceptTouchEvent 2 $isInProgress} ${isInTarget}")
 		  return if (isInProgress || isInTarget) {
 			   super.onInterceptTouchEvent(ev)
 		  } else {
@@ -70,10 +69,10 @@ class VideoOverlayView @JvmOverloads constructor(
 	 }
 
 	 override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-		  Log.e("VVO", "dispatchTouchEvent ${motionLayout == null} ")
+//		  Log.e("VVO", "dispatchTouchEvent ${motionLayout == null} ")
 		  if (player != null && motionLayout != null) {
 			   val consumed = player!!.dispatchTouchEvent(ev)
-			   Log.e("VVO", "dispatchTouchEvent c1 ${consumed}  ")
+//			   Log.e("VVO", "dispatchTouchEvent c1 ${consumed}  ")
 			   if (consumed) {
 					return consumed
 			   }
@@ -89,11 +88,11 @@ class VideoOverlayView @JvmOverloads constructor(
 								   val endY = ev.y
 								   if (isClick(startX!!, endX, startY!!, endY)) {
 										if (motionLayout!!.currentState == motionLayout!!.startState || motionLayout!!.currentState == com.appchief.msa.exoplayerawesome.R.id.fullScreen) {
-											 Log.e("VVO", "dispatchTouchEvent preform pte ")
+//											 Log.e("VVO", "dispatchTouchEvent preform pte ")
 											 player!!.performClick()
 										}
 										if (doClickTransition()) {
-											 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
+//											 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
 											 return true
 										}
 								   }

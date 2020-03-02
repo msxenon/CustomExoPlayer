@@ -1,17 +1,14 @@
 package com.appchief.msa.floating_player
 
 import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
+import com.appchief.msa.exoplayerawesome.ExoIntent
 import com.appchief.msa.exoplayerawesome.databinding.VideoOverViewBinding
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.appchief.msa.exoplayerawesome.listeners.CloseReason
@@ -31,22 +28,27 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  super.onActivityCreated(savedInstanceState)
 		  view?.isFocusableInTouchMode = true
 		  view?.requestFocus()
-		  view?.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-			   Log.i("llll", "keyCode: $keyCode")
-			   if (keyCode == KeyEvent.KEYCODE_BACK && event.action === KeyEvent.ACTION_UP) {
-					Log.i("lllll", "onKey Back listener is working!!!")
-					callDissmiss(CloseReason.BackButton)
-					return@OnKeyListener true
-			   }
-			   false
-		  })
 	 }
 
 	 override fun setScreenOrentation(inFullScreenMode: Boolean) {
-		  activity?.requestedOrientation = if (!inFullScreenMode)
-			   ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-		  else
-			   ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//		  activity?.requestedOrientation = if (!inFullScreenMode)
+//			   ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+//		  else
+//			   ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+		  if (!inFullScreenMode) {
+			   ExoIntent.openFullScreenMode(binding.videoOverlayView.player)
+		  } else {
+			   ExoIntent.dismissFullScreen()
+		  }
+		  Log.e("xx", "setScreenOrentation $inFullScreenMode ")
+//		  view?.playerViewFull?.visibility = if (inFullScreenMode) View.VISIBLE else View.GONE
+//		  if (inFullScreenMode)
+//		  PlayerView.switchTargetView(binding.videoOverlayView.player?.player!!,binding.videoOverlayView.player,binding.videoOverlayView.playerViewFull)
+//		  else
+//			   PlayerView.switchTargetView(binding.videoOverlayView.player?.player!!,binding.videoOverlayView.playerViewFull,binding.videoOverlayView.player)
+//
+
+
 	 }
 
 	 override fun onDissmiss(reason: CloseReason) {
@@ -74,14 +76,10 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 private fun callDissmiss(closeReason: CloseReason = CloseReason.Swipe) {
 		  if (!dissmissCalled) {
-			   if (closeReason == CloseReason.BackButton && activity?.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
-					activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-			   } else {
 					binding.videoOverlayView.player?.playerUiFinalListener?.onDissmiss(
 						 closeReason
 					)
 					dissmissCalled = true
-			   }
 		  }
 	 }
 	 fun initFloating() {
@@ -126,12 +124,13 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 override fun onResume() {
+		  ExoIntent.getPlayerHere(binding.videoOverlayView.player)
 		  binding.videoOverlayView.player?.onResume()
 		  super.onResume()
 	 }
 
 	 override fun onPause() {
-		  binding.videoOverlayView.player?.onPauseSave()
+		  ExoIntent.onPause(binding.videoOverlayView.player)
 		  super.onPause()
 	 }
 
@@ -140,54 +139,10 @@ abstract class FloatingPLayerFragment : Fragment(),
 			   .replace(com.appchief.msa.exoplayerawesome.R.id.detailsView, fragment).commit()
 	 }
 
-	 override fun onConfigurationChanged(newConfig: Configuration) {
-		  super.onConfigurationChanged(newConfig)
-		  // Checking the orientation of the screen
-		  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			   //First Hide other objects (listview or recyclerview), better hide them using Gone.
-			   activity?.window?.decorView?.apply {
-					// Hide both the navigation bar and the status bar.
-					// SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
-					// a general rule, you should design your app to hide the status bar whenever you
-					// hide the navigation bar.
-					systemUiVisibility =
-						 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-			   }
-//			   val m = binding.videoOverlayView.container_motionLayout ?: return
-//			   val params =  m.layoutParams
-//			   params?.width = ViewGroup.LayoutParams.MATCH_PARENT
-//			   params?.height = ViewGroup.LayoutParams.MATCH_PARENT
-//			   m.layoutParams = params
-//			   m.requestLayout()
-			   binding.videoOverlayView.player?.isInFullScreenMode = true
-			   binding.videoOverlayView.motionLayout?.transitionToState(com.appchief.msa.exoplayerawesome.R.id.fullScreen)
-			   // binding.videoOverlayView.motionLayout?.loadLayoutDescription(0)
-		  } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-			   //unhide your objects here.
-			   activity?.window?.decorView?.apply {
-					// Hide both the navigation bar and the status bar.
-					// SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
-					// a general rule, you should design your app to hide the status bar whenever you
-					// hide the navigation bar.
-					systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE
-			   }
-//			   val m = binding.videoOverlayView.container_motionLayout ?: return
-//			   val params =  m.layoutParams as ConstraintLayout.LayoutParams
-//			   params.width = ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
-//			   params.height = ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
-//			   m.layoutParams = params
-//			   binding.videoOverlayView.player?.isInFullScreenMode = false
-//			   binding.videoOverlayView.motionLayout?.loadLayoutDescription(R.xml.floating_player_scene)
-//			   val m = binding.videoOverlayView.container_motionLayout ?: return
-//			   val params =  m.layoutParams
-//			   params?.width = ViewGroup.LayoutParams.MATCH_PARENT
-//			   params?.height = 200.DpToPx()
-//			   m.layoutParams = params
-//			   m.requestLayout()
-			   binding.videoOverlayView.player?.isInFullScreenMode = false
-			   binding.videoOverlayView.motionLayout?.transitionToStart()
-		  }
+	 override fun onDestroy() {
+		  ExoIntent.onDestroy()
+		  super.onDestroy()
 	 }
+
 }
 
-fun Int.DpToPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()

@@ -40,16 +40,4 @@ class FullScreenPlayer : AppCompatActivity(), FullScreenActivity {
 	 override fun ondissmiss() {
 		  onBackPressed()
 	 }
-//	 @SuppressLint("MissingSuperCall")
-//	 override fun onConfigurationChanged(newConfig: Configuration) {
-//		 // super.onConfigurationChanged(newConfig)
-//		  val display =
-//			   (getSystemService(WINDOW_SERVICE) as? WindowManager?)?.defaultDisplay
-//		  val orientation = display?.rotation
-//		  when(orientation){
-//			   3->fullScreenPlayer?.animate()?.rotation(-90f)?.start()
-//			   else->fullScreenPlayer?.animate()?.rotation(90f)?.start()
-//		  }
-//		  oldOrentation = orientation?:1
-//	 }
 }

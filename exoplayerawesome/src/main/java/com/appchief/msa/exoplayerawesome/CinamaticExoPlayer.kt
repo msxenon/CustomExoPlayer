@@ -392,9 +392,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					}
 			   }
 		  }
-		  Log.e("CEP", "dispatchTouchEvent end ${ExoIntent.isInFullScreen}")
+		  val x = super.dispatchTouchEvent(ev)
+		  Log.e("CEP", "dispatchTouchEvent end ${ExoIntent.isInFullScreen} $x")
 
-		  return super.dispatchTouchEvent(ev)
+		  return x
 	 }
 
 	 override fun onTouchEvent(event: MotionEvent): Boolean {

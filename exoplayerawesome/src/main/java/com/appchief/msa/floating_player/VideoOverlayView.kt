@@ -3,6 +3,7 @@ package com.appchief.msa.floating_player
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -36,14 +37,23 @@ class VideoOverlayView @JvmOverloads constructor(
 		  }
 	 }
 
+	 fun isInProgress(): Boolean {
+		  try {
+			   return (motionLayout!!.progress > 0.0f && motionLayout!!.progress < 1.0f)
+		  } catch (e: Exception) {
+			   e.printStackTrace()
+			   return false
+		  }
+	 }
 	 override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-//		  Log.e("VVO", "onInterceptTouchEvent ${motionLayout == null} ")
+		  Log.e("VVO", "onInterceptTouchEvent ${motionLayout == null} ")
 		  if (motionLayout == null)
 			   return false
-		  val isInProgress = (motionLayout!!.progress > 0.0f && motionLayout!!.progress < 1.0f)
+		  val isInProgress = isInProgress()
 		  val isInTarget = touchEventInsideTargetViewExceptTop(player!!, ev)
-//		  Log.e("VVO", "onInterceptTouchEvent 2 $isInProgress} ${isInTarget}")
-		  return if (isInProgress || isInTarget) {
+		  val touchingTarget = touchEventInsideTargetView(player!!, ev)
+		  Log.e("VVO", "onInterceptTouchEvent 2 $isInProgress  $isInTarget $touchingTarget")
+		  return if (isInProgress || isInTarget || touchingTarget) {
 			   super.onInterceptTouchEvent(ev)
 		  } else {
 			   true
@@ -51,21 +61,26 @@ class VideoOverlayView @JvmOverloads constructor(
 	 }
 
 	 private fun touchEventInsideTargetView(v: View, ev: MotionEvent): Boolean {
+		  var x = false
 		  if (ev.x > v.left && ev.x < v.right) {
 			   if (ev.y > v.top && ev.y < v.bottom) {
-					return true
+					x = true
 			   }
 		  }
-		  return false
+		  Log.e("VOV", "target $x ${ev.x} ${ev.y} ${v.left} ${v.top} ${v.right} ${v.bottom}")
+
+		  return x
 	 }
 
 	 private fun touchEventInsideTargetViewExceptTop(v: View, ev: MotionEvent): Boolean {
-		  if (ev.x > v.left && ev.x < v.right) {
-			   if (ev.y > v.top) {
-					return true
-			   }
-		  }
-		  return false
+//		  var x = false
+//		  if (ev.x > v.left && ev.x < v.right) {
+//			   if (ev.y > v.top &&ev.y < v.bottom && !isMinimized()) {
+//					x =  true
+//			   }
+//		  }
+		  Log.e("VOV", "top $x ${ev.x} ${ev.y} ${v.left} ${v.top} ${v.right} ${v.bottom}")
+		  return !isMinimized()
 	 }
 
 	 override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -88,11 +103,11 @@ class VideoOverlayView @JvmOverloads constructor(
 								   val endY = ev.y
 								   if (isClick(startX!!, endX, startY!!, endY)) {
 										if (motionLayout!!.currentState == motionLayout!!.startState || motionLayout!!.currentState == com.appchief.msa.exoplayerawesome.R.id.fullScreen) {
-//											 Log.e("VVO", "dispatchTouchEvent preform pte ")
+											 Log.e("VVO", "dispatchTouchEvent preform pte ")
 											 player!!.performClick()
 										}
 										if (doClickTransition()) {
-//											 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
+											 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
 											 return true
 										}
 								   }
@@ -130,6 +145,9 @@ class VideoOverlayView @JvmOverloads constructor(
 		  return false
 	 }
 
+	 fun isMinimized(): Boolean {
+		  return motionLayout?.currentState == com.appchief.msa.exoplayerawesome.R.id.end
+	 }
 	 fun minimize() {
 		  motionLayout?.transitionToEnd()
 	 }

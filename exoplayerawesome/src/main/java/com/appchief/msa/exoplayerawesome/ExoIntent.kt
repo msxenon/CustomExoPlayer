@@ -31,7 +31,7 @@ object ExoIntent {
 		  views = playerView.cinematicPlayerViews
 		  listener = playerView.playerUiFinalListener
 		  player = playerView.player
-
+		  onPause(playerView)
 		  playerView.player = null
 		  return true
 	 }
@@ -68,6 +68,7 @@ object ExoIntent {
 
 	 fun onDestroy() {
 		  Log.e(Tag, "OnDestroy")
+		  onPause(null)
 		  player = null
 		  listener = null
 	 }

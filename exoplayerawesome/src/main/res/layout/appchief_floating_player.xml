@@ -61,9 +61,8 @@
             android:id="@+id/bottom_nav_spacer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="80dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="1" />
+            android:layout_marginBottom="60dp"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     <FrameLayout
             android:id="@+id/idPlayerContainer"

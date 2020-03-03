@@ -7,51 +7,57 @@
         tools:context="com.appchief.msa.MainActivity">
 
 
-    <RelativeLayout
-            android:id="@+id/relativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+    <SeekBar
+            android:id="@+id/seekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:max="10"
+            android:progress="3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+            android:id="@+id/button4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+            android:id="@+id/button3"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:text="a Movie"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
-
-        <Button
-                android:id="@+id/button3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="true"
-                android:clickable="true"
-                android:text="a Movie" />
-
-        <SeekBar
-                android:id="@+id/seekBar"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_toEndOf="@+id/button3"
-                android:max="10"
-                android:progress="3" />
-    </RelativeLayout>
+            app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
             android:id="@+id/you"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:clickable="false"
+            android:elevation="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+    <Button
+            android:id="@+id/button5"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="Button"
+            app:layout_constraintBottom_toTopOf="@+id/button3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/seekBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

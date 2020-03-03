@@ -1,6 +1,7 @@
 package com.appchief.msa.exoplayerawesome
 
 import android.content.Intent
+import android.util.Log
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.appchief.msa.exoplayerawesome.listeners.CinematicPlayerViews
 import com.google.android.exoplayer2.Player
@@ -23,6 +24,7 @@ object ExoIntent {
 	 }
 
 	 fun savePlayer(playerView: CinamaticExoPlayer?, itWasFullScreen: Boolean): Any? {
+		  Log.e(Tag, "savePlayer $itWasFullScreen")
 		  isInFullScreen = !itWasFullScreen
 		  if (playerView?.player == null)
 			   return null
@@ -35,6 +37,7 @@ object ExoIntent {
 	 }
 
 	 fun get(playerView: CinamaticExoPlayer?) {
+		  Log.e(Tag, "get")
 		  if (playerView?.player == null)
 			   return
 		  listener = playerView.playerUiFinalListener
@@ -52,6 +55,7 @@ object ExoIntent {
 		  playerView: CinamaticExoPlayer?,
 		  fullScreenActivityP: FullScreenActivity? = null
 	 ) {
+		  Log.e(Tag, "getPlayerHere ${playerView != null} ${listener != null} ${player != null}")
 		  if (playerView == null || listener == null || player == null)
 			   return
 		  fullScreenActivity = fullScreenActivityP
@@ -63,18 +67,23 @@ object ExoIntent {
 	 }
 
 	 fun onDestroy() {
+		  Log.e(Tag, "OnDestroy")
 		  player = null
 		  listener = null
 	 }
 
 	 fun dismissFullScreen() {
+		  Log.e(Tag, "dismissFullScreen")
 		  fullScreenActivity?.ondissmiss()
 	 }
 
 	 fun onPause(playerView: CinamaticExoPlayer?) {
+		  Log.e(Tag, "onPause")
 		  player?.playWhenReady = false
 		  playerView?.onPauseSave()
 	 }
+
+	 val Tag = "ExoIntent"
 }
 
 interface FullScreenActivity {

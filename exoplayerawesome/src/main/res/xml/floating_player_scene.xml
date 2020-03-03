@@ -14,18 +14,14 @@
                 motion:onTouchUp="autoComplete"
                 motion:touchRegionId="@id/motionInteractView" />
         <KeyFrameSet>
-
-            <!--            <KeyPosition-->
-            <!--                    motion:curveFit="spline"-->
-            <!--                    motion:framePosition="50"-->
-            <!--                    motion:motionTarget="@id/motionInteractView"-->
-            <!--                    motion:percentWidth="0" />-->
-
-            <!--            <KeyPosition-->
-            <!--                    motion:curveFit="spline"-->
-            <!--                    motion:framePosition="50"-->
-            <!--                    motion:motionTarget="@id/detailsView"-->
-            <!--                    motion:percentWidth="0" />-->
+            <KeyAttribute
+                    android:alpha="0"
+                    motion:framePosition="25"
+                    motion:motionTarget="@id/detailsView" />
+            <KeyAttribute
+                    android:alpha="0"
+                    motion:framePosition="100"
+                    motion:motionTarget="@id/detailsView" />
         </KeyFrameSet>
     </Transition>
     <Transition

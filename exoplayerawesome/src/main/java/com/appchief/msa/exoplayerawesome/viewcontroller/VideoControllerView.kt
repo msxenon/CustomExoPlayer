@@ -15,6 +15,7 @@ import android.widget.TextView
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
 import com.appchief.msa.exoplayerawesome.ExoIntent
 import com.appchief.msa.exoplayerawesome.R
+import com.appchief.msa.exoplayerawesome.SettingsListener
 import com.google.android.gms.cast.framework.CastButtonFactory
 import kotlinx.android.synthetic.main.controllerui.view.*
 import java.lang.ref.WeakReference
@@ -123,8 +124,6 @@ class VideoControllerView : FrameLayout {
 			   mFfwdButton?.visibility = View.GONE
 			   mRewButton?.visibility = View.GONE
 			   mCurrentTime?.visibility = View.GONE
-			   mPauseButton?.visibility = View.GONE
-			   return
 		  }
 		  if (mPlayer?.hasNext() != true) {
 			   mNextButton?.visibility = View.GONE
@@ -134,11 +133,12 @@ class VideoControllerView : FrameLayout {
 		  }
 		  setProgress()
 		  updateDownBtn()
-		  settingsVisiability()
 	 }
 
 	 private fun settingsVisiability() {
-		  mVideoSettings?.visibility = (mPlayer?.hasSettings == true).controlVisibility()
+		  val x = (mPlayer?.hasSettings == true)
+		  mVideoSettings?.visibility = x.controlVisibility()
+		  Log.e("VCV", "settingsVisiability $x ${mPlayer?.hasSettings}")
 	 }
 	 /**
 	  * Set the view that acts as the anchor for the control view.
@@ -236,6 +236,13 @@ class VideoControllerView : FrameLayout {
 		  mVideoSettings?.setOnClickListener {
 			   mPlayer?.playerUiFinalListener?.showSettings()
 		  }
+		  mPlayer?.hasSettingsListener = object : SettingsListener {
+			   override fun hasSettings(has: Boolean) {
+					settingsVisiability()
+			   }
+		  }
+		  settingsVisiability()
+
 	 }
 
 	 //	 override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -500,9 +507,10 @@ class VideoControllerView : FrameLayout {
 		  }
 	 }
 
-	 fun updateViews() {
+	 fun updateViews(isLoading: Boolean) {
 		  updatePausePlay()
 		  controlVis()
+		  mPauseButton?.visibility = isLoading.invertedControlVisibility()
 	 }
 
 	 fun toggleShowHide() {
@@ -572,6 +580,6 @@ private fun Boolean?.controlVisibility(): Int {
 	 return if (this == true) View.VISIBLE else View.GONE
 }
 
-private fun Boolean?.InvertedControlVisibility(): Int {
+private fun Boolean?.invertedControlVisibility(): Int {
 	 return if (this == false) View.VISIBLE else View.GONE
 }

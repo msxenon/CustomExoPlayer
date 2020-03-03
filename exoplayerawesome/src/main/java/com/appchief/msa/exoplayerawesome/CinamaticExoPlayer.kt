@@ -142,6 +142,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					playWhenReady: Boolean,
 					playbackState: Int
 			   ) {
+
 					loadingView()?.visibility = View.GONE
 					if (playbackState == ExoPlayer.STATE_BUFFERING) {
 						 loadingView()?.visibility = View.VISIBLE
@@ -157,7 +158,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 						 if (playbackState == ExoPlayer.STATE_READY)
 							  checkHasSettings()
 					}
-					customController?.updateViews()
+					customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
 
 			   }
 		  })
@@ -234,6 +235,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		 val m =  SettingsUtil.willHaveContent(trackSelector)
 		  hasSettings = m
 		  hasSettingsListener?.hasSettings(m)
+		  Log.e("CEP", "settings $hasSettings ${hasSettingsListener != null}")
 	 }
 
 	 fun getLastPos(nowPlaying: NowPlaying?): Long {

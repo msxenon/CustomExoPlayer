@@ -62,6 +62,7 @@ class VideoControllerView : FrameLayout {
 	 private var mEndTime: TextView? = null
 	 private var mDownPlayer: ImageButton? = null
 	 private var mCurrentTime: TextView? = null
+	 private var mVideoSettings: ImageButton? = null
 	 var isShowing = false
 		  private set
 	 private var mDragging = false
@@ -133,8 +134,12 @@ class VideoControllerView : FrameLayout {
 		  }
 		  setProgress()
 		  updateDownBtn()
+		  settingsVisiability()
 	 }
 
+	 private fun settingsVisiability() {
+		  mVideoSettings?.visibility = (mPlayer?.hasSettings == true).controlVisibility()
+	 }
 	 /**
 	  * Set the view that acts as the anchor for the control view.
 	  * This can for example be a VideoView, or your Activity's main view.
@@ -227,6 +232,10 @@ class VideoControllerView : FrameLayout {
 		  mDownPlayer?.setOnClickListener { mPlayer?.minmize() }
 		  mFormatBuilder = StringBuilder()
 		  mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
+		  mVideoSettings = v.findViewById(R.id.video_settings)
+		  mVideoSettings?.setOnClickListener {
+			   mPlayer?.playerUiFinalListener?.showSettings()
+		  }
 	 }
 
 	 //	 override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -496,6 +505,13 @@ class VideoControllerView : FrameLayout {
 		  controlVis()
 	 }
 
+	 fun toggleShowHide() {
+		  if (isShowing)
+			   hide()
+		  else
+			   show()
+	 }
+
 	 private val mRewListener =
 		  OnClickListener {
 			   if (mPlayer == null) {
@@ -554,4 +570,8 @@ class VideoControllerView : FrameLayout {
 
 private fun Boolean?.controlVisibility(): Int {
 	 return if (this == true) View.VISIBLE else View.GONE
+}
+
+private fun Boolean?.InvertedControlVisibility(): Int {
+	 return if (this == false) View.VISIBLE else View.GONE
 }

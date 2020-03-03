@@ -24,7 +24,8 @@ class MainActivityFragment : FloatingPLayerFragment() {
 //		  }
 		  binding.videoOverlayView.player?.cinematicPlayerViews = CinematicOnce()
 		  binding.videoOverlayView.player?.playLinkNSub(
-			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/t1Ak5ejQKKHiwf4/,t1Ak5ejQKKHiwf4_720.mp4,t1Ak5ejQKKHiwf4_480.mp4,t1Ak5ejQKKHiwf4.srt,.urlset/master.m3u8",//"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/n9Vd4sY1HKItrtd/,RKbkxyUS1oFR5H1_720.mp4,RKbkxyUS1oFR5H1_480.mp4,.urlset/master.m3u8"
+			   ,
 			   null,
 			   null,
 			   PlayerType.MOVIE,
@@ -65,5 +66,10 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 	 override fun isConnectedToCast(): Boolean {
 		  return false
+	 }
+
+	 override fun showSettings() {
+		  binding.videoOverlayView.player?.trackSelector
+		  Log.e("smdd", "showsettttt")
 	 }
 }

@@ -11,6 +11,7 @@ interface CineamaticPlayerScreen {
 	 fun isPlayList(): Boolean
 	 fun setScreenOrentation(inFullScreenMode: Boolean)
 	 fun isConnectedToCast(): Boolean
+	 fun showSettings()
 }
 
 interface CinematicPlayerViews {

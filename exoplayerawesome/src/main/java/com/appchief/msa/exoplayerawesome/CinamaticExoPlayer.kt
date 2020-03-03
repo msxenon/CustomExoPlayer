@@ -142,7 +142,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					playWhenReady: Boolean,
 					playbackState: Int
 			   ) {
-					customController?.updateViews()
+					loadingView()?.visibility = View.GONE
 					if (playbackState == ExoPlayer.STATE_BUFFERING) {
 						 loadingView()?.visibility = View.VISIBLE
 						 this@CinamaticExoPlayer.hideController()
@@ -156,13 +156,13 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 						 }
 						 if (playbackState == ExoPlayer.STATE_READY)
 							  checkHasSettings()
-					} else {
-						 loadingView()?.visibility = View.GONE
 					}
+					customController?.updateViews()
+
 			   }
 		  })
 
-		  this.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
+		  this.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
 		  this.setShowBuffering(SHOW_BUFFERING_NEVER)
 		  hasSettings = false
 		  hasSettingsListener?.hasSettings(false)
@@ -400,7 +400,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 override fun onTouchEvent(event: MotionEvent): Boolean {
 		  if (ExoIntent.isInFullScreen) {
-			   customController?.show()
+			   customController?.toggleShowHide()
 		  }
 		  return false
 	 }

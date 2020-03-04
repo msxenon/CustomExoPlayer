@@ -78,6 +78,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 //start
 	 private var startAutoPlay: Boolean = true
+	 private var forceReplay = true
 	 private var nowPlaying: NowPlaying? = null
 	 private var mediaSource: MediaSource? = null
 	  var trackSelector: DefaultTrackSelector? = null
@@ -158,24 +159,22 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   playbackState: Int
 		  ) {
 			   try {
-					Log.e(taag, "onPlayerStateChanged ${loadingView() != null}")
+					Log.e(
+						 taag,
+						 "onPlayerStateChanged ps$playbackState $playWhenReady ${loadingView() != null}"
+					)
 					loadingView()?.visibility = View.GONE
 					if (playbackState == ExoPlayer.STATE_BUFFERING) {
 						 loadingView()?.visibility = View.VISIBLE
 						 this@CinamaticExoPlayer.hideController()
 					} else if (playbackState == ExoPlayer.STATE_READY) {
-						 loadingView()?.visibility = View.GONE
-						 val isEnded =
-							  player?.currentPosition ?: 0 >= player?.duration ?: -1
-						 if (playWhenReady && playbackState == ExoPlayer.STATE_READY && isEnded) {
-							  player?.playWhenReady = false
-							  try {
-								   seekTo(0)
-							  } catch (e: Exception) {
-							  }
+						 forceReplay = false
+
+						 checkHasSettings()
+					} else if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
+						 if (playWhenReady && forceReplay) {
+							  start()
 						 }
-						 if (playbackState == ExoPlayer.STATE_READY)
-							  checkHasSettings()
 					}
 					customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
 			   } catch (e: Exception) {
@@ -238,7 +237,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 			   mediaSource =
 					buildMediaSource(Uri.parse(url), srtLink)
-			   val sp = getLastPos(nowPlaying)
+			   val sp = getLastPos()
 			   val haveStartPosition = sp > 0L
 			   setListeners()
 			   if (mediaSource != null) {
@@ -261,16 +260,12 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  Log.e("CEP", "settings $hasSettings ${hasSettingsListener != null}")
 	 }
 
-	 fun getLastPos(nowPlaying: NowPlaying?): Long {
+	 fun getLastPos(): Long {
 		  var res = 0L
 		  playerUiFinalListener?.getLastPosition(nowPlaying)?.let {
-			   if (nowPlaying!!.runtime - it >= 5000) {
-					res = it
-					if (reachedEndOfVideo())
-						 res = 0
-			   }
+			   res = it
 		  }
-		  Log.e("lastpos", "$nowPlaying $res")
+		  Log.e(taag, "getLastPos $nowPlaying $res")
 		  return res
 	 }
 	 private fun isSreaming(): Boolean {
@@ -332,7 +327,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  var res = false
 		  this.player?.let {
 			   val x = it.duration - it.currentPosition
-			   res = abs(x) <= 1000
+			   res = abs(x) <= 500
+			   Log.e(taag, "reachedEndOfVideo $x $res ${it.duration} ${it.currentPosition}")
 		  }
 
 		  return res
@@ -440,7 +436,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					nowPlaying!!.poster,
 					nowPlaying!!.runtime,
 					isSreaming(),
-					getLastPos(nowPlaying)
+					getLastPos()
 			   )
 			   playerUiFinalListener?.onDissmiss(CloseReason.Casting)
 		  }

@@ -25,11 +25,8 @@ class MainActivityFragment : FloatingPLayerFragment() {
 //			   width = 160
 //			   this.gravity = Gravity.CENTER
 //		  }
-		  val video = if (!isFirstVideo) {
-			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/zuJOw9Idlw0Yjx4/,zuJOw9Idlw0Yjx4_1080.mp4,zuJOw9Idlw0Yjx4_720.mp4,.urlset/master.m3u8"
-		  } else {
-			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/n9Vd4sY1HKItrtd/,RKbkxyUS1oFR5H1_720.mp4,RKbkxyUS1oFR5H1_480.mp4,.urlset/master.m3u8"
-		  }
+		  val video =
+			   "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
 		  binding.videoOverlayView.player?.cinematicPlayerViews = CinematicOnce()
 		  binding.videoOverlayView.player?.playLinkNSub(
 			   video,
@@ -37,7 +34,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   null,
 			   PlayerType.MOVIE,
 			   null,
-			   "null", "", "", 596000
+			   "null", "", "", 10000
 		  )
 		  setDetails(DetailsFrag())
 		  isFirstVideo = !isFirstVideo
@@ -50,7 +47,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 
 	 override fun getLastPosition(modelId: NowPlaying?): Long {
-		  return 591000
+		  return 10000
 	 }
 
 	 override fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long) {

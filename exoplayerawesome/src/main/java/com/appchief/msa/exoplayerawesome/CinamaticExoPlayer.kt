@@ -142,24 +142,26 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					playWhenReady: Boolean,
 					playbackState: Int
 			   ) {
-
-					loadingView()?.visibility = View.GONE
-					if (playbackState == ExoPlayer.STATE_BUFFERING) {
-						 loadingView()?.visibility = View.VISIBLE
-						 this@CinamaticExoPlayer.hideController()
-					} else if (playbackState == ExoPlayer.STATE_READY) {
+					try {
 						 loadingView()?.visibility = View.GONE
-						 val isEnded =
-							  player?.currentPosition ?: 0 >= player?.duration ?: -1
-						 if (playWhenReady && playbackState == ExoPlayer.STATE_READY && isEnded) {
-							  player?.playWhenReady = false
-							  seekTo(0)
+						 if (playbackState == ExoPlayer.STATE_BUFFERING) {
+							  loadingView()?.visibility = View.VISIBLE
+							  this@CinamaticExoPlayer.hideController()
+						 } else if (playbackState == ExoPlayer.STATE_READY) {
+							  loadingView()?.visibility = View.GONE
+							  val isEnded =
+								   player?.currentPosition ?: 0 >= player?.duration ?: -1
+							  if (playWhenReady && playbackState == ExoPlayer.STATE_READY && isEnded) {
+								   player?.playWhenReady = false
+								   seekTo(0)
+							  }
+							  if (playbackState == ExoPlayer.STATE_READY)
+								   checkHasSettings()
 						 }
-						 if (playbackState == ExoPlayer.STATE_READY)
-							  checkHasSettings()
+						 customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
+					} catch (e: Exception) {
+						 e.printStackTrace()
 					}
-					customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
-
 			   }
 		  })
 

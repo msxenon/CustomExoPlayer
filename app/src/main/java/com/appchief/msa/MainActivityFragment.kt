@@ -12,6 +12,9 @@ import com.appchief.msa.floating_player.FloatingPLayerFragment
  */
 class MainActivityFragment : FloatingPLayerFragment() {
 
+	 companion object {
+		  var isFirstVideo = true
+	 }
 	 //	 private var loadingView: View? = null
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		  super.onViewCreated(view, savedInstanceState)
@@ -22,10 +25,14 @@ class MainActivityFragment : FloatingPLayerFragment() {
 //			   width = 160
 //			   this.gravity = Gravity.CENTER
 //		  }
+		  val video = if (!isFirstVideo) {
+			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/zuJOw9Idlw0Yjx4/,zuJOw9Idlw0Yjx4_1080.mp4,zuJOw9Idlw0Yjx4_720.mp4,.urlset/master.m3u8"
+		  } else {
+			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/n9Vd4sY1HKItrtd/,RKbkxyUS1oFR5H1_720.mp4,RKbkxyUS1oFR5H1_480.mp4,.urlset/master.m3u8"
+		  }
 		  binding.videoOverlayView.player?.cinematicPlayerViews = CinematicOnce()
 		  binding.videoOverlayView.player?.playLinkNSub(
-			   "http://93.191.114.6:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/n9Vd4sY1HKItrtd/,RKbkxyUS1oFR5H1_720.mp4,RKbkxyUS1oFR5H1_480.mp4,.urlset/master.m3u8"
-			   ,
+			   video,
 			   null,
 			   null,
 			   PlayerType.MOVIE,
@@ -33,6 +40,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   "null", "", "", 596000
 		  )
 		  setDetails(DetailsFrag())
+		  isFirstVideo = !isFirstVideo
 	 }
 
 	 override fun onMessageRecived(msg: String?, state: Int) {

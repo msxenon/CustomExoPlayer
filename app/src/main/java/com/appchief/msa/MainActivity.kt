@@ -15,7 +15,8 @@ class MainActivity : BaseActivity() {
 		  super.onCreate(savedInstanceState)
 		  setContentView(R.layout.activity_main)
 		  button3?.setOnClickListener {
-			   supportFragmentManager.beginTransaction().replace(R.id.you, MainActivityFragment())
+			   supportFragmentManager.beginTransaction()
+					.replace(R.id.you, MainActivityFragment(), "ff")
 					.commit()
 		  }
 	 }

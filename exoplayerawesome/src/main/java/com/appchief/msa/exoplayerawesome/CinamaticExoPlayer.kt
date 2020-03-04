@@ -26,6 +26,7 @@ import kotlin.math.abs
 class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.VisibilityListener,
 	 MediaPlayerControl {
 
+	 private val taag = "CEP isFloating = ${R.id.playerView == this.id}"
 	 var controllerViiablilityListener:PlayerControlView.VisibilityListener? = null
 	 var cinematicPlayerViews: CinematicPlayerViews? = null
 	 constructor(context: Context) : super(context)
@@ -42,17 +43,29 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  return loadingV//playerUiFinalListener?.loadingView()
 	 }
 
-	 private fun setController(title: String?) {
-		  customController = VideoControllerView(context!!)
-		  Log.e("CEP", "controller ${cinematicPlayerViews?.controlLayout != null}")
-		  customController?.setAnchorView(this, title, cinematicPlayerViews?.controlLayout)
+	 fun setController(title: String?) {
+		  if (customController == null) {
+			   customController = VideoControllerView(context!!)
+			   Log.e(taag, "controller ${cinematicPlayerViews?.controlLayout != null}")
+			   customController?.setAnchorView(this, title, cinematicPlayerViews?.controlLayout)
 
-		  customController?.show()
+			   customController?.show()
+		  }
 
-		  controllerViiablilityListener =
-			   PlayerControlView.VisibilityListener { visibility ->
-					controlController(visibility)
+		  try {
+			   cinematicPlayerViews?.loadingView?.let {
+					if (loadingV == null) {
+						 loadingV = LayoutInflater.from(context).inflate(it, null)
+						 val x = FrameLayout.LayoutParams(
+							  cinematicPlayerViews!!.loaderSizeInP,
+							  cinematicPlayerViews!!.loaderSizeInP
+						 )
+						 x.gravity = Gravity.CENTER
+						 addView(loadingV, x)
+					}
 			   }
+		  } catch (e: Exception) {
+		  }
 	 }
 
 	 private fun controlController(visibility: Int) {
@@ -67,21 +80,26 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 private var nowPlaying: NowPlaying? = null
 	 private var mediaSource: MediaSource? = null
 	  var trackSelector: DefaultTrackSelector? = null
-	 private var trackSelectorParameters: DefaultTrackSelector.Parameters? = null
+	 var trackSelectorParameters: DefaultTrackSelector.Parameters? = null
 	 var customController: VideoControllerView? = null
 	 var playerUiFinalListener: CineamaticPlayerScreen? = null
 	 var hasSettingsListener:SettingsListener? = null
 
 	 override fun onDetachedFromWindow() {
-		  savePlayData()
-		  this.player?.playWhenReady = false
-		  this.player?.stop(true)
-		  this.player?.stop()
-		  this.player?.playWhenReady = false
-		  startAutoPlay = false
-		  this.player?.release()
-		  this.player?.release()
-		  this.player = null
+		  try {
+			   Log.e(taag, "onDetachedFromWindow ${this.id == R.id.playerView}")
+			   savePlayData()
+			   this.player?.playWhenReady = false
+			   this.player?.stop(true)
+			   this.player?.stop()
+			   this.player?.playWhenReady = false
+			   startAutoPlay = false
+			   this.player?.release()
+			   this.player?.release()
+			   this.player = null
+		  } catch (e: Exception) {
+			   e.printStackTrace()
+		  }
 		  super.onDetachedFromWindow()
 	 }
 
@@ -108,7 +126,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  }
 	 }
 
-	 private fun setupPlayer() {
+	 fun setupPlayer() {
 		  if (trackSelectorParameters == null) {
 			   trackSelectorParameters = DefaultTrackSelector.ParametersBuilder(context)
 					.setRendererDisabled(C.TRACK_TYPE_VIDEO, false).setPreferredTextLanguage("ar")
@@ -133,59 +151,66 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   }
 	 }
 	 var hasSettings = false
-	 fun applySettings(newPlayer: Player? = null) {
-		  this.player = newPlayer ?: this.player
-		  this.player?.playWhenReady = startAutoPlay
-		  this.setPlaybackPreparer(this)
-		  this.player?.addListener(object : Player.EventListener {
-			   override fun onPlayerStateChanged(
-					playWhenReady: Boolean,
-					playbackState: Int
-			   ) {
-					try {
+	 private val plistener = object : Player.EventListener {
+		  override fun onPlayerStateChanged(
+			   playWhenReady: Boolean,
+			   playbackState: Int
+		  ) {
+			   try {
+					Log.e(taag, "onPlayerStateChanged ${loadingView() != null}")
+					loadingView()?.visibility = View.GONE
+					if (playbackState == ExoPlayer.STATE_BUFFERING) {
+						 loadingView()?.visibility = View.VISIBLE
+						 this@CinamaticExoPlayer.hideController()
+					} else if (playbackState == ExoPlayer.STATE_READY) {
 						 loadingView()?.visibility = View.GONE
-						 if (playbackState == ExoPlayer.STATE_BUFFERING) {
-							  loadingView()?.visibility = View.VISIBLE
-							  this@CinamaticExoPlayer.hideController()
-						 } else if (playbackState == ExoPlayer.STATE_READY) {
-							  loadingView()?.visibility = View.GONE
-							  val isEnded =
-								   player?.currentPosition ?: 0 >= player?.duration ?: -1
-							  if (playWhenReady && playbackState == ExoPlayer.STATE_READY && isEnded) {
-								   player?.playWhenReady = false
+						 val isEnded =
+							  player?.currentPosition ?: 0 >= player?.duration ?: -1
+						 if (playWhenReady && playbackState == ExoPlayer.STATE_READY && isEnded) {
+							  player?.playWhenReady = false
+							  try {
 								   seekTo(0)
+							  } catch (e: Exception) {
 							  }
-							  if (playbackState == ExoPlayer.STATE_READY)
-								   checkHasSettings()
 						 }
-						 customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
-					} catch (e: Exception) {
-						 e.printStackTrace()
+						 if (playbackState == ExoPlayer.STATE_READY)
+							  checkHasSettings()
 					}
+					customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
+			   } catch (e: Exception) {
+					e.printStackTrace()
 			   }
-		  })
+		  }
+	 }
 
-		  this.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-		  this.setShowBuffering(SHOW_BUFFERING_NEVER)
+	 fun setListeners() {
+		  this.setPlaybackPreparer(this)
+		  this.player?.addListener(plistener)
+		  this.player?.addListener(
+			   PlayerEventListener(
+					context,
+					this,
+					playerUiFinalListener
+			   )
+		  )
+		  controllerViiablilityListener =
+			   PlayerControlView.VisibilityListener { visibility ->
+					controlController(visibility)
+			   }
+	 }
+	 fun applySettings(newPlayer: Player? = null) {
+		  if (newPlayer == null) {
+			   this.player?.playWhenReady = startAutoPlay
+			   this.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+			   this.setShowBuffering(SHOW_BUFFERING_NEVER)
+		  }
 		  hasSettings = false
 		  hasSettingsListener?.hasSettings(false)
+
 		  setController(null)
 		  Log.e("ApplySettings", "$ load${cinematicPlayerViews?.loadingView != null}")
 		  Log.e("ApplySettings", "$ load2 ${cinematicPlayerViews?.controlLayout != null}")
-		  try {
-			   cinematicPlayerViews?.loadingView?.let {
-					if (loadingV == null) {
-						 loadingV = LayoutInflater.from(context).inflate(it, null)
-						 val x = FrameLayout.LayoutParams(
-							  cinematicPlayerViews!!.loaderSizeInP,
-							  cinematicPlayerViews!!.loaderSizeInP
-						 )
-						 x.gravity = Gravity.CENTER
-						 addView(loadingV, x)
-					}
-			   }
-		  } catch (e: Exception) {
-		  }
+
 	 }
 	 private fun initializePlayer(url: String, srtLink: String?) {
 		  mediaSource = null
@@ -201,13 +226,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 					this.player = SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector!!)
 						 .build()
-					this.player?.addListener(
-						 PlayerEventListener(
-							  context,
-							  this,
-							  playerUiFinalListener
-						 )
-					)
+
+
 					applySettings()
 
 
@@ -219,7 +239,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					buildMediaSource(Uri.parse(url), srtLink)
 			   val sp = getLastPos(nowPlaying)
 			   val haveStartPosition = sp > 0L
-
+			   setListeners()
 			   if (mediaSource != null) {
 					(this.player as ExoPlayer).prepare(mediaSource!!, !haveStartPosition, false)
 					this.player?.seekTo(sp)
@@ -424,4 +444,14 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   playerUiFinalListener?.onDissmiss(CloseReason.Casting)
 		  }
 	 }
+}
+
+fun CinamaticExoPlayer.copyFrom(oldCinamaticExoPlayer: CinamaticExoPlayer) {
+	 this.hasSettingsListener = oldCinamaticExoPlayer.hasSettingsListener
+	 this.cinematicPlayerViews = oldCinamaticExoPlayer.cinematicPlayerViews
+	 this.player = oldCinamaticExoPlayer.player
+	 this.playerUiFinalListener = oldCinamaticExoPlayer.playerUiFinalListener
+	 this.setController(null)
+	 this.setListeners()
+//	 this.loadingV = oldCinamaticExoPlayer.loadingV
 }

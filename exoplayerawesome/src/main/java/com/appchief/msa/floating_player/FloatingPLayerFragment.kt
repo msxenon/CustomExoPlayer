@@ -80,6 +80,8 @@ abstract class FloatingPLayerFragment : Fragment(),
 						 closeReason
 					)
 					dissmissCalled = true
+		  } else {
+			   fragmentManager?.beginTransaction()?.remove(this)?.commitAllowingStateLoss()
 		  }
 	 }
 	 fun initFloating() {
@@ -124,8 +126,8 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 override fun onResume() {
-		  ExoIntent.getPlayerHere(binding.videoOverlayView.player)
-		  binding.videoOverlayView.player?.onResume()
+		  ExoIntent.getPlayerHere(binding.videoOverlayView.player!!)
+		  //  binding.videoOverlayView.player?.onResume()
 		  super.onResume()
 	 }
 

@@ -39,6 +39,7 @@
             android:autoSizeMaxTextSize="20sp"
             android:autoSizeMinTextSize="1sp"
             android:autoSizeTextType="uniform"
+            android:background="#000000"
             android:gravity="center"
             android:text="إغلاق"
             android:textColor="#fff"

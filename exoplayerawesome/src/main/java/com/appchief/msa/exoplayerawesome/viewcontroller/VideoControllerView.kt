@@ -2,6 +2,7 @@ package com.appchief.msa.exoplayerawesome.viewcontroller
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.util.AttributeSet
 import android.util.Log
@@ -135,8 +136,8 @@ class VideoControllerView : FrameLayout {
 		  updateDownBtn()
 	 }
 
-	 private fun settingsVisiability() {
-		  val x = (mPlayer?.hasSettings == true)
+	 private fun settingsVisiability(boolean: Boolean) {
+		  val x = boolean//(mPlayer?.hasSettings == true)
 		  mVideoSettings?.visibility = x.controlVisibility()
 		  Log.e("VCV", "settingsVisiability $x ${mPlayer?.hasSettings}")
 	 }
@@ -153,6 +154,7 @@ class VideoControllerView : FrameLayout {
 			   ViewGroup.LayoutParams.MATCH_PARENT,
 			   ViewGroup.LayoutParams.MATCH_PARENT
 		  )
+
 		  removeAllViews()
 
 		  val v = makeControllerView(controllerLayout)
@@ -238,10 +240,10 @@ class VideoControllerView : FrameLayout {
 		  }
 		  mPlayer?.hasSettingsListener = object : SettingsListener {
 			   override fun hasSettings(has: Boolean) {
-					settingsVisiability()
+					settingsVisiability(has)
 			   }
 		  }
-		  settingsVisiability()
+		  //  settingsVisiability()
 
 	 }
 
@@ -278,7 +280,7 @@ class VideoControllerView : FrameLayout {
 
 	 @JvmOverloads
 	 fun show(timeout: Int = sDefaultTimeout) {
-		  Log.e("VCV", "showcalled")
+		  Log.e("VCV", "showcalled $isShowing ${mAnchor != null}")
 		  if (!isShowing && mAnchor != null) {
 			   setProgress()
 			   if (mPauseButton != null) {
@@ -290,7 +292,9 @@ class VideoControllerView : FrameLayout {
 					ViewGroup.LayoutParams.MATCH_PARENT,
 					Gravity.BOTTOM
 			   )
-			   mAnchor?.addView(this, tlp)
+
+			   mAnchor?.addView(this, 1, tlp)
+
 			   isShowing = true
 		  }
 		  updatePausePlay()
@@ -453,15 +457,19 @@ class VideoControllerView : FrameLayout {
 	 }
 
 	 private fun doPauseResume() {
-		  if (mPlayer == null) {
-			   return
+		  try {
+			   if (mPlayer == null) {
+					return
+			   }
+			   if (mPlayer?.isPlaying == true) {
+					mPlayer?.pause()
+			   } else {
+					mPlayer?.start()
+			   }
+			   updatePausePlay()
+		  } catch (e: Exception) {
+			   e.printStackTrace()
 		  }
-		  if (mPlayer?.isPlaying == true) {
-			   mPlayer?.pause()
-		  } else {
-			   mPlayer?.start()
-		  }
-		  updatePausePlay()
 	 }
 
 	 private fun doToggleFullscreen() {
@@ -481,17 +489,21 @@ class VideoControllerView : FrameLayout {
 			   progress: Int,
 			   fromuser: Boolean
 		  ) {
-			   if (mPlayer == null) {
-					return
+			   try {
+					if (mPlayer == null) {
+						 return
+					}
+					if (!fromuser) { // We're not interested in programmatically generated changes to
+						 // the progress bar's position.
+						 return
+					}
+					val duration = mPlayer?.duration ?: 0
+					val newposition = duration * progress / 1000L
+					mPlayer?.seekTo(newposition)
+					if (mCurrentTime != null) mCurrentTime?.text = stringForTime(newposition)
+			   } catch (e: Exception) {
+					e.printStackTrace()
 			   }
-			   if (!fromuser) { // We're not interested in programmatically generated changes to
-// the progress bar's position.
-					return
-			   }
-			   val duration = mPlayer?.duration ?: 0
-			   val newposition = duration * progress / 1000L
-			   mPlayer?.seekTo(newposition)
-			   if (mCurrentTime != null) mCurrentTime?.text = stringForTime(newposition)
 		  }
 
 		  override fun onStopTrackingTouch(bar: SeekBar) {
@@ -544,7 +556,7 @@ class VideoControllerView : FrameLayout {
 		  }
 
 	 private class MessageHandler internal constructor(viewX: VideoControllerView) :
-		  Handler() {
+		  Handler(Looper.getMainLooper()) {
 
 		  private val mView: WeakReference<VideoControllerView> = WeakReference(viewX)
 		  override fun handleMessage(msgj: Message) {

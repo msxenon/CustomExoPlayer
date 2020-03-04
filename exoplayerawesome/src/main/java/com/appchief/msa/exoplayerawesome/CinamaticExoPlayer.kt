@@ -62,6 +62,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 						 )
 						 x.gravity = Gravity.CENTER
 						 addView(loadingV, x)
+						 loadingV?.visibility = View.GONE
 					}
 			   }
 		  } catch (e: Exception) {

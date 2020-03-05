@@ -126,9 +126,12 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 override fun onResume() {
-		  ExoIntent.getPlayerHere(binding.videoOverlayView.player!!)
-		  //  binding.videoOverlayView.player?.onResume()
 		  super.onResume()
+		  try {
+			   ExoIntent.getPlayerHere(binding.videoOverlayView.player!!)
+		  } catch (e: Exception) {
+			   e.printStackTrace()
+		  }
 	 }
 
 	 override fun onPause() {

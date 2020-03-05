@@ -201,17 +201,18 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 fun applySettings(newPlayer: Player? = null) {
 		  if (newPlayer == null) {
 			   this.player?.playWhenReady = startAutoPlay
-			   this.resizeMode =
-					cinematicPlayerViews?.resizeMode() ?: AspectRatioFrameLayout.RESIZE_MODE_FIT
-			   player?.videoComponent?.videoScalingMode =
-					cinematicPlayerViews?.videoScalingMode() ?: C.VIDEO_SCALING_MODE_SCALE_TO_FIT
-			   Log.e(
-					"ApplySettings",
-					"$ load${cinematicPlayerViews?.resizeMode() != null} ${cinematicPlayerViews?.videoScalingMode() != null}"
-			   )
+
 
 			   this.setShowBuffering(SHOW_BUFFERING_NEVER)
 		  }
+		  this.resizeMode =
+			   cinematicPlayerViews?.resizeMode() ?: AspectRatioFrameLayout.RESIZE_MODE_FIT
+		  player?.videoComponent?.videoScalingMode =
+			   cinematicPlayerViews?.videoScalingMode() ?: C.VIDEO_SCALING_MODE_SCALE_TO_FIT
+		  Log.e(
+			   "ApplySettings",
+			   "$ VIDEO SIZEING ${cinematicPlayerViews?.resizeMode() != null} ${cinematicPlayerViews?.videoScalingMode() != null}"
+		  )
 		  hasSettings = false
 		  hasSettingsListener?.hasSettings(false)
 
@@ -458,5 +459,6 @@ fun CinamaticExoPlayer.copyFrom(oldCinamaticExoPlayer: CinamaticExoPlayer) {
 	 this.playerUiFinalListener = oldCinamaticExoPlayer.playerUiFinalListener
 	 this.setController(null)
 	 this.setListeners()
+	 this.applySettings()
 //	 this.loadingV = oldCinamaticExoPlayer.loadingV
 }

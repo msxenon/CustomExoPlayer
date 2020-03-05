@@ -7,11 +7,11 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 
 class CinematicOnce : CinematicPlayerViews {
 	 override fun resizeMode(): Int {
-		  return AspectRatioFrameLayout.RESIZE_MODE_FIT
+		  return AspectRatioFrameLayout.RESIZE_MODE_FILL
 	 }
 
 	 override fun videoScalingMode(): Int {
-		  return C.VIDEO_SCALING_MODE_SCALE_TO_FIT
+		  return C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 	 }
 
 	 override val loadingView: Int?

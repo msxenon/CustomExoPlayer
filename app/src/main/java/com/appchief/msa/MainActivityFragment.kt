@@ -27,7 +27,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 //			   this.gravity = Gravity.CENTER
 //		  }
 		  val video =
-			   "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
+			   "http://tv.supercellnetwork.com:1935/nile3/mbc3.stream_360p/playlist.m3u8"//"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
 		  binding.videoOverlayView.player?.playLinkNSub(
 			   video,
 			   null,

@@ -201,7 +201,15 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 fun applySettings(newPlayer: Player? = null) {
 		  if (newPlayer == null) {
 			   this.player?.playWhenReady = startAutoPlay
-			   this.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+			   this.resizeMode =
+					cinematicPlayerViews?.resizeMode() ?: AspectRatioFrameLayout.RESIZE_MODE_FIT
+			   player?.videoComponent?.videoScalingMode =
+					cinematicPlayerViews?.videoScalingMode() ?: C.VIDEO_SCALING_MODE_SCALE_TO_FIT
+			   Log.e(
+					"ApplySettings",
+					"$ load${cinematicPlayerViews?.resizeMode() != null} ${cinematicPlayerViews?.videoScalingMode() != null}"
+			   )
+
 			   this.setShowBuffering(SHOW_BUFFERING_NEVER)
 		  }
 		  hasSettings = false

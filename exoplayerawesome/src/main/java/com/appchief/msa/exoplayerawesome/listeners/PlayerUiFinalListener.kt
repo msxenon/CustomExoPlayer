@@ -15,6 +15,9 @@ interface CineamaticPlayerScreen {
 }
 
 interface CinematicPlayerViews {
+	 fun resizeMode(): Int
+	 fun videoScalingMode(): Int
+
 	 val loadingView: Int?
 	 val controlLayout: Int?
 	 val loaderSizeInP: Int

@@ -17,6 +17,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 	 //	 private var loadingView: View? = null
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		  binding.videoOverlayView.player?.cinematicPlayerViews = CinematicOnce()
 		  super.onViewCreated(view, savedInstanceState)
 //		  loadingView = LoadingScBinding.inflate(layoutInflater).root
 //		  binding.videoOverlayView.player?.addView(loadingView)
@@ -27,7 +28,6 @@ class MainActivityFragment : FloatingPLayerFragment() {
 //		  }
 		  val video =
 			   "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
-		  binding.videoOverlayView.player?.cinematicPlayerViews = CinematicOnce()
 		  binding.videoOverlayView.player?.playLinkNSub(
 			   video,
 			   null,

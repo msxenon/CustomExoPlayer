@@ -6,6 +6,7 @@ import android.view.View
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
 import com.appchief.msa.floating_player.FloatingPLayerFragment
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * A placeholder fragment containing a simple view.
@@ -26,21 +27,34 @@ class MainActivityFragment : FloatingPLayerFragment() {
 //			   width = 160
 //			   this.gravity = Gravity.CENTER
 //		  }
-		  val video =
-			   "http://tv.supercellnetwork.com:1935/nile3/mbc3.stream_360p/playlist.m3u8"//"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
+//		  val video =
+//			   "http://tv.supercellnetwork.com:1935/nile3/mbc3.stream_360p/playlist.m3u8"//"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
+		  initPlayer()
+		  setDetails(DetailsFrag())
+		  isFirstVideo = !isFirstVideo
+	 }
+
+	 private fun initPlayer() {
 		  binding.videoOverlayView.player?.playLinkNSub(
-			   video,
+			   MainActivity.link,
 			   null,
 			   null,
 			   PlayerType.CHANNEL,
 			   null,
 			   "null", "", "", 10000
 		  )
-		  setDetails(DetailsFrag())
-		  isFirstVideo = !isFirstVideo
 	 }
 
 	 override fun onMessageRecived(msg: String?, state: Int) {
+		  msg?.takeIf { view != null }?.let {
+			   val snack = Snackbar.make(view!!, msg, Snackbar.LENGTH_INDEFINITE)
+			   snack.setAction("Retry") {
+					snack.dismiss()
+					initPlayer()
+			   }
+			   snack.show()
+		  }
+
 		  Log.e("main", "$msg $state")
 	 }
 

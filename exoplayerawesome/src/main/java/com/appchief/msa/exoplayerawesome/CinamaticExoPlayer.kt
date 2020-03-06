@@ -2,17 +2,19 @@ package com.appchief.msa.exoplayerawesome
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
+import android.transition.TransitionSet
 import android.util.AttributeSet
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.widget.FrameLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.appchief.msa.exoplayerawesome.ExoIntent.usedInistances
 import com.appchief.msa.exoplayerawesome.listeners.*
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.google.android.exoplayer2.*
@@ -24,6 +26,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.MimeTypes
 import kotlin.math.abs
 
@@ -36,7 +39,11 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
 	 fun onCreate() {
-		  Log.e("TAG", "================================>>>> lifecycle owner STARTED $taag")
+		  usedInistances += 1
+		  Log.e(
+			   "TAG",
+			   "================================>>>> lifecycle owner ON_CREATE $usedInistances $taag"
+		  )
 	 }
 
 	 @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -48,7 +55,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 fun onResumeLC() {
 		  Log.e(
 			   "TAG",
-			   "================================>>>> lifecycle owner ON_RESUME sufcenull = ${this.videoSurfaceView == null}"
+			   "================================>>>> lifecycle owner ON_RESUME "
 		  )
 //			onResume()
 		  Log.e("TAG", "================================>>>> lifecycle ${player == null} ")
@@ -67,26 +74,29 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
 	 fun destroy() {
+		  usedInistances -= 1
 		  releasePlayer()
 		  Log.e(
 			   "TAG",
-			   "================================>>>> lifecycle owner destroy --  sfcnull${this.videoSurfaceView == null}"
+			   "================================>>>> lifecycle owner destroy --  sfcnull $usedInistances ${this.videoSurfaceView == null}"
 		  )
 	 }
 
 	 fun releasePlayer() {
 		  try {
-//			   if (player != null) {
-//					player?.release()
-//					player = null
-//					removeAllViews()
-//			   }
+			   if (player != null && usedInistances == 0) {
+					player?.release()
+					player = null
+					removeAllViews()
+					ExoIntent.reInit()
+			   }
 		  } catch (e: Exception) {
 			   e.printStackTrace()
 		  }
 	 }
 
-	 private val taag = "CEP isFloating = ${R.id.playerView == id}"
+	 private val isFloatingPlayer = R.id.playerView == id
+	 private val taag = "CEP isFloating = ${isFloatingPlayer}"
 	 var controllerViiablilityListener:PlayerControlView.VisibilityListener? = null
 	 var cinematicPlayerViews: CinematicPlayerViews? = null
 	 constructor(context: Context) : super(context)
@@ -139,6 +149,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 private var forceReplay = true
 	 var nowPlaying: NowPlaying? = null
 	 var mediaSource: MediaSource? = null
+
 	 val trackSelector: DefaultTrackSelector by lazy {
 		  val trackSelectionFactory: com.google.android.exoplayer2.trackselection.TrackSelection.Factory
 		  trackSelectionFactory = AdaptiveTrackSelection.Factory()
@@ -174,12 +185,16 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   throw Exception("playerUiFinalListener not setted")
 		  savePlayData()
 		  nowPlaying =
-			   NowPlaying(movieId, episodeId, playerType, poster, videoLink, geners, title, runtime)
+			   NowPlaying(
+					movieId, episodeId, playerType, poster,
+					videoLink.encodeUrl(), geners, title, runtime, SrtLink?.encodeUrl()
+			   )
 		  if (playerUiFinalListener?.isConnectedToCast() != true) {
-			   initializePlayer(videoLink.encodeUrl(), SrtLink?.encodeUrl())
+			   initializePlayer()
 		  } else {
 			   castCurrent()
 		  }
+
 	 }
 
 
@@ -213,6 +228,17 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 						 loadingView()?.visibility = View.VISIBLE
 						 this@CinamaticExoPlayer.hideController()
 					} else if (playbackState == ExoPlayer.STATE_READY) {
+						 if (isFloatingPlayer) {
+							  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+								   TransitionManager.beginDelayedTransition(
+										rootView as ViewGroup, TransitionSet()
+											 .addTransition(ChangeBounds())
+								   )
+							  }
+							  val m = layoutParams
+							  m.height = FrameLayout.LayoutParams.WRAP_CONTENT
+							  layoutParams = m
+						 }
 						 forceReplay = false
 
 						 checkHasSettings()
@@ -270,25 +296,25 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  Log.e("ApplySettings", "$ load2 ${cinematicPlayerViews?.controlLayout != null}")
 
 	 }
-	 private fun initializePlayer(url: String, srtLink: String?) {
+
+	 val bMeter by lazy { DefaultBandwidthMeter.Builder(context).build() }
+	 fun initializePlayer(): Boolean? {
 		  mediaSource = null
-
+		  if (nowPlaying?.videoLink == null)
+			   return null
 		  try {
-			   if (player == null) {
-					ExoIntent.paused = false
+			   ExoIntent.paused = false
+			   player = null
+			   player = SimpleExoPlayer.Builder(context).setBandwidthMeter(bMeter)
+					.setTrackSelector(trackSelector)
+					.build()
 
 
-					player = SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector)
-						 .build()
+			   applySettings()
 
-
-					applySettings()
-
-
-			   }
 
 			   mediaSource =
-					buildMediaSource(Uri.parse(url), srtLink)
+					buildMediaSource(Uri.parse(nowPlaying?.videoLink), nowPlaying?.srtLink)
 			   val sp = getLastPos()
 			   val haveStartPosition = sp > 0L
 			   setListeners()
@@ -296,7 +322,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					(player as ExoPlayer).prepare(mediaSource!!, !haveStartPosition, false)
 					player?.seekTo(sp)
 			   }
-
+			   return true
 		  } catch (e: Exception) {
 			   playerUiFinalListener?.onMessageRecived(
 					e.localizedMessage,
@@ -304,6 +330,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   )
 			   e.printStackTrace()
 		  }
+		  return null
 	 }
 	 private fun checkHasSettings() {
 		 val m =  SettingsUtil.willHaveContent(trackSelector)

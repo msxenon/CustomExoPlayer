@@ -41,7 +41,8 @@ data class NowPlaying(
 	 val videoLink: String?,
 	 val geners: String,
 	 val title: String,
-	 val runtime: Long
+	 val runtime: Long,
+	 val srtLink: String?
 ) {
 
 	 fun nowPlayingId(): Long {

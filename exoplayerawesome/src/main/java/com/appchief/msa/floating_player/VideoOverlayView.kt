@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
 import com.appchief.msa.exoplayerawesome.databinding.AppchiefFloatingPlayerBinding
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 
 // https://medium.com/vrt-digital-studio/picture-in-picture-video-overlay-with-motionlayout-a9404663b9e7
 class VideoOverlayView @JvmOverloads constructor(
@@ -21,8 +22,16 @@ class VideoOverlayView @JvmOverloads constructor(
 
 	 var motionLayout: MotionLayout? = null
 	 var player: CinamaticExoPlayer? = null
+	 var playerContainer: AspectRatioFrameLayout? = null
 	 private var startX: Float? = null
 	 private var startY: Float? = null
+	 //	 override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+//		  super.onLayout(changed, left, top, right, bottom)
+//		  if (changed){
+//			   player =
+//					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.playerView)
+//		  }
+//	 }
 	 override fun onFinishInflate() {
 		  super.onFinishInflate()
 		  //LayoutInflater.from(context).inflate(R.layout.layout_detail, this, false) as MotionLayout
@@ -33,6 +42,8 @@ class VideoOverlayView @JvmOverloads constructor(
 			   addView(motionLayout)
 			   player =
 					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.playerView)
+			   playerContainer =
+					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.motionInteractView)
 			   //   player = playerView//motionLayout?.findViewById(R.id.playerView)
 		  }
 	 }
@@ -51,7 +62,7 @@ class VideoOverlayView @JvmOverloads constructor(
 			   return false
 		  val isInProgress = isInProgress()
 		  val isInTarget = touchEventInsideTargetViewExceptTop(player!!, ev)
-		  val touchingTarget = touchEventInsideTargetView(player!!, ev)
+		  val touchingTarget = touchEventInsideTargetView(playerContainer!!, ev)
 		  Log.e("VVO", "onInterceptTouchEvent 2 $isInProgress  $isInTarget $touchingTarget")
 		  return if (isInProgress || isInTarget || touchingTarget) {
 			   super.onInterceptTouchEvent(ev)
@@ -67,7 +78,10 @@ class VideoOverlayView @JvmOverloads constructor(
 					x = true
 			   }
 		  }
-		  Log.e("VOV", "target $x ${ev.x} ${ev.y} ${v.left} ${v.top} ${v.right} ${v.bottom}")
+		  Log.e(
+			   "VOV",
+			   "target touched$x ex${ev.x} ey${ev.y} ${v.left} ${v.top} ${v.right} ${v.bottom}"
+		  )
 
 		  return x
 	 }

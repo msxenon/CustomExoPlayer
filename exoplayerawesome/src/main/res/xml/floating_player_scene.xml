@@ -67,7 +67,7 @@
         <Constraint
                 android:id="@id/motionInteractView"
                 android:layout_width="0dp"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 motion:layout_constraintEnd_toEndOf="parent"
                 motion:layout_constraintStart_toStartOf="parent"
                 motion:layout_constraintTop_toTopOf="parent" />

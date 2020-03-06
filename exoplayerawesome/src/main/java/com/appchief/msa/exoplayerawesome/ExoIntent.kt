@@ -5,6 +5,7 @@ import android.util.Log
 
 object ExoIntent {
 	 //private var player: Player? = null
+	 var usedInistances = 0
 	 var isInFullScreen = false
 	 var pview: CinamaticExoPlayer? = null
 	 // var savedPlayer : Player? = null
@@ -85,6 +86,12 @@ object ExoIntent {
 		  x.playerUiFinalListener = oldCinamaticExoPlayer.playerUiFinalListener
 		  oldCinamaticExoPlayer.player = null
 		  return x
+	 }
+
+	 fun reInit() {
+		  pview = null
+		  fullScreenActivity = null
+		  paused = false
 	 }
 }
 

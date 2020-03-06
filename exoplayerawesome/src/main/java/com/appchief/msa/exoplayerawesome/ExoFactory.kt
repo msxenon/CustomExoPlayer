@@ -43,9 +43,10 @@ class ExoFactory internal constructor(private val context: Context?) {
 	 }
 
 	 fun buildMediaSource(uri: Uri): MediaSource? {
-		  Log.e("exoFactory", "buildMediaSource $uri")
 		  try {//here put url
 			   @C.ContentType val type = Util.inferContentType(uri, null)
+			   Log.e("exoFactory", "buildMediaSource $uri $type")
+
 			   return when (type) {
 					C.TYPE_DASH -> DashMediaSource.Factory(buildDataSourceFactory()!!).createMediaSource(
 						 uri
@@ -53,14 +54,19 @@ class ExoFactory internal constructor(private val context: Context?) {
 					C.TYPE_SS -> SsMediaSource.Factory(buildDataSourceFactory()!!).createMediaSource(
 						 uri
 					)
-					C.TYPE_HLS -> HlsMediaSource.Factory(buildDataSourceFactory()!!).createMediaSource(
+					C.TYPE_HLS -> {
+						 val m = HlsMediaSource.Factory(buildDataSourceFactory()!!)
+							  .setAllowChunklessPreparation(true)
+						 m.createMediaSource(
 						 uri
 					)
+					}
 					C.TYPE_OTHER -> ProgressiveMediaSource.Factory(buildDataSourceFactory()!!).createMediaSource(
 						 uri
 					)
 					else -> throw Throwable("Unsupported type: $type")
 			   }
+
 		  } catch (e: Exception) {
 			   e.printStackTrace()
 		  }
@@ -74,7 +80,7 @@ class ExoFactory internal constructor(private val context: Context?) {
 		  return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache())
 	 }
 
-	 val twoMins = 2 * 60 * 1000
+	 val twoMins = 8000
 	 /** Returns a [HttpDataSource.Factory].  */
 	 fun buildHttpDataSourceFactory(): HttpDataSource.Factory {
 		  return DefaultHttpDataSourceFactory(userAgent, twoMins, twoMins, true)

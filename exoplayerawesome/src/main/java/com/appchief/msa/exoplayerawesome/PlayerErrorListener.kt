@@ -6,6 +6,7 @@ import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.source.BehindLiveWindowException
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
@@ -16,16 +17,43 @@ class PlayerEventListener(
 	 private val playerUiFinalListener: CineamaticPlayerScreen?
 ) : Player.EventListener {
 
+	 companion object {
+		  private fun isBehindLiveWindow(e: ExoPlaybackException): Boolean {
+			   if (e.type != ExoPlaybackException.TYPE_SOURCE) {
+					return false
+			   }
+			   var cause: Throwable? = e.sourceException
+			   while (cause != null) {
+					if (cause is BehindLiveWindowException) {
+						 return true
+					}
+					cause = cause.cause
+			   }
+			   return false
+		  }
+	 }
+
 	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
 
 	 override fun onPlayerError(error: ExoPlaybackException) {
-		  Log.e("PlayerEventListener", "err ${error.type}")
-		  error.printStackTrace()
-		  cinemPlayer?.useController = false
-		  playerUiFinalListener?.onMessageRecived(
-			   context?.getString(com.appchief.msa.exoplayerawesome.R.string.videonotav),
-			   error.type
-		  )
+		  val m = isBehindLiveWindow(error)
+		  Log.e("PlayerEventListener", "err ${error.type} isbehind=$m")
+		  if (m) {
+			   val z = cinemPlayer?.initializePlayer()
+			   Log.e("PlayerEventListener", "err ${error.type} isReinit = $z")
+		  } else {
+			   error.printStackTrace()
+			   cinemPlayer?.useController = false
+			   val errMsg = context?.getExoString(error)
+			   errMsg?.let {
+					playerUiFinalListener?.onMessageRecived(
+						 errMsg,
+						 error.type
+					)
+			   }
+
+			   cinemPlayer?.playerUiFinalListener?.onMessageRecived(errMsg, error.type)
+		  }
 	 }
 
 	 override fun onTracksChanged(
@@ -56,5 +84,18 @@ class PlayerEventListener(
 		  if (playbackState != Player.STATE_IDLE) {
 			   //  cinemPlayer?.useController = true
 		  }
+	 }
+}
+
+private fun Context?.getExoString(error: ExoPlaybackException): String? {
+	 if (this == null)
+		  return null
+	 return when (error.type) {
+		  ExoPlaybackException.TYPE_SOURCE -> this.getString(R.string.faild_to_connect)
+		  ExoPlaybackException.TYPE_RENDERER -> this.getString(R.string.player_render_issue)
+		  ExoPlaybackException.TYPE_UNEXPECTED -> this.getString(R.string.player_unknown)
+		  ExoPlaybackException.TYPE_REMOTE -> this.getString(R.string.videonotav)
+		  ExoPlaybackException.TYPE_OUT_OF_MEMORY -> this.getString(R.string.player_outofmem)
+		  else -> this.getString(R.string.player_unknown)
 	 }
 }

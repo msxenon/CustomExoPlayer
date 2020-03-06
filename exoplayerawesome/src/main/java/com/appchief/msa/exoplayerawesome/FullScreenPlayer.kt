@@ -38,6 +38,7 @@ class FullScreenPlayer : AppCompatActivity(), FullScreenActivity {
 
 	 override fun ondissmiss() {
 		  Log.e("FullScreen", "Dismiss called")
+		  ExoIntent.isInFullScreen = false
 		  onBackPressed()
 	 }
 //	 override fun onBackPressed() {

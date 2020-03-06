@@ -118,7 +118,7 @@ class VideoControllerView : FrameLayout {
 	 }
 
 	 private fun controlVis() {
-		  Log.e("VCV", "${mPlayer?.canSeekBackward()}")
+		  Log.e("VCV", "controlVis ${mPlayer?.canSeekBackward()}")
 		  if (mPlayer?.canSeekForward() != true) {
 			   mProgress?.visibility = View.GONE
 			   mEndTime?.visibility = View.GONE
@@ -139,7 +139,7 @@ class VideoControllerView : FrameLayout {
 	 private fun settingsVisiability(boolean: Boolean) {
 		  val x = boolean//(mPlayer?.hasSettings == true)
 		  mVideoSettings?.visibility = x.controlVisibility()
-		  Log.e("VCV", "settingsVisiability $x ${mPlayer?.hasSettings}")
+		  Log.e("VCV", " settingsVisiability $x")
 	 }
 	 /**
 	  * Set the view that acts as the anchor for the control view.
@@ -401,6 +401,7 @@ class VideoControllerView : FrameLayout {
 			   || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE
 		  ) {
 			   if (uniqueDown && mPlayer?.isPlaying == true) {
+					ExoIntent.paused = true
 					mPlayer?.pause()
 					updatePausePlay()
 					show(sDefaultTimeout)
@@ -462,8 +463,10 @@ class VideoControllerView : FrameLayout {
 					return
 			   }
 			   if (mPlayer?.isPlaying == true) {
+					ExoIntent.paused = true
 					mPlayer?.pause()
 			   } else {
+					ExoIntent.paused = false
 					mPlayer?.start()
 			   }
 			   updatePausePlay()
@@ -519,10 +522,11 @@ class VideoControllerView : FrameLayout {
 		  }
 	 }
 
-	 fun updateViews(isLoading: Boolean) {
+	 fun updateViews(isLoading: Boolean?) {
 		  updatePausePlay()
 		  controlVis()
-		  mPauseButton?.visibility = isLoading.invertedControlVisibility()
+		  if (isLoading != null)
+			   mPauseButton?.visibility = isLoading.invertedControlVisibility()
 	 }
 
 	 fun toggleShowHide() {

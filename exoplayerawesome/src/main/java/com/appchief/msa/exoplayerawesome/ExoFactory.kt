@@ -74,9 +74,10 @@ class ExoFactory internal constructor(private val context: Context?) {
 		  return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache())
 	 }
 
+	 val twoMins = 2 * 60 * 1000
 	 /** Returns a [HttpDataSource.Factory].  */
 	 fun buildHttpDataSourceFactory(): HttpDataSource.Factory {
-		  return DefaultHttpDataSourceFactory(userAgent)
+		  return DefaultHttpDataSourceFactory(userAgent, twoMins, twoMins, true)
 	 }
 
 	 @Synchronized

@@ -32,7 +32,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   video,
 			   null,
 			   null,
-			   PlayerType.MOVIE,
+			   PlayerType.CHANNEL,
 			   null,
 			   "null", "", "", 10000
 		  )

@@ -2,18 +2,17 @@ package com.appchief.msa.exoplayerawesome
 
 import android.content.Intent
 import android.util.Log
-import com.appchief.msa.exoplayerawesome.listeners.CinematicPlayerViews
 
 object ExoIntent {
 	 //private var player: Player? = null
 	 var isInFullScreen = false
-	 var views: CinematicPlayerViews? = null
 	 var pview: CinamaticExoPlayer? = null
+	 // var savedPlayer : Player? = null
 	 var fullScreenActivity: FullScreenActivity? = null
+	 var paused = false
 	 fun openFullScreenMode(playerView: CinamaticExoPlayer?) {
-		  pview = playerView!!
-		  savePlayer(playerView, false)?.let {
-			   playerView.context?.startActivity(
+		  savePlayer(playerView)?.let {
+			   playerView?.context?.startActivity(
 					Intent(
 						 playerView.context,
 						 FullScreenPlayer::class.java
@@ -22,16 +21,16 @@ object ExoIntent {
 		  }
 	 }
 
-	 fun savePlayer(playerView: CinamaticExoPlayer, itWasFullScreen: Boolean): Any? {
-		  Log.e(Tag, "savePlayer $itWasFullScreen")
-		  isInFullScreen = !itWasFullScreen
-
+	 fun savePlayer(playerView: CinamaticExoPlayer?): Any? {
+		  if (playerView?.player == null)
+			   return null
+		  // savedPlayer = playerView?.player
 		  pview = createCopyFrom(playerView)
-		  playerView.player = null
-		  Log.e(
-			   Tag,
-			   "savePlayer $itWasFullScreen pv =  ${pview?.player != null} viewp = ${playerView.player != null}"
-		  )
+//		 // playerView.player = null
+//		  Log.e(
+//			   Tag,
+//			   "savePlayer $itWasFullScreen pv =  ${pview?.player != null} viewp = ${playerView.player != null}"
+//		  )
 
 		  return true
 	 }
@@ -51,51 +50,40 @@ object ExoIntent {
 //	 }
 
 	 fun getPlayerHere(
-		  playerView: CinamaticExoPlayer,
-		  fullScreenActivityP: FullScreenActivity? = null
+		  playerView: CinamaticExoPlayer?
 	 ) {
 		  Log.e(Tag, "getPlayerHere ${playerView != null} ${pview != null}")
-
 		  if (pview == null)
 			   return
-		  playerView.copyFrom(pview!!)
+		  playerView?.copyFrom(pview!!)
+		  // playerView?.player = savedPlayer
 //		  if (playerView == null || listener == null || singeltonPlayer == null)
 //			   return
-		  fullScreenActivity = fullScreenActivityP
-		  isInFullScreen = fullScreenActivityP != null
-//		  singeltonPlayer?.playWhenReady = true
+		  //		  singeltonPlayer?.playWhenReady = true
 //		  playerView.cinematicPlayerViews = views
 //		  playerView.playerUiFinalListener = listener
 //		  playerView.player = singeltonPlayer
 	 }
 
-	 fun onDestroy() {
-		  Log.e(Tag, "OnDestroy")
-		  onPause(null)
-//		  singeltonPlayer?.playWhenReady = false
-		  // listener
-	 }
+
 
 	 fun dismissFullScreen() {
 		  Log.e(Tag, "dismissFullScreen")
 		  fullScreenActivity?.ondissmiss()
 	 }
 
-	 fun onPause(playerView: CinamaticExoPlayer?) {
-		  Log.e(Tag, "onPause")
-//		  singeltonPlayer?.playWhenReady = false
-		  playerView?.onPauseSave()
-	 }
+
 
 	 val Tag = "ExoIntent"
 	 fun createCopyFrom(oldCinamaticExoPlayer: CinamaticExoPlayer): CinamaticExoPlayer {
 		  val x = CinamaticExoPlayer(oldCinamaticExoPlayer.context)
+		  Log.e("createCopyFrom", "pnull ${x.player == null}")
+		  x.nowPlaying = oldCinamaticExoPlayer.nowPlaying
 		  x.hasSettingsListener = oldCinamaticExoPlayer.hasSettingsListener
 		  x.cinematicPlayerViews = oldCinamaticExoPlayer.cinematicPlayerViews
 		  x.player = oldCinamaticExoPlayer.player
 		  x.playerUiFinalListener = oldCinamaticExoPlayer.playerUiFinalListener
-		  x.setController(null)
-//		  x.loadingV = oldCinamaticExoPlayer.loadingV
+		  oldCinamaticExoPlayer.player = null
 		  return x
 	 }
 }

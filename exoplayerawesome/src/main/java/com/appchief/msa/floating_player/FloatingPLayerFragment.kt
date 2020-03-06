@@ -22,6 +22,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 
 	 override fun onCreate(savedInstanceState: Bundle?) {
 		  super.onCreate(null)
+
 	 }
 
 	 override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -31,22 +32,13 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 override fun setScreenOrentation(inFullScreenMode: Boolean) {
-//		  activity?.requestedOrientation = if (!inFullScreenMode)
-//			   ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-//		  else
-//			   ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
 		  if (!inFullScreenMode) {
 			   ExoIntent.openFullScreenMode(binding.videoOverlayView.player)
 		  } else {
 			   ExoIntent.dismissFullScreen()
 		  }
 		  Log.e("xx", "setScreenOrentation $inFullScreenMode ")
-//		  view?.playerViewFull?.visibility = if (inFullScreenMode) View.VISIBLE else View.GONE
-//		  if (inFullScreenMode)
-//		  PlayerView.switchTargetView(binding.videoOverlayView.player?.player!!,binding.videoOverlayView.player,binding.videoOverlayView.playerViewFull)
-//		  else
-//			   PlayerView.switchTargetView(binding.videoOverlayView.player?.player!!,binding.videoOverlayView.playerViewFull,binding.videoOverlayView.player)
-//
 
 
 	 }
@@ -69,6 +61,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		  binding.videoOverlayView.player?.attachObersver(viewLifecycleOwner)
 		  initFloating()
 		  super.onViewCreated(view, savedInstanceState)
 	 }
@@ -76,7 +69,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 private fun callDissmiss(closeReason: CloseReason = CloseReason.Swipe) {
 		  if (!dissmissCalled) {
-					binding.videoOverlayView.player?.playerUiFinalListener?.onDissmiss(
+			   binding.videoOverlayView.player?.playerUiFinalListener?.onDissmiss(
 						 closeReason
 					)
 					dissmissCalled = true
@@ -124,30 +117,14 @@ abstract class FloatingPLayerFragment : Fragment(),
 			   }
 		  })
 	 }
-
-	 override fun onResume() {
-		  super.onResume()
-		  try {
-			   ExoIntent.getPlayerHere(binding.videoOverlayView.player!!)
-		  } catch (e: Exception) {
-			   e.printStackTrace()
-		  }
-	 }
-
-	 override fun onPause() {
-		  ExoIntent.onPause(binding.videoOverlayView.player)
-		  super.onPause()
-	 }
+//	 override fun onPause() {
+//		  ExoIntent.onPause(binding.videoOverlayView.player)
+//		  super.onPause()
+//	 }
 
 	 fun setDetails(fragment: Fragment) {
 		  childFragmentManager.beginTransaction()
 			   .replace(com.appchief.msa.exoplayerawesome.R.id.detailsView, fragment).commit()
 	 }
-
-	 override fun onDestroy() {
-		  ExoIntent.onDestroy()
-		  super.onDestroy()
-	 }
-
 }
 

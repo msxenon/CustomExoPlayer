@@ -58,5 +58,6 @@ dependencies {
     implementation project(path: ':exoplayerawesome')
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
 }

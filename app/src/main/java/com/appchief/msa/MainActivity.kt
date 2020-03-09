@@ -19,11 +19,12 @@ class MainActivity : BaseActivity() {
 		  super.onCreate(savedInstanceState)
 		  setContentView(R.layout.activity_main)
 		  button4?.setOnClickListener {
-			   link = "http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
+			   link =
+					"https://filebin.net/eattau482j78n9t1/final_5e6539f87b31e1001532c66f_625963.mp4?t=v4vxwhov"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
 			   removeIfExist()
 		  }
 		  button3?.setOnClickListener {
-			   link = "http://tv.supercellnetwork.com:1935/nile3/mbc3.stream_360p/playlist.m3u8"
+			   link = "http://appchief.net/bigBunny.mp4"
 			   removeIfExist()
 		  }
 	 }

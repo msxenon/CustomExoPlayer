@@ -16,6 +16,8 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 companion object {
 		  var isFirstVideo = true
 	 }
+
+	 private var snackBar: Snackbar? = null
 	 //	 private var loadingView: View? = null
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		  binding.videoOverlayView.player?.cinematicPlayerViews = CinematicOnce()
@@ -39,7 +41,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   MainActivity.link,
 			   null,
 			   null,
-			   PlayerType.CHANNEL,
+			   PlayerType.MOVIE,
 			   null,
 			   "null", "", "", 10000
 		  )
@@ -47,21 +49,24 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 	 override fun onMessageRecived(msg: String?, state: Int) {
 		  msg?.takeIf { view != null }?.let {
-			   val snack = Snackbar.make(view!!, msg, Snackbar.LENGTH_INDEFINITE)
-			   snack.setAction("Retry") {
-					snack.dismiss()
+			   snackBar = Snackbar.make(view!!, msg, Snackbar.LENGTH_INDEFINITE)
+			   snackBar?.setAction("Retry") {
+					snackBar?.dismiss()
 					initPlayer()
 			   }
-			   snack.show()
+			   snackBar?.show()
 		  }
 
 		  Log.e("main", "$msg $state")
 	 }
 
+	 override fun onDestroy() {
+		  snackBar?.dismiss()
 
-
+		  super.onDestroy()
+	 }
 	 override fun getLastPosition(modelId: NowPlaying?): Long {
-		  return 10000
+		  return 0
 	 }
 
 	 override fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long) {

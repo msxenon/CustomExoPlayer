@@ -34,6 +34,11 @@
                 android:launchMode="singleInstance"
                 android:screenOrientation="sensorLandscape"
                 tools:ignore="LockedOrientationActivity" />
+        <activity android:name="com.appchief.msa.ExpandedControlsActivity" />
+
+        <meta-data
+                android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+                android:value="com.appchief.msa.supercinema.utils.general.casting.CastOptionsProvider" />
     </application>
 
 </manifest>

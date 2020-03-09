@@ -120,6 +120,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   customController?.setAnchorView(this, title, cinematicPlayerViews?.controlLayout)
 			   customController?.updateViews(null)
 			   customController?.show()
+		  } else {
+			   customController?.updateViews(true)
 		  }
 
 		  try {

@@ -280,11 +280,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 private fun videoSize(height: Int, width: Int = 0, respectAspectRatio: Boolean = false) {
 		  val screenHeightPx = Resources.getSystem().displayMetrics.heightPixels
 		  val screenWPx = Resources.getSystem().displayMetrics.widthPixels
-		  val heightRatio = height.toFloat() / screenHeightPx.toFloat()
-		  val realVideoSize = height.toFloat() / heightRatio
+		  val aspectRatio = screenWPx.toFloat() / width.toFloat()
+
 		  val actualHeight = if (respectAspectRatio && width > 0) {
-			   val aspectRatio = width.toFloat() / height.toFloat()
-			   (height / aspectRatio).toInt()
+			   (height * aspectRatio).toInt()
 		  } else
 			   height
 		  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -297,7 +296,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 		  Log.e(
 			   "videoSizeCHanged",
-			   " $height  $respectAspectRatio $actualHeight $screenHeightPx , $screenWPx hr$heightRatio ${realVideoSize.toInt()}"
+			   " $width $height  $respectAspectRatio $aspectRatio $actualHeight $screenHeightPx , $screenWPx }"
 		  )
 		  m.height = min(screenHeightPx.div(2), actualHeight)
 		  layoutParams = m

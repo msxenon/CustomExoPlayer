@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity() {
 			   removeIfExist()
 		  }
 		  button3?.setOnClickListener {
-			   link = "http://appchief.net/bigBunny.mp4"
+			   link =
+					"http://cinema.supercellnetwork.com:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/NxSxsu0xvAzvrqo/,NxSxsu0xvAzvrqo_1080.mp4,NxSxsu0xvAzvrqo_720.mp4,NxSxsu0xvAzvrqo_480.mp4,NxSxsu0xvAzvrqo.srt,.urlset/master.m3u8"//"http://appchief.net/bigBunny.mp4"
 			   movieName = "TigBunny"
 			   poster =
 					"https://kaboompics.com/cache/c/b/2/1/f/cb21f5aca64890d7d13ce9e8387c23c6883e71e9.jpeg"

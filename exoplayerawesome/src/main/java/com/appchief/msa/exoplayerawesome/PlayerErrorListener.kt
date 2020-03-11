@@ -83,6 +83,7 @@ class PlayerEventListener(
 
 	 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
 		  try {
+			   Log.e("PEL", "$playWhenReady $playbackState")
 			   cinemPlayer?.customController?.showLoading(false)
 			   if (playbackState == ExoPlayer.STATE_BUFFERING) {
 					cinemPlayer?.customController?.showLoading(true)
@@ -92,7 +93,7 @@ class PlayerEventListener(
 
 					cinemPlayer?.checkHasSettings()
 			   } else if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
-					cinemPlayer?.seekTo(0)
+					//cinemPlayer?.seekTo(0)
 					if (playWhenReady && cinemPlayer?.forceReplay == true) {
 						 cinemPlayer.start()
 					}

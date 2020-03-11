@@ -67,8 +67,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 //			onResume()
 		  Log.e("TAG", "================================>>>> lifecycle ${player == null} ")
 		  ExoIntent.getPlayerHere(this)
-
-		  start()
+		  //  start()
 		  Log.e("TAG2", "================================>>>> lifecycle ${player == null} ")
 	 }
 
@@ -345,8 +344,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 			   mediaSource =
 					buildMediaSource(Uri.parse(nowPlaying?.videoLink), nowPlaying?.srtLink)
-			   val sp = getLastPos()
-			   val haveStartPosition = sp > 0L
+
 			   initCast()
 
 			   setListeners()
@@ -358,7 +356,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					nowPlaying!!.poster,
 					nowPlaying!!.runtime,
 					isSreaming(),
-					getLastPos()
+					getLastPos("pairinit")
 			   )
 			   playerManager?.addItem(mediaSource, x.second)
 //			   if (mediaSource != null) {
@@ -383,12 +381,12 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  Log.e("CEP", "settings $hasSettings ${hasSettingsListener != null}")
 	 }
 
-	 fun getLastPos(): Long {
+	 fun getLastPos(tag: String): Long {
 		  var res = 0L
 		  playerUiFinalListener?.getLastPosition(nowPlaying)?.let {
 			   res = it
 		  }
-		  Log.e(taag, "getLastPos $nowPlaying $res")
+		  Log.e(taag, "getLastPos $tag $nowPlaying $res")
 		  return res
 	 }
 	 private fun isSreaming(): Boolean {
@@ -426,7 +424,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 override fun onVisibilityChange(visibility: Int) {
-		  Log.e("msdmdsmd", "$visibility $useController ${customController != null}")
+		  Log.e("msdmdsmd vischange", "$visibility $useController ${customController != null}")
 		  controlController(visibility)
 	 }
 
@@ -438,7 +436,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 		  if (reachedEndOfVideo()) {
 			   seekTo(0)
-		  }
+		  } else
+			   seekTo(player?.currentPosition ?: 0)
 		  player?.playWhenReady = canAutoPlay()
 	 }
 
@@ -469,6 +468,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  get() = player?.currentPosition ?: 0
 
 	 override fun seekTo(pos: Long) {
+		  Log.e(taag, "seekto $pos")
 		  player?.seekTo(pos)
 	 }
 
@@ -573,17 +573,12 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   nowPlaying!!.poster,
 			   nowPlaying!!.runtime,
 			   isSreaming(),
-			   getLastPos()
+			   getLastPos("castcurrent")
 		  )
 	 }
 
 	 fun minSize() {
 		  videoSize(100.DpToPx())
-	 }
-
-	 fun getCurrentPos(): Long? {
-		  return playerUiFinalListener?.getLastPosition(nowPlaying) ?: player?.currentPosition
-		  ?: C.TIME_UNSET
 	 }
 }
 

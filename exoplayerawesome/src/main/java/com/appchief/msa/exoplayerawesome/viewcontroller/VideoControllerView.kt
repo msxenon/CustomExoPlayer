@@ -550,6 +550,7 @@ class VideoControllerView : FrameLayout {
 			   }
 			   var pos = player.currentPosition
 			   pos -= 5000 // milliseconds
+			   Log.e("taag", "seekto $pos")
 			   player.seekTo(pos)
 			   setProgress()
 			   show(sDefaultTimeout)
@@ -561,6 +562,7 @@ class VideoControllerView : FrameLayout {
 			   }
 			   var pos = player.currentPosition
 			   pos += 15000 // milliseconds
+			   Log.e("taag", "seekto $pos")
 			   player.seekTo(pos)
 			   setProgress()
 			   show(sDefaultTimeout)

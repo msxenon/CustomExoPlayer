@@ -16,6 +16,7 @@
 package com.appchief.msa.exoplayerawesome
 
 import android.content.Context
+import android.util.Log
 import android.view.KeyEvent
 import com.appchief.msa.exoplayerawesome.viewcontroller.ControllerVisState
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
@@ -87,6 +88,7 @@ internal class PlayerManager(
 //      castPlayer.addItems(mediaItemConverter.toMediaQueueItem(item));
 //    }
 //  }
+	 val tag = "PlayerManager"
 	 fun addItem(
 		  item: MediaSource?,
 		  castCurrent: Array<MediaQueueItem>
@@ -96,8 +98,10 @@ internal class PlayerManager(
 		  concatenatingMediaSource.clear()
 		  concatenatingMediaSource.addMediaSource(item)
 		  if (currentPlayer === castPlayer) {
+			   val pos = localPlayerView.getLastPos("addItem")
+			   Log.e(tag, "$pos addItem")
 			   castPlayer.loadItems(
-					castCurrent, 0, localPlayerView.getCurrentPos() ?: C.TIME_UNSET,
+					castCurrent, 0, pos,
 					REPEAT_MODE_ALL
 			   )
 		  }
@@ -251,7 +255,8 @@ internal class PlayerManager(
 //					.setBackgroundResource(R.drawable.cast_bg)
 		  }
 		  // Player state management.
-		  var playbackPositionMs = localPlayerView.getCurrentPos() ?: C.TIME_UNSET
+		  var playbackPositionMs = localPlayerView.getLastPos("setcurrent")
+		  Log.e(tag, "$playbackPositionMs setcurrentplayerFirst")
 		  var windowIndex = C.INDEX_UNSET
 		  var playWhenReady = false
 		  val previousPlayer = this.currentPlayer
@@ -272,12 +277,18 @@ internal class PlayerManager(
 		  this.currentPlayer = currentPlayer
 		  // Media queue management.
 		  if (currentPlayer === exoPlayer) {
-			   exoPlayer.prepare(concatenatingMediaSource)
+			   val haveStartPosition = playbackPositionMs > 0L
+			   exoPlayer.prepare(concatenatingMediaSource, false, false)
+			   exoPlayer.seekTo(playbackPositionMs)
+			   Log.e(tag, "seekto $playbackPositionMs setcurrentplayerexoo $haveStartPosition")
+
 		  }
 		  // Playback transition.
 		  if (windowIndex != C.INDEX_UNSET) {
-			   setCurrentItem(windowIndex, playbackPositionMs, playWhenReady)
+			   //  setCurrentItem(windowIndex, playbackPositionMs, playWhenReady)
 		  }
+		  Log.e(tag, "$playbackPositionMs setcurrentplayerSecond")
+
 	 }
 
 	 /**
@@ -304,8 +315,9 @@ internal class PlayerManager(
 					Player.REPEAT_MODE_ALL
 			   )
 		  } else {
-			   currentPlayer!!.seekTo(itemIndex, positionMs)
-			   currentPlayer!!.playWhenReady = playWhenReady
+			   // currentPlayer?.seekTo(itemIndex, positionMs)
+			   currentPlayer?.playWhenReady = playWhenReady
+			   Log.e(tag, "$itemIndex $positionMs currentItem")
 		  }
 	 }
 

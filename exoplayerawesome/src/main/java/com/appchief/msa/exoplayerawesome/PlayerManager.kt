@@ -77,9 +77,9 @@ internal class PlayerManager(
 	  *
 	  * @param itemIndex The index of the item to play.
 	  */
-	 fun selectQueueItem(itemIndex: Int) {
-		  setCurrentItem(itemIndex, C.TIME_UNSET, true)
-	 }
+//	 fun selectQueueItem(itemIndex: Int) {
+//		  setCurrentItem(itemIndex, C.TIME_UNSET, true)
+//	 }
 
 	 //  public void addItem(MediaItem item) {
 //    mediaQueue.add(item);
@@ -280,12 +280,15 @@ internal class PlayerManager(
 			   val haveStartPosition = playbackPositionMs > 0L
 			   exoPlayer.prepare(concatenatingMediaSource, false, false)
 			   exoPlayer.seekTo(playbackPositionMs)
-			   Log.e(tag, "seekto $playbackPositionMs setcurrentplayerexoo $haveStartPosition")
+			   Log.e(
+					tag,
+					"seekto $playbackPositionMs setcurrentplayerexoo $haveStartPosition $windowIndex"
+			   )
 
 		  }
 		  // Playback transition.
 		  if (windowIndex != C.INDEX_UNSET) {
-			   //  setCurrentItem(windowIndex, playbackPositionMs, playWhenReady)
+			   setCurrentItem(windowIndex, playbackPositionMs, playWhenReady)
 		  }
 		  Log.e(tag, "$playbackPositionMs setcurrentplayerSecond")
 

@@ -35,7 +35,6 @@ class PlayerEventListener(
 	 }
 
 	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
-
 	 override fun onPlayerError(error: ExoPlaybackException) {
 		  val m = isBehindLiveWindow(error)
 		  Log.e("PlayerEventListener", "err ${error.type} isbehind=$m")
@@ -83,7 +82,7 @@ class PlayerEventListener(
 
 	 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
 		  try {
-			   Log.e("PEL", "$playWhenReady $playbackState")
+			   Log.e("PEL", "$playWhenReady $playbackState ")
 			   cinemPlayer?.customController?.showLoading(false)
 			   if (playbackState == ExoPlayer.STATE_BUFFERING) {
 					cinemPlayer?.customController?.showLoading(true)

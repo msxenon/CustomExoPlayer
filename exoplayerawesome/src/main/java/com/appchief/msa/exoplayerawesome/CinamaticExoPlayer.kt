@@ -207,6 +207,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   return
 		  if (playerUiFinalListener == null)
 			   throw Exception("playerUiFinalListener not setted")
+		  lastPos_ = 0
 		  savePlayData()
 		  playerManager?.release()
 		  nowPlaying =
@@ -381,11 +382,15 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  Log.e("CEP", "settings $hasSettings ${hasSettingsListener != null}")
 	 }
 
+	 private var lastPos_ = 0L
 	 fun getLastPos(tag: String): Long {
+
 		  var res = 0L
-		  playerUiFinalListener?.getLastPosition(nowPlaying)?.let {
-			   res = it
-		  }
+		  if (lastPos_ == 0L)
+			   playerUiFinalListener?.getLastPosition(nowPlaying)?.let {
+					res = it
+					lastPos_ = it
+			   }
 		  Log.e(taag, "getLastPos $tag $nowPlaying $res")
 		  return res
 	 }
@@ -438,6 +443,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   seekTo(0)
 		  } else
 			   seekTo(player?.currentPosition ?: 0)
+
 		  player?.playWhenReady = canAutoPlay()
 	 }
 

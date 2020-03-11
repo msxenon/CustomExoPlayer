@@ -279,7 +279,7 @@ internal class PlayerManager(
 		  if (currentPlayer === exoPlayer) {
 			   val haveStartPosition = playbackPositionMs > 0L
 			   exoPlayer.prepare(concatenatingMediaSource, false, false)
-			   exoPlayer.seekTo(-1, playbackPositionMs)
+			   exoPlayer.seekTo(playbackPositionMs)
 			   Log.e(
 					tag,
 					"seekto $playbackPositionMs setcurrentplayerexoo $haveStartPosition $windowIndex cwi${exoPlayer.currentWindowIndex}"

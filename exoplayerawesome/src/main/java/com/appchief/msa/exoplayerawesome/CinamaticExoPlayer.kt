@@ -110,6 +110,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					player = null
 					removeAllViews()
 					ExoIntent.reInit()
+			   } else {
+					pause()
 			   }
 		  } catch (e: Exception) {
 			   e.printStackTrace()
@@ -207,6 +209,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  if (playerUiFinalListener == null)
 			   throw Exception("playerUiFinalListener not setted")
 		  savePlayData()
+		  playerManager?.release()
 		  nowPlaying =
 			   NowPlaying(
 					movieId, episodeId, playerType, poster,

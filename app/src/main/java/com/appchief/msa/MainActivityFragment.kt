@@ -39,7 +39,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 		  isFirstVideo = !isFirstVideo
 	 }
 
-	 private fun initPlayer() {
+	 fun initPlayer() {
 
 		  binding.videoOverlayView.player?.playLinkNSub(
 			   MainActivity.link,

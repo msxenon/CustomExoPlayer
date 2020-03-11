@@ -23,7 +23,9 @@ class DetailsFrag : Fragment() {
 			   MainActivity.movieName = "dede"
 			   MainActivity.link =
 					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
-			   (activity as MainActivity).removeIfExist()
+			   val m =
+					activity?.supportFragmentManager?.findFragmentByTag("ff") as? MainActivityFragment
+			   m!!.initPlayer()
 		  }
 	 }
 }

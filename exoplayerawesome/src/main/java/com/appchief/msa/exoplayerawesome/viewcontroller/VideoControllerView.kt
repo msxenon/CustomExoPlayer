@@ -8,15 +8,14 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import android.view.View.OnClickListener
-import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.SeekBar
+import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.TextView
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
 import com.appchief.msa.exoplayerawesome.ExoIntent
 import com.appchief.msa.exoplayerawesome.R
 import com.appchief.msa.exoplayerawesome.SettingsListener
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.Player
 import com.google.android.gms.cast.framework.CastButtonFactory
 import kotlinx.android.synthetic.main.controllerui.view.*
 import java.lang.ref.WeakReference
@@ -53,10 +52,20 @@ import kotlin.math.max
  * with the boolean set to false
  *
  */
-class VideoControllerView : FrameLayout {
+enum class ControllerVisState {
 
+	 Normal, Cast
+}
+class VideoControllerView : FrameLayout {
+	 var currentState = ControllerVisState.Normal
+		  set(value) {
+			   field = value
+			   Log.e("VCV", "viewState Changed $field")
+			   controlVis()
+		  }
 	 private var mPlayer: CinamaticExoPlayer? =
 		  null
+	 lateinit var player: Player
 	 private var mContext: Context
 	 private var mAnchor: ViewGroup? = null
 	 private var mRoot: View? = null
@@ -70,17 +79,13 @@ class VideoControllerView : FrameLayout {
 	 private var mDragging = false
 	 private var mUseFastForward: Boolean
 	 private var mFromXml = false
-	 private var mListenersSet = false
-	 private var mNextListener: OnClickListener? = null
-	 private var mPrevListener: OnClickListener? = null
+
 	 var mFormatBuilder: StringBuilder? = null
 	 var mFormatter: Formatter? = null
 	 private var fullscreenBtn: ImageButton? = null
 	 private var mPauseButton: ImageButton? = null
 	 private var mFfwdButton: ImageButton? = null
 	 private var mRewButton: ImageButton? = null
-	 private var mNextButton: ImageButton? = null
-	 private var mPrevButton: ImageButton? = null
 	 private val mHandler: Handler =
 		  MessageHandler(this)
 
@@ -111,33 +116,40 @@ class VideoControllerView : FrameLayout {
 	 public override fun onFinishInflate() {
 		  super.onFinishInflate()
 		  if (mRoot != null) initControllerView(mRoot!!)
+
 	 }
 
 	 fun setMediaPlayer(player: CinamaticExoPlayer?) {
 		  mPlayer = player
+		  this.player = player?.player!!
 	 }
 
+	 private var moviePoster: ImageView? = null
 	 private fun controlVis() {
-		  Log.e("VCV", "controlVis ${mPlayer?.canSeekBackward()}")
-		  if (mPlayer?.canSeekForward() != true) {
-			   mProgress?.visibility = View.GONE
-			   mEndTime?.visibility = View.GONE
-			   mFfwdButton?.visibility = View.GONE
-			   mRewButton?.visibility = View.GONE
-			   mCurrentTime?.visibility = View.GONE
+		  val vis =
+			   (currentState == ControllerVisState.Normal && mPlayer?.canSeekForward() == true).controlVisibility()
+		  mProgress?.visibility = vis
+		  mFfwdButton?.visibility = vis
+		  mRewButton?.visibility = vis
+		  mCurrentTime?.visibility = vis
+		  mEndTime?.visibility = vis
+		  fullscreenBtn?.visibility = vis
+		  moviePoster?.visibility = (currentState == ControllerVisState.Cast).controlVisibility()
+		  if (currentState == ControllerVisState.Cast) {
+			   mPlayer?.playerUiFinalListener?.setMoviePoster(moviePoster)
 		  }
-		  if (mPlayer?.hasNext() != true) {
-			   mNextButton?.visibility = View.GONE
-		  }
-		  if (mPlayer?.isFirstItem() != false) {
-			   mPrevButton?.visibility = View.GONE
-		  }
+		  Log.e("VCV", "controlVis ${mPlayer?.canSeekBackward()} $vis $currentState")
+
 		  setProgress()
 		  updateDownBtn()
+		  mPauseButton?.visibility =
+			   (player.playbackState == ExoPlayer.STATE_BUFFERING).invertedControlVisibility()
+
 	 }
 
 	 private fun settingsVisiability(boolean: Boolean) {
-		  val x = boolean//(mPlayer?.hasSettings == true)
+		  val x =
+			   (boolean || currentState == ControllerVisState.Cast)//(mPlayer?.hasSettings == true)
 		  mVideoSettings?.visibility = x.controlVisibility()
 		  Log.e("VCV", " settingsVisiability $x")
 	 }
@@ -154,7 +166,6 @@ class VideoControllerView : FrameLayout {
 			   ViewGroup.LayoutParams.MATCH_PARENT,
 			   ViewGroup.LayoutParams.MATCH_PARENT
 		  )
-
 		  removeAllViews()
 
 		  val v = makeControllerView(controllerLayout)
@@ -182,35 +193,28 @@ class VideoControllerView : FrameLayout {
 		  )
 
 		  initControllerView(mRoot!!)
-		  try {
-			   CastButtonFactory.setUpMediaRouteButton(context, mRoot?.exo_cast)
-		  } catch (e: Exception) {
-			   e.printStackTrace()
-		  }
+		  CastButtonFactory.setUpMediaRouteButton(context, mRoot!!.exo_cast)
+
 		  return mRoot
 	 }
 
 	 private fun initControllerView(v: View) {
+		  moviePoster = v.findViewById(R.id.bg_iv)
 		  mPauseButton = v.findViewById(R.id.exo_play_pause) as? ImageButton
 		  if (mPauseButton != null) {
 			   mPauseButton?.requestFocus()
 			   mPauseButton?.setOnClickListener(mPauseListener)
 		  }
-		  mNextButton = v.findViewById(R.id.exo_next)
-		  mPrevButton = v.findViewById(R.id.exo_prev)
+
 		  mFfwdButton = v.findViewById<View>(R.id.exo_ffwd) as? ImageButton
 		  if (mFfwdButton != null) {
 			   mFfwdButton?.setOnClickListener(mFfwdListener)
-			   if (!mFromXml) {
-					mFfwdButton?.visibility = if (mUseFastForward) View.VISIBLE else View.GONE
-			   }
+
 		  }
 		  mRewButton = v.findViewById<View>(R.id.exo_rew) as? ImageButton
 		  if (mRewButton != null) {
 			   mRewButton?.setOnClickListener(mRewListener)
-			   if (!mFromXml) {
-					mRewButton?.visibility = if (mUseFastForward) View.VISIBLE else View.GONE
-			   }
+
 		  }
 
 		  fullscreenBtn = v.findViewById(R.id.toggle_fullscreen)
@@ -236,7 +240,7 @@ class VideoControllerView : FrameLayout {
 		  mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
 		  mVideoSettings = v.findViewById(R.id.video_settings)
 		  mVideoSettings?.setOnClickListener {
-			   mPlayer?.playerUiFinalListener?.showSettings()
+			   mPlayer?.playerUiFinalListener?.showSettings(currentState == ControllerVisState.Cast)
 		  }
 		  mPlayer?.hasSettingsListener = object : SettingsListener {
 			   override fun hasSettings(has: Boolean) {
@@ -292,9 +296,8 @@ class VideoControllerView : FrameLayout {
 					ViewGroup.LayoutParams.MATCH_PARENT,
 					Gravity.BOTTOM
 			   )
-
-			   mAnchor?.addView(this, 1, tlp)
-
+			   val lastIndex = mAnchor?.childCount ?: 0
+			   mAnchor?.addView(this, lastIndex, tlp)
 			   isShowing = true
 		  }
 		  updatePausePlay()
@@ -349,8 +352,8 @@ class VideoControllerView : FrameLayout {
 		  if (mPlayer == null || mDragging) {
 			   return 0
 		  }
-		  val position = mPlayer?.currentPosition ?: 0
-		  val duration = mPlayer?.duration ?: 0
+		  val position = player.currentPosition
+		  val duration = player.duration
 		  if (mProgress != null) {
 			   if (duration > 0) { // use long to avoid overflow
 					val pos = 1000L * position / duration
@@ -391,7 +394,7 @@ class VideoControllerView : FrameLayout {
 			   }
 			   return true
 		  } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
-			   if (uniqueDown && mPlayer?.isPlaying == true) {
+			   if (uniqueDown && player.isPlaying == true) {
 					mPlayer?.start()
 					updatePausePlay()
 					show(sDefaultTimeout)
@@ -400,7 +403,7 @@ class VideoControllerView : FrameLayout {
 		  } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
 			   || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE
 		  ) {
-			   if (uniqueDown && mPlayer?.isPlaying == true) {
+			   if (uniqueDown && player.isPlaying == true) {
 					ExoIntent.paused = true
 					mPlayer?.pause()
 					updatePausePlay()
@@ -436,7 +439,7 @@ class VideoControllerView : FrameLayout {
 		  if (mRoot == null || mPauseButton == null || mPlayer == null) {
 			   return
 		  }
-		  if (mPlayer?.isPlaying == true) {
+		  if (player.isPlaying == true) {
 			   mPauseButton?.setImageResource(com.appchief.msa.exoplayerawesome.R.drawable.exo_controls_pause)
 		  } else {
 			   mPauseButton?.setImageResource(com.appchief.msa.exoplayerawesome.R.drawable.exo_icon_play)
@@ -454,7 +457,9 @@ class VideoControllerView : FrameLayout {
 
 	 private fun updateDownBtn() {
 		  mDownPlayer?.visibility =
-			   if (!ExoIntent.isInFullScreen && mPlayer?.minimizeAble() == true) View.VISIBLE else View.GONE
+			   (!ExoIntent.isInFullScreen && mPlayer?.minimizeAble() == true).controlVisibility(
+					currentState == ControllerVisState.Normal
+			   )
 	 }
 
 	 private fun doPauseResume() {
@@ -462,12 +467,12 @@ class VideoControllerView : FrameLayout {
 			   if (mPlayer == null) {
 					return
 			   }
-			   if (mPlayer?.isPlaying == true) {
+			   if (player.isPlaying == true) {
 					ExoIntent.paused = true
-					mPlayer?.pause()
+					player.playWhenReady = false
 			   } else {
 					ExoIntent.paused = false
-					mPlayer?.start()
+					player.playWhenReady = true
 			   }
 			   updatePausePlay()
 		  } catch (e: Exception) {
@@ -500,9 +505,9 @@ class VideoControllerView : FrameLayout {
 						 // the progress bar's position.
 						 return
 					}
-					val duration = mPlayer?.duration ?: 0
+					val duration = player.duration
 					val newposition = duration * progress / 1000L
-					mPlayer?.seekTo(newposition)
+					player.seekTo(newposition)
 					if (mCurrentTime != null) mCurrentTime?.text = stringForTime(newposition)
 			   } catch (e: Exception) {
 					e.printStackTrace()
@@ -525,8 +530,6 @@ class VideoControllerView : FrameLayout {
 	 fun updateViews(isLoading: Boolean?) {
 		  updatePausePlay()
 		  controlVis()
-		  if (isLoading != null)
-			   mPauseButton?.visibility = isLoading.invertedControlVisibility()
 	 }
 
 	 fun toggleShowHide() {
@@ -536,25 +539,29 @@ class VideoControllerView : FrameLayout {
 			   show()
 	 }
 
+	 fun showLoading(b: Boolean) {
+		  mPlayer?.loadingView()?.visibility = b.controlVisibility()
+	 }
+
 	 private val mRewListener =
 		  OnClickListener {
-			   if (mPlayer == null) {
+			   if (player == null) {
 					return@OnClickListener
 			   }
-			   var pos = mPlayer?.currentPosition ?: 0
+			   var pos = player.currentPosition
 			   pos -= 5000 // milliseconds
-			   mPlayer?.seekTo(pos)
+			   player.seekTo(pos)
 			   setProgress()
 			   show(sDefaultTimeout)
 		  }
 	 private val mFfwdListener =
 		  OnClickListener {
-			   if (mPlayer == null) {
+			   if (player == null) {
 					return@OnClickListener
 			   }
-			   var pos = mPlayer?.currentPosition ?: 0
+			   var pos = player.currentPosition
 			   pos += 15000 // milliseconds
-			   mPlayer?.seekTo(pos)
+			   player.seekTo(pos)
 			   setProgress()
 			   show(sDefaultTimeout)
 		  }
@@ -575,7 +582,7 @@ class VideoControllerView : FrameLayout {
 					FADE_OUT -> view.hide()
 					SHOW_PROGRESS -> {
 						 pos = view.setProgress()
-						 if (!view.mDragging && view.isShowing && view.mPlayer?.isPlaying == true) {
+						 if (!view.mDragging && view.isShowing && view.player.isPlaying == true) {
 							  msg = obtainMessage(SHOW_PROGRESS)
 							  sendMessageDelayed(msg, 1000 - (pos % 1000).toLong())
 						 }
@@ -592,10 +599,13 @@ class VideoControllerView : FrameLayout {
 	 }
 }
 
-private fun Boolean?.controlVisibility(): Int {
-	 return if (this == true) View.VISIBLE else View.GONE
+fun Boolean?.controlVisibility(
+	 anotherBool: Boolean = true,
+	 currentState: ControllerVisState? = null
+): Int {
+	 return if (this == true && (anotherBool || currentState == null || currentState == ControllerVisState.Normal)) View.VISIBLE else View.GONE
 }
 
-private fun Boolean?.invertedControlVisibility(): Int {
-	 return if (this == false) View.VISIBLE else View.GONE
+fun Boolean?.invertedControlVisibility(normalBoolean: Boolean = false): Int {
+	 return if (this == false || normalBoolean) View.VISIBLE else View.GONE
 }

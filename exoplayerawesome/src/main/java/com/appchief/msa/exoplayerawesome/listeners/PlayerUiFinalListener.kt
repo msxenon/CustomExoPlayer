@@ -1,5 +1,7 @@
 package com.appchief.msa.exoplayerawesome.listeners
 
+import android.widget.ImageView
+
 interface CineamaticPlayerScreen {
 	 fun onMessageRecived(msg: String?, state: Int)
 	 fun getLastPosition(modelId: NowPlaying?): Long
@@ -10,8 +12,9 @@ interface CineamaticPlayerScreen {
 	 fun isFirstItem(): Boolean
 	 fun isPlayList(): Boolean
 	 fun setScreenOrentation(inFullScreenMode: Boolean)
-	 fun isConnectedToCast(): Boolean
-	 fun showSettings()
+	 fun showSettings(forCasting: Boolean)
+	 fun showCustomUi(show: Boolean)
+	 fun setMoviePoster(moviePoster: ImageView?)
 }
 
 interface CinematicPlayerViews {

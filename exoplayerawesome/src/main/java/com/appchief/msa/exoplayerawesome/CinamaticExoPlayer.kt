@@ -1,6 +1,7 @@
 package com.appchief.msa.exoplayerawesome
 
 import android.content.Context
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.transition.ChangeBounds
@@ -14,10 +15,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.appchief.msa.CastApp
 import com.appchief.msa.exoplayerawesome.ExoIntent.usedInistances
 import com.appchief.msa.exoplayerawesome.listeners.*
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.SingleSampleMediaSource
@@ -28,7 +31,11 @@ import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.MimeTypes
+import com.google.android.exoplayer2.video.VideoListener
+import com.google.android.gms.cast.MediaQueueItem
+import com.google.android.gms.cast.framework.CastContext
 import kotlin.math.abs
+import kotlin.math.min
 
 class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.VisibilityListener,
 	 MediaPlayerControl, LifecycleObserver {
@@ -65,6 +72,20 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  Log.e("TAG2", "================================>>>> lifecycle ${player == null} ")
 	 }
 
+	 private var castExoPlayer: CastPlayer? = null
+	 private var playerManager: PlayerManager? = null
+	 fun initCast() {
+//		  castExoPlayer = CastPlayer(this.getCastContext())
+//		  castExoPlayer?.addListener(plistener)
+//		  castExoPlayer?.setSessionAvailabilityListener(this)
+		  playerManager = PlayerManager(object : PlayerManager.Listener {
+			   override fun onUnsupportedTrack(trackType: Int) {
+			   }
+
+			   override fun onQueuePositionChanged(previousIndex: Int, newIndex: Int) {
+			   }
+		  }, this, customController!!, context, this.getCastContext(), trackSelector)
+	 }
 	 @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
 	 fun stop() {
 		  pause()
@@ -109,7 +130,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 )
 
 	 private var loadingV: View? = null
-	 private fun loadingView(): View? {
+	 fun loadingView(): View? {
 		  return loadingV//playerUiFinalListener?.loadingView()
 	 }
 
@@ -148,7 +169,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   customController?.hide()
 	 }
 
-	 private var forceReplay = true
+	 var forceReplay = true
 	 var nowPlaying: NowPlaying? = null
 	 var mediaSource: MediaSource? = null
 
@@ -166,7 +187,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 		  return@lazy x
 	 }
-	 private var customController: VideoControllerView? = null
+	 var customController: VideoControllerView? = null
 	 var playerUiFinalListener: CineamaticPlayerScreen? = null
 	 var hasSettingsListener:SettingsListener? = null
 
@@ -191,11 +212,11 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					movieId, episodeId, playerType, poster,
 					videoLink.encodeUrl(), geners, title, runtime, SrtLink?.encodeUrl()
 			   )
-		  if (playerUiFinalListener?.isConnectedToCast() != true) {
+		  // if (playerUiFinalListener?.isConnectedToCast() != true) {
 			   initializePlayer()
-		  } else {
-			   castCurrent()
-		  }
+//		  } else {
+//			   castCurrent()
+//		  }
 
 	 }
 
@@ -220,58 +241,63 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   playWhenReady: Boolean,
 			   playbackState: Int
 		  ) {
-			   try {
-					Log.e(
-						 taag,
-						 "onPlayerStateChanged ps$playbackState $playWhenReady ${loadingView() != null}"
-					)
-					loadingView()?.visibility = View.GONE
-					if (playbackState == ExoPlayer.STATE_BUFFERING) {
-						 loadingView()?.visibility = View.VISIBLE
-						 this@CinamaticExoPlayer.hideController()
-					} else if (playbackState == ExoPlayer.STATE_READY) {
-						 if (isFloatingPlayer) {
-							  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-								   TransitionManager.beginDelayedTransition(
-										rootView as ViewGroup, TransitionSet()
-											 .addTransition(ChangeBounds())
-								   )
-							  }
-							  val m = layoutParams
-							  m.height = FrameLayout.LayoutParams.WRAP_CONTENT
-							  layoutParams = m
-						 }
-						 forceReplay = false
-
-						 checkHasSettings()
-					} else if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
-						 if (playWhenReady && forceReplay) {
-							  start()
-						 }
-					}
-					customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
-			   } catch (e: Exception) {
-					e.printStackTrace()
-			   }
 		  }
 	 }
-
+	 val eventListener = PlayerEventListener(
+		  context,
+		  this,
+		  playerUiFinalListener
+	 )
 	 fun setListeners() {
 		  setControllerVisibilityListener(this)
 		  setErrorMessageProvider(PlayerErrorMessageProvider())
 		  setPlaybackPreparer(this)
 		  player?.addListener(plistener)
 		  player?.addListener(
-			   PlayerEventListener(
-					context,
-					this,
-					playerUiFinalListener
-			   )
+			   eventListener
 		  )
 		  controllerViiablilityListener =
 			   PlayerControlView.VisibilityListener { visibility ->
 					controlController(visibility)
 			   }
+		  player?.videoComponent?.addVideoListener(object : VideoListener {
+			   override fun onVideoSizeChanged(
+					width: Int,
+					height: Int,
+					unappliedRotationDegrees: Int,
+					pixelWidthHeightRatio: Float
+			   ) {
+					if (isFloatingPlayer) {
+						 videoSize(height, width, true)
+					}
+			   }
+		  })
+	 }
+
+	 private fun videoSize(height: Int, width: Int = 0, respectAspectRatio: Boolean = false) {
+		  val screenHeightPx = Resources.getSystem().displayMetrics.heightPixels
+		  val screenWPx = Resources.getSystem().displayMetrics.widthPixels
+		  val heightRatio = height.toFloat() / screenHeightPx.toFloat()
+		  val realVideoSize = height.toFloat() / heightRatio
+		  val actualHeight = if (respectAspectRatio && width > 0) {
+			   val aspectRatio = width.toFloat() / height.toFloat()
+			   (height / aspectRatio).toInt()
+		  } else
+			   height
+		  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			   TransitionManager.beginDelayedTransition(
+					rootView as ViewGroup, TransitionSet()
+						 .addTransition(ChangeBounds())
+			   )
+		  }
+		  val m = layoutParams
+
+		  Log.e(
+			   "videoSizeCHanged",
+			   " $height  $respectAspectRatio $actualHeight $screenHeightPx , $screenWPx hr$heightRatio ${realVideoSize.toInt()}"
+		  )
+		  m.height = min(screenHeightPx.div(2), actualHeight)
+		  layoutParams = m
 	 }
 
 	 fun canAutoPlay(): Boolean {
@@ -319,11 +345,24 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					buildMediaSource(Uri.parse(nowPlaying?.videoLink), nowPlaying?.srtLink)
 			   val sp = getLastPos()
 			   val haveStartPosition = sp > 0L
+			   initCast()
+
 			   setListeners()
-			   if (mediaSource != null) {
-					(player as ExoPlayer).prepare(mediaSource!!, !haveStartPosition, false)
-					player?.seekTo(sp)
-			   }
+			   val x = CastUtil.castThisMI(
+					context,
+					nowPlaying?.title,
+					nowPlaying?.videoLink,
+					nowPlaying!!.geners,
+					nowPlaying!!.poster,
+					nowPlaying!!.runtime,
+					isSreaming(),
+					getLastPos()
+			   )
+			   playerManager?.addItem(mediaSource, x.second)
+//			   if (mediaSource != null) {
+//					(player as ExoPlayer).prepare(mediaSource!!, !haveStartPosition, false)
+//					player?.seekTo(sp)
+//			   }
 			   return true
 		  } catch (e: Exception) {
 			   playerUiFinalListener?.onMessageRecived(
@@ -334,7 +373,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  }
 		  return null
 	 }
-	 private fun checkHasSettings() {
+
+	 fun checkHasSettings() {
 		 val m =  SettingsUtil.willHaveContent(trackSelector)
 		  hasSettings = m
 		  hasSettingsListener?.hasSettings(m)
@@ -401,7 +441,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 override fun pause() {
-		  player?.playWhenReady = false
+		  if (!context.isCastConnected())
+			   player?.playWhenReady = false
 	 }
 
 	 override fun onPause() {
@@ -508,23 +549,50 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  return false
 	 }
 
-	 fun castCurrent() {
-		  if (nowPlaying != null) {
-			   CastUtil.castThis(
-					context,
-					nowPlaying?.title,
-					nowPlaying?.videoLink,
-					nowPlaying!!.geners,
-					nowPlaying!!.poster,
-					nowPlaying!!.runtime,
-					isSreaming(),
-					getLastPos()
-			   )
-			   playerUiFinalListener?.onDissmiss(CloseReason.Casting)
-		  }
+	 //	 fun castCurrentMI(): MediaItem {
+//		  return  CastUtil.castThisMI(
+//			   context,
+//			   nowPlaying?.title,
+//			   nowPlaying?.videoLink,
+//			   nowPlaying!!.geners,
+//			   nowPlaying!!.poster,
+//			   nowPlaying!!.runtime,
+//			   isSreaming(),
+//			   getLastPos()
+//		  )
+//
+//	 }
+	 fun castCurrent(): Array<MediaQueueItem> {
+		  return CastUtil.castThis(
+			   context,
+			   nowPlaying?.title,
+			   nowPlaying?.videoLink,
+			   nowPlaying!!.geners,
+			   nowPlaying!!.poster,
+			   nowPlaying!!.runtime,
+			   isSreaming(),
+			   getLastPos()
+		  )
+	 }
+
+	 fun minSize() {
+		  videoSize(100.DpToPx())
 	 }
 }
 
+fun Int.DpToPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+private fun CinamaticExoPlayer.getCastContext(): CastContext {
+	 return (this.context.applicationContext as CastApp).mCastContext
+}
+
+private fun CinamaticExoPlayer.attachCastListener() {
+	 // (this.context.applicationContext as CastApp).listeners.add(this)
+}
+
+private fun Context.isCastConnected(): Boolean {
+	 return (this.applicationContext as CastApp).isCastConnected()
+}
 fun CinamaticExoPlayer.copyFrom(oldCinamaticExoPlayer: CinamaticExoPlayer) {
 	 nowPlaying = oldCinamaticExoPlayer.nowPlaying
 	 cinematicPlayerViews = oldCinamaticExoPlayer.cinematicPlayerViews

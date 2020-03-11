@@ -22,6 +22,7 @@
                     android:alpha="0"
                     motion:framePosition="100"
                     motion:motionTarget="@id/detailsView" />
+
         </KeyFrameSet>
     </Transition>
     <Transition
@@ -81,8 +82,8 @@
                 motion:layout_constraintEnd_toEndOf="@id/motionInteractView"
                 motion:layout_constraintStart_toStartOf="@id/motionInteractView"
                 motion:layout_constraintTop_toBottomOf="@id/motionInteractView"
-                android:visibility="visible"
                 motion:layout_constraintVertical_bias="0.0" />
+
 
         <!--        <Constraint android:id="@id/playerView">-->
         <!--            <PropertySet motion:visibilityMode="ignore" android:alpha="1" />-->
@@ -115,7 +116,6 @@
                 android:visibility="visible"
                 motion:layout_constraintVertical_bias="0.0" />
 
-
     </ConstraintSet>
     <ConstraintSet android:id="@+id/finish_left">
 
@@ -141,29 +141,5 @@
 
 
     </ConstraintSet>
-    <ConstraintSet android:id="@+id/fullScreen">
 
-        <Constraint
-                android:id="@id/motionInteractView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_margin="0dp"
-                motion:layout_constraintBottom_toBottomOf="parent"
-                motion:layout_constraintEnd_toEndOf="parent"
-                motion:layout_constraintStart_toStartOf="parent"
-                motion:layout_constraintTop_toTopOf="parent" />
-
-
-        <Constraint
-                android:id="@id/detailsView"
-                android:layout_width="0dp"
-                android:layout_height="0px"
-                android:visibility="gone"
-                motion:layout_constraintEnd_toEndOf="@id/motionInteractView"
-                motion:layout_constraintStart_toStartOf="@id/motionInteractView"
-                motion:layout_constraintTop_toBottomOf="@id/motionInteractView"
-                motion:layout_constraintVertical_bias="0.0" />
-
-
-    </ConstraintSet>
 </MotionScene>

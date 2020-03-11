@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.appchief.msa.awesomeplayer.R
+import kotlinx.android.synthetic.main.details_view.*
 
 class DetailsFrag : Fragment() {
 	 override fun onCreateView(
@@ -14,5 +15,15 @@ class DetailsFrag : Fragment() {
 		  savedInstanceState: Bundle?
 	 ): View? {
 		  return inflater.inflate(R.layout.details_view, container, false)
+	 }
+
+	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		  super.onViewCreated(view, savedInstanceState)
+		  button2?.setOnClickListener {
+			   MainActivity.movieName = "dede"
+			   MainActivity.link =
+					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
+			   (activity as MainActivity).removeIfExist()
+		  }
 	 }
 }

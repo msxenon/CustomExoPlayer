@@ -36,7 +36,7 @@ class VideoOverlayView @JvmOverloads constructor(
 		  super.onFinishInflate()
 		  //LayoutInflater.from(context).inflate(R.layout.layout_detail, this, false) as MotionLayout
 		  if (motionLayout == null || player == null) {
-			   removeAllViews()
+			   //   (rootView as ViewGroup) .removeAllViews()
 			   motionLayout = AppchiefFloatingPlayerBinding.inflate(LayoutInflater.from(context))
 					.containerMotionLayout
 			   addView(motionLayout)
@@ -44,7 +44,7 @@ class VideoOverlayView @JvmOverloads constructor(
 					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.playerView)
 			   playerContainer =
 					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.motionInteractView)
-			   //   player = playerView//motionLayout?.findViewById(R.id.playerView)
+
 		  }
 	 }
 
@@ -116,7 +116,7 @@ class VideoOverlayView @JvmOverloads constructor(
 								   val endX = ev.x
 								   val endY = ev.y
 								   if (isClick(startX!!, endX, startY!!, endY)) {
-										if (motionLayout!!.currentState == motionLayout!!.startState || motionLayout!!.currentState == com.appchief.msa.exoplayerawesome.R.id.fullScreen) {
+										if (motionLayout!!.currentState == motionLayout!!.startState) {
 											 Log.e("VVO", "dispatchTouchEvent preform pte ")
 											 player!!.performClick()
 										}

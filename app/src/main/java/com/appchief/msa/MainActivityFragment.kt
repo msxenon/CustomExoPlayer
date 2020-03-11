@@ -1,8 +1,11 @@
 package com.appchief.msa
 
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
 import com.appchief.msa.floating_player.FloatingPLayerFragment
@@ -37,13 +40,14 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 private fun initPlayer() {
+
 		  binding.videoOverlayView.player?.playLinkNSub(
 			   MainActivity.link,
 			   null,
 			   null,
 			   PlayerType.MOVIE,
-			   null,
-			   "null", "", "", 10000
+			   "https://mkvtoolnix.download/samples/vsshort-en.srt",
+			   MainActivity.poster, "Action", MainActivity.movieName, 10000
 		  )
 	 }
 
@@ -88,12 +92,21 @@ class MainActivityFragment : FloatingPLayerFragment() {
 		  return false
 	 }
 
-	 override fun isConnectedToCast(): Boolean {
-		  return false
+	 override fun showSettings(forCasting: Boolean) {
+		  Log.e("smdd", "showsettttt ${binding.videoOverlayView.player != null}")
+		  if (!forCasting) {
+			   TrackSelectionDialog.createForTrackSelector(childFragmentManager,
+					activity,
+					binding.videoOverlayView.player!!.trackSelector,
+					DialogInterface.OnDismissListener { })
+		  } else {
+			   activity?.startActivity(Intent(activity, ExpandedControlsActivity::class.java))
+		  }
 	 }
 
-	 override fun showSettings() {
-		  binding.videoOverlayView.player?.trackSelector
-		  Log.e("smdd", "showsettttt")
+	 override fun setMoviePoster(moviePoster: ImageView?) {
+//		  val url = URL(binding.videoOverlayView.player?.nowPlaying?.poster)
+//		 val x =  BitmapFactory.decodeStream(url.openConnection().getInputStream())
+//		   moviePoster?.setImageBitmap(x)
 	 }
 }

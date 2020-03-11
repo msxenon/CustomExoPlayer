@@ -1,24 +1,39 @@
 package com.appchief.msa
 
-import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
+import android.app.Application
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.cast.framework.*
 
-abstract class BaseActivity : AppCompatActivity() {
+interface CastListener {
+	 fun isCastConnected(isConnected: Boolean)
+	 fun isCastAvailable(isAvailable: Boolean)
+}
+
+abstract class CastApp : Application() {
 	 init {
 		  AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 	 }
 
-	 abstract fun isCastConnected(isConnected: Boolean)
-
-	 abstract fun isCastAvailable(isAvailable: Boolean)
-	 private val mCastContext: CastContext by lazy { CastContext.getSharedInstance(this) }
+	 val listeners = mutableListOf<CastListener>()
+	 val mCastContext: CastContext by lazy { CastContext.getSharedInstance(this) }
 	 private var mCastSession: CastSession? = null
-	 private val mSessionManagerListener = object : SessionManagerListener<CastSession> {
+	 override fun onCreate() {
+		  super.onCreate()
+		  try {
+			   if (mCastSession == null) {
+					mCastSession = CastContext.getSharedInstance(this).sessionManager
+						 .currentCastSession
+			   }
+			   mCastContext.sessionManager.addSessionManagerListener(
+					mSessionManagerListener, CastSession::class.java
+			   )
+			   mCastContext.addCastStateListener(castStateListener)
+		  } catch (e: Exception) {
+		  }
+	 }
+
+	 val mSessionManagerListener = object : SessionManagerListener<CastSession> {
 		  override fun onSessionStarted(p0: CastSession?, p1: String?) {
 			   Log.e("BaseActivity", "onSessionStarted  ")
 			   isCastConnected(true)
@@ -66,23 +81,15 @@ abstract class BaseActivity : AppCompatActivity() {
 		  }
 	 }
 
+	 fun isCastConnected(boolean: Boolean) {
+		  listeners.map { it.isCastConnected(boolean) }
+	 }
 	 fun isCastConnected(): Boolean {
 		  return (mCastSession != null && mCastSession!!.isConnected)
 	 }
 
-	 @SuppressLint("SourceLockedOrientationActivity")
-	 override fun onBackPressed() {
-		  val orientation = this.resources.configuration.orientation
-		  if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-			   // code for portrait mode
-			   super.onBackPressed()
-		  } else {
-			   // code for landscape mode
-			   requestedOrientation =
-					ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-		  }
-	 }
+
 
 	 private val castStateListener =
-		  CastStateListener { p0 -> isCastAvailable(p0 != CastState.NO_DEVICES_AVAILABLE) }
+		  CastStateListener { p0 -> listeners.map { it.isCastAvailable(p0 != CastState.NO_DEVICES_AVAILABLE) } }
 }

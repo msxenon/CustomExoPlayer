@@ -1,43 +1,77 @@
 package com.appchief.msa
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.appchief.msa.awesomeplayer.R
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 
-class MainActivity : BaseActivity() {
+class MainActivity : AppCompatActivity() {
 	 companion object {
-		  var link = "http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
-	 }
-	 override fun isCastConnected(isConnected: Boolean) {
+		  var link = ""
+		  var poster = ""
+		  var movieName = ""
 	 }
 
-	 override fun isCastAvailable(isAvailable: Boolean) {
+	 private fun isGooglePlayServicesAvailable(): Boolean {
+		  val googleApiAvailability = GoogleApiAvailability.getInstance()
+		  val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(this)
+		  if (resultCode != ConnectionResult.SUCCESS) {
+			   val dialog: Dialog? = googleApiAvailability.getErrorDialog(this, resultCode, 0)
+			   if (dialog != null) {
+					dialog.show()
+			   }
+			   return false
+		  }
+		  return true
 	 }
+
+
 
 	 override fun onCreate(savedInstanceState: Bundle?) {
+		  Timber.plant(Timber.DebugTree())
 		  super.onCreate(savedInstanceState)
 		  setContentView(R.layout.activity_main)
+		  Timber.e("kkmkmk ")
+		  isGooglePlayServicesAvailable()
 		  button4?.setOnClickListener {
 			   link =
-					"https://filebin.net/eattau482j78n9t1/final_5e6539f87b31e1001532c66f_625963.mp4?t=v4vxwhov"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
+					"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
+			   movieName = "Tiktok"
+			   poster =
+					"https://kaboompics.com/cache/b/2/8/8/3/b2883703308df69a2c024a1eacae859cbf227364.jpeg"
 			   removeIfExist()
 		  }
 		  button3?.setOnClickListener {
 			   link = "http://appchief.net/bigBunny.mp4"
+			   movieName = "TigBunny"
+			   poster =
+					"https://kaboompics.com/cache/c/b/2/1/f/cb21f5aca64890d7d13ce9e8387c23c6883e71e9.jpeg"
 			   removeIfExist()
 		  }
 	 }
 
 	 fun removeIfExist() {
-		  val m = MainActivityFragment()
+
 		  val x = supportFragmentManager.findFragmentById(R.id.you)
 		  x?.let {
-			   supportFragmentManager.beginTransaction().remove(x).commitNowAllowingStateLoss()
+			   supportFragmentManager.beginTransaction().remove(x).runOnCommit {
+					showFrag()
+			   }.commitNow()
 			   Log.e("main", "old frag removed")
+		  } ?: kotlin.run {
+			   showFrag()
 		  }
+	 }
+
+	 fun showFrag() {
+		  val m = MainActivityFragment()
 		  supportFragmentManager.beginTransaction()
-			   .add(R.id.you, m, "ff")
+			   .replace(R.id.you, m, "ff")
 			   .commit()
 	 }
 }

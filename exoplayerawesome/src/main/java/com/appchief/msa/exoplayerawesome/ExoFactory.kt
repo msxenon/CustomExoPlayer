@@ -4,10 +4,13 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.database.DatabaseProvider
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.SingleSampleMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
@@ -16,6 +19,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
 import java.io.File
 
@@ -42,6 +46,33 @@ class ExoFactory internal constructor(private val context: Context?) {
 			   userAgent = Util.getUserAgent(context, "ExoPlayerDemo")
 	 }
 
+	 fun buildMediaSource(uri: Uri, srtLink: String?): MediaSource? {
+		  return if (!srtLink.isNullOrBlank()) {
+			   addSubTitlesToMediaSource(
+					ExoFactorySingeleton.getInstance().buildMediaSource(uri),
+					srtLink.encodeUrl()
+			   )
+		  } else {
+			   ExoFactorySingeleton.getInstance().buildMediaSource(uri)
+		  }
+	 }
+
+	 private fun addSubTitlesToMediaSource(
+		  mediaSource: MediaSource?,
+		  subTitlesUrl: String
+	 ): MediaSource {
+		  val textFormat = Format.createTextSampleFormat(
+			   null, MimeTypes.APPLICATION_SUBRIP,
+			   null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
+		  )
+		  val uri = Uri.parse(subTitlesUrl)
+		  Log.e("subtitleURI", uri.toString() + " ")
+		  val subtitleSource =
+			   SingleSampleMediaSource.Factory(ExoFactorySingeleton.getInstance().buildDataSourceFactory())
+					.createMediaSource(uri, textFormat, C.TIME_UNSET)
+
+		  return MergingMediaSource(mediaSource, subtitleSource)
+	 }
 	 fun buildMediaSource(uri: Uri): MediaSource? {
 		  try {//here put url
 			   @C.ContentType val type = Util.inferContentType(uri, null)

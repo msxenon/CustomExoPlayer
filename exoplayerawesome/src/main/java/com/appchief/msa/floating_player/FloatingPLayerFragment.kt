@@ -12,6 +12,7 @@ import com.appchief.msa.exoplayerawesome.ExoIntent
 import com.appchief.msa.exoplayerawesome.databinding.VideoOverViewBinding
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.appchief.msa.exoplayerawesome.listeners.CloseReason
+import com.google.android.gms.cast.framework.media.widget.MiniControllerFragment
 
 abstract class FloatingPLayerFragment : Fragment(),
 	 CineamaticPlayerScreen {
@@ -19,10 +20,15 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 private var dissmissCalled = false
 	 lateinit var binding: VideoOverViewBinding
 		  private set
-
+	 var miniControllerFragment: MiniControllerFragment? = null
 	 override fun onCreate(savedInstanceState: Bundle?) {
 		  super.onCreate(null)
 
+	 }
+
+	 override fun onDestroy() {
+		  miniControllerFragment?.onDestroy()
+		  super.onDestroy()
 	 }
 
 	 override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -63,7 +69,23 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		  binding.videoOverlayView.player?.attachObersver(viewLifecycleOwner)
 		  initFloating()
+
 		  super.onViewCreated(view, savedInstanceState)
+//		  val handler = Handler()
+//		  handler.post(Runnable {
+//			   var fm = fragmentManager?.findFragmentByTag("mini")
+//			   Log.e("max11111 ","=== $fm")
+//			   if (fm != null){
+//					fragmentManager?.beginTransaction()?.remove(fm)?.commitNow()
+//					fragmentManager?.executePendingTransactions()
+//
+//			   }
+//			   cast_minicontroller_?.inflate()
+//
+//			   fm = fragmentManager?.findFragmentByTag("mini")
+//			   Log.e("max2222 ","  === $fm")
+//		  })
+
 	 }
 
 	 @SuppressLint("SourceLockedOrientationActivity")
@@ -110,12 +132,17 @@ abstract class FloatingPLayerFragment : Fragment(),
 						 callDissmiss()
 					}
 					val isMain =
-						 p1 == com.appchief.msa.exoplayerawesome.R.id.start || p1 == com.appchief.msa.exoplayerawesome.R.id.fullScreen
+						 p1 == com.appchief.msa.exoplayerawesome.R.id.start
 					Log.e("FPF", "onTransitionCompleted $isMain")
 
 					binding.videoOverlayView.player?.canShowController(isMain)
 			   }
 		  })
+	 }
+
+	 override fun onDestroyView() {
+		  miniControllerFragment?.onDestroyView()
+		  super.onDestroyView()
 	 }
 //	 override fun onPause() {
 //		  ExoIntent.onPause(binding.videoOverlayView.player)
@@ -125,6 +152,10 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 fun setDetails(fragment: Fragment) {
 		  childFragmentManager.beginTransaction()
 			   .replace(com.appchief.msa.exoplayerawesome.R.id.detailsView, fragment).commit()
+	 }
+
+	 override fun showCustomUi(show: Boolean) {
+		  //  binding.videoOverlayView.playerImage.visibility = show.controlVisibility()
 	 }
 }
 

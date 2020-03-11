@@ -5,6 +5,7 @@ import android.util.Log
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.BehindLiveWindowException
 import com.google.android.exoplayer2.source.TrackGroupArray
@@ -81,8 +82,24 @@ class PlayerEventListener(
 	 }
 
 	 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-		  if (playbackState != Player.STATE_IDLE) {
-			   //  cinemPlayer?.useController = true
+		  try {
+			   cinemPlayer?.customController?.showLoading(false)
+			   if (playbackState == ExoPlayer.STATE_BUFFERING) {
+					cinemPlayer?.customController?.showLoading(true)
+					cinemPlayer?.hideController()
+			   } else if (playbackState == ExoPlayer.STATE_READY) {
+					cinemPlayer?.forceReplay = false
+
+					cinemPlayer?.checkHasSettings()
+			   } else if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
+					cinemPlayer?.seekTo(0)
+					if (playWhenReady && cinemPlayer?.forceReplay == true) {
+						 cinemPlayer.start()
+					}
+			   }
+			   cinemPlayer?.customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
+		  } catch (e: Exception) {
+			   e.printStackTrace()
 		  }
 	 }
 }

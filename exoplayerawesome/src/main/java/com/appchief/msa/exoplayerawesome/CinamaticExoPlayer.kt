@@ -580,6 +580,11 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 fun minSize() {
 		  videoSize(100.DpToPx())
 	 }
+
+	 fun getCurrentPos(): Long? {
+		  return playerUiFinalListener?.getLastPosition(nowPlaying) ?: player?.currentPosition
+		  ?: C.TIME_UNSET
+	 }
 }
 
 fun Int.DpToPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()

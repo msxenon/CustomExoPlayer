@@ -97,7 +97,7 @@ internal class PlayerManager(
 		  concatenatingMediaSource.addMediaSource(item)
 		  if (currentPlayer === castPlayer) {
 			   castPlayer.loadItems(
-					castCurrent, 0, 0,
+					castCurrent, 0, localPlayerView.getCurrentPos() ?: C.TIME_UNSET,
 					REPEAT_MODE_ALL
 			   )
 		  }
@@ -251,7 +251,7 @@ internal class PlayerManager(
 //					.setBackgroundResource(R.drawable.cast_bg)
 		  }
 		  // Player state management.
-		  var playbackPositionMs = C.TIME_UNSET
+		  var playbackPositionMs = localPlayerView.getCurrentPos() ?: C.TIME_UNSET
 		  var windowIndex = C.INDEX_UNSET
 		  var playWhenReady = false
 		  val previousPlayer = this.currentPlayer

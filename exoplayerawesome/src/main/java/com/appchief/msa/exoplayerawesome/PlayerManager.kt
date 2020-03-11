@@ -318,7 +318,7 @@ internal class PlayerManager(
 					Player.REPEAT_MODE_ALL
 			   )
 		  } else {
-			   // currentPlayer?.seekTo(itemIndex, positionMs)
+			   currentPlayer?.seekTo(itemIndex, positionMs)
 			   currentPlayer?.playWhenReady = playWhenReady
 			   Log.e(tag, "$itemIndex $positionMs currentItem")
 		  }

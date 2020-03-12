@@ -43,6 +43,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  lifecycleOwner.lifecycle.addObserver(this)
 	 }
 
+	 var isForeground = true
 	 @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
 	 fun onCreate() {
 		  usedInistances += 1
@@ -59,6 +60,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
 	 fun onResumeLC() {
+		  isForeground = true
 		  Log.e(
 			   "TAG",
 			   "================================>>>> lifecycle owner ON_RESUME "
@@ -72,7 +74,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 private var playerManager: PlayerManager? = null
 	 fun initCast() {
-//		  castExoPlayer = CastPlayer(this.getCastContext())
+		  //		  castExoPlayer = CastPlayer(this.getCastContext())
 //		  castExoPlayer?.addListener(plistener)
 //		  castExoPlayer?.setSessionAvailabilityListener(this)
 		  if (playerManager == null)
@@ -86,6 +88,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 	 @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
 	 fun stop() {
+		  isForeground = false
 		  pause()
 		  onPauseSave()
 		  Log.e("TAG", "================================>>>> lifecycle owner STOPED  $taag")

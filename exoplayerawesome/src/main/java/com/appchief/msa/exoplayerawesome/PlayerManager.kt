@@ -259,7 +259,7 @@ internal class PlayerManager(
 		  }
 		  Log.e(tag, "$playbackPositionMs ${exoPlayer.currentPosition}  setcurrentplayerSecond")
 		  this.currentPlayer = currentPlayer
-
+		  exoPlayer.playWhenReady = localPlayerView().isForeground
 	 }
 
 	 /**

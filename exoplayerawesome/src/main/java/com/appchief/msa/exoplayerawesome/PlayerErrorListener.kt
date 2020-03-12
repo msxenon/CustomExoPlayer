@@ -34,6 +34,13 @@ class PlayerEventListener(
 		  }
 	 }
 
+	 override fun onPositionDiscontinuity(reason: Int) {
+		  Log.e("PlayerEventListener", "onPositionDiscontinuity $reason")
+
+		  if (reason == Player.DISCONTINUITY_REASON_PERIOD_TRANSITION) {
+			   // when window index changes (eg. end of window 0, start of window 1)
+		  }
+	 }
 	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
 	 override fun onPlayerError(error: ExoPlaybackException) {
 		  val m = isBehindLiveWindow(error)

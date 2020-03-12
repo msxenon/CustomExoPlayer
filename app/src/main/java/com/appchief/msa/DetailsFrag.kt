@@ -27,5 +27,21 @@ class DetailsFrag : Fragment() {
 					activity?.supportFragmentManager?.findFragmentByTag("ff") as? MainActivityFragment
 			   m!!.initPlayer()
 		  }
+		  button6?.setOnClickListener {
+			   MainActivity.movieName = "dede"
+			   MainActivity.link =
+					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
+			   val m =
+					activity?.supportFragmentManager?.findFragmentByTag("ff") as? MainActivityFragment
+			   m!!.initPlayer()
+		  }
+		  button7?.setOnClickListener {
+			   MainActivity.movieName = "dede"
+			   MainActivity.link =
+					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
+			   val m =
+					activity?.supportFragmentManager?.findFragmentByTag("ff") as? MainActivityFragment
+			   m!!.initPlayer()
+		  }
 	 }
 }

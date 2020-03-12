@@ -15,9 +15,7 @@
  */
 package com.appchief.msa.exoplayerawesome
 
-import android.content.Context
 import android.util.Log
-import android.view.KeyEvent
 import com.appchief.msa.exoplayerawesome.viewcontroller.ControllerVisState
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.google.android.exoplayer2.C
@@ -26,7 +24,6 @@ import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.ext.cast.*
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -39,9 +36,8 @@ import java.util.*
 /** Manages players and an internal media queue for the demo app.  */ /* package */
 internal class PlayerManager(
 	 private val listener: Listener,
-	 private val localPlayerView: CinamaticExoPlayer,
-	 private val castControlView: VideoControllerView,
-	 context: Context?,
+	 private val localPlayerView: () -> CinamaticExoPlayer,
+	 private val castControlView: () -> VideoControllerView?,
 	 castContext: CastContext?,
 	 trackSelectors: DefaultTrackSelector
 ) : Player.EventListener, SessionAvailabilityListener {
@@ -64,7 +60,7 @@ internal class PlayerManager(
 	 private val exoPlayer: SimpleExoPlayer
 	 private val castPlayer: CastPlayer
 	 private val mediaQueue: ArrayList<MediaItem>
-	 private val concatenatingMediaSource: ConcatenatingMediaSource
+	 private var concatenatingMediaSource: MediaSource? = null
 	 private val mediaItemConverter: MediaItemConverter
 //	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
 	 /** Returns the index of the currently played item.  */
@@ -95,89 +91,35 @@ internal class PlayerManager(
 	 ) {
 //			mediaQueue.clear()
 //		  mediaQueue.add(castCurrent)
-		  concatenatingMediaSource.clear()
-		  concatenatingMediaSource.addMediaSource(item)
-		  if (currentPlayer === castPlayer) {
-			   val pos = localPlayerView.getLastPos("addItem")
-			   Log.e(tag, "$pos addItem")
+		  //concatenatingMediaSource.clear()
+		  //  concatenatingMediaSource.clear()
+		  concatenatingMediaSource = item!!
+		  val pos = localPlayerView().getLastPos("addItem")
+		  if (currentPlayer == castPlayer) {
 			   castPlayer.loadItems(
 					castCurrent, 0, pos,
 					REPEAT_MODE_ALL
 			   )
+		  } else {
+			   // setCurrentItem(concatenatingMediaSource.size-1,pos,true)
+			   this.currentPlayer?.stop()
+			   setCurrentPlayer(exoPlayer, pos, true)
 		  }
+		  Log.e(tag, " addItem")
+
 	 }
 
-	 /** Returns the size of the media queue.  */
-	 val mediaQueueSize: Int
-		  get() = mediaQueue.size
 
-	 /**
-	  * Returns the item at the given index in the media queue.
-	  *
-	  * @param position The index of the item.
-	  * @return The item at the given index in the media queue.
-	  */
-	 fun getItem(position: Int): MediaItem {
-		  return mediaQueue[position]
-	 }
 
-	 /**
-	  * Removes the item at the given index from the media queue.
-	  *
-	  * @param item The item to remove.
-	  * @return Whether the removal was successful.
-	  */
-	 fun removeItem(item: MediaItem?): Boolean {
-		  val itemIndex = mediaQueue.indexOf(item)
-		  if (itemIndex == -1) {
-			   return false
-		  }
-		  concatenatingMediaSource.removeMediaSource(itemIndex)
-		  if (currentPlayer === castPlayer) {
-			   if (castPlayer.playbackState != Player.STATE_IDLE) {
-					val castTimeline = castPlayer.currentTimeline
-					if (castTimeline.periodCount <= itemIndex) {
-						 return false
-					}
-					castPlayer.removeItem(
-						 castTimeline.getPeriod(
-							  itemIndex,
-							  Timeline.Period()
-						 ).id as Int
-					)
-			   }
-		  }
-		  mediaQueue.removeAt(itemIndex)
-		  if (itemIndex == currentItemIndex && itemIndex == mediaQueue.size) {
-			   maybeSetCurrentItemAndNotify(C.INDEX_UNSET)
-		  } else if (itemIndex < currentItemIndex) {
-			   maybeSetCurrentItemAndNotify(currentItemIndex - 1)
-		  }
-		  return true
-	 }
-
-	 /**
-	  * Dispatches a given [KeyEvent] to the corresponding view of the current player.
-	  *
-	  * @param event The [KeyEvent].
-	  * @return Whether the event was handled by the target view.
-	  */
-	 fun dispatchKeyEvent(event: KeyEvent?): Boolean {
-		  return if (currentPlayer === exoPlayer) {
-			   localPlayerView.dispatchKeyEvent(event!!)
-		  } else  /* currentPlayer == castPlayer */ {
-			   castControlView.dispatchKeyEvent(event!!)
-		  }
-	 }
 
 	 /** Releases the manager and the players that it holds.  */
 	 fun release() {
 		  currentItemIndex = C.INDEX_UNSET
 		  mediaQueue.clear()
-		  concatenatingMediaSource.clear()
+//		  concatenatingMediaSource.clear()
 		  castPlayer.setSessionAvailabilityListener(null)
 		  castPlayer.release()
-		  localPlayerView.player = null
+		  localPlayerView().player = null
 		  exoPlayer.release()
 	 }
 
@@ -218,45 +160,56 @@ internal class PlayerManager(
 
 	 // CastPlayer.SessionAvailabilityListener implementation.
 	 override fun onCastSessionAvailable() {
-		  setCurrentPlayer(castPlayer)
+		  setCurrentPlayer(castPlayer, skip = false)
 	 }
 
 	 override fun onCastSessionUnavailable() {
-		  setCurrentPlayer(exoPlayer)
+		  setCurrentPlayer(exoPlayer, skip = false)
 	 }
 
 	 // Internal methods.
 	 private fun updateCurrentItemIndex() {
-		  val playbackState = currentPlayer!!.playbackState
+		  val playbackState = currentPlayer?.playbackState
 		  maybeSetCurrentItemAndNotify(
-			   if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) currentPlayer!!.currentWindowIndex else C.INDEX_UNSET
+			   if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) currentPlayer?.currentWindowIndex
+					?: 0 else C.INDEX_UNSET
 		  )
 	 }
 
-	 private fun setCurrentPlayer(currentPlayer: Player) {
-		  if (this.currentPlayer === currentPlayer) {
-			   return
-		  }
+	 private fun setCurrentPlayer(currentPlayer: Player, pos: Long? = null, skip: Boolean) {
+//		  if (this.currentPlayer == currentPlayer) {
+// 			   return
+//		  }
 		  // View management.
-		  if (currentPlayer === exoPlayer) {
-			   castControlView.player = exoPlayer
-			   localPlayerView.player = exoPlayer
-			   castControlView.hide()
-			   castControlView.currentState = ControllerVisState.Normal
+		  if (currentPlayer == exoPlayer) {
+			   castControlView()?.player = exoPlayer
+			   localPlayerView().player = exoPlayer
+			   castControlView()?.hide()
+			   castControlView()?.currentState = ControllerVisState.Normal
 			   //  localPlayerView.rootView.findViewById<View>(R.id.overlayImage).visibility = View.GONE
 		  } else  /* currentPlayer == castPlayer */ { //localPlayerView.setVisibility(View.GONE);
-			   castControlView.currentState = ControllerVisState.Cast
-			   castControlView.player = castPlayer
-			   localPlayerView.player = castPlayer
-			   castControlView.show()
+			   castControlView()?.currentState = ControllerVisState.Cast
+			   castControlView()?.player = castPlayer
+			   localPlayerView().player = castPlayer
+			   castControlView()?.show()
 //			   localPlayerView.rootView.findViewById<View>(R.id.overlayImage).visibility =
 //					View.VISIBLE
 //			   localPlayerView.rootView.findViewById<View>(R.id.overlayImage)
 //					.setBackgroundResource(R.drawable.cast_bg)
 		  }
+
 		  // Player state management.
-		  var playbackPositionMs = localPlayerView.getLastPos("setcurrent")
-		  Log.e(tag, "$playbackPositionMs setcurrentplayerFirst")
+		  prepare(currentPlayer, pos)
+	 }
+
+	 private fun prepare(currentPlayer: Player, lastpos: Long? = null) {
+		  if (concatenatingMediaSource == null)
+			   return
+		  var playbackPositionMs = lastpos ?: 0L
+		  Log.e(
+			   tag,
+			   "$playbackPositionMs ${currentPlayer.isPlaying} ${this.currentPlayer?.isPlaying}setcurrentplayerFirst"
+		  )
 		  var windowIndex = C.INDEX_UNSET
 		  var playWhenReady = false
 		  val previousPlayer = this.currentPlayer
@@ -274,15 +227,20 @@ internal class PlayerManager(
 			   }
 			   previousPlayer.stop(true)
 		  }
-		  this.currentPlayer = currentPlayer
+		  lastpos?.let {
+			   playbackPositionMs = it
+		  }
 		  // Media queue management.
-		  if (currentPlayer === exoPlayer) {
+		  if (currentPlayer == exoPlayer) {
 			   val haveStartPosition = playbackPositionMs > 0L
-			   exoPlayer.prepare(concatenatingMediaSource, false, false)
-			   exoPlayer.seekTo(exoPlayer.currentWindowIndex, playbackPositionMs)
+			   exoPlayer.seekTo(playbackPositionMs)
+			   exoPlayer.prepare(concatenatingMediaSource!!, !haveStartPosition, false)
+			   var prevIndex = exoPlayer.previousWindowIndex
+			   if (prevIndex < 0)
+					prevIndex = 0
 			   Log.e(
 					tag,
-					"seekto $playbackPositionMs setcurrentplayerexoo $haveStartPosition $windowIndex cwi${exoPlayer.currentWindowIndex}"
+					"seekto $playbackPositionMs setcurrentplayerexoo $haveStartPosition $windowIndex ${prevIndex} cwi ${exoPlayer.currentWindowIndex}"
 			   )
 
 		  }
@@ -290,7 +248,8 @@ internal class PlayerManager(
 		  if (windowIndex != C.INDEX_UNSET) {
 			   setCurrentItem(windowIndex, playbackPositionMs, playWhenReady)
 		  }
-		  Log.e(tag, "$playbackPositionMs setcurrentplayerSecond")
+		  Log.e(tag, "$playbackPositionMs ${exoPlayer.currentPosition}  setcurrentplayerSecond")
+		  this.currentPlayer = currentPlayer
 
 	 }
 
@@ -307,12 +266,12 @@ internal class PlayerManager(
 		  playWhenReady: Boolean
 	 ) {
 		  maybeSetCurrentItemAndNotify(itemIndex)
-		  if (currentPlayer === castPlayer && castPlayer.currentTimeline.isEmpty) { //      MediaQueueItem[] items = new MediaQueueItem[mediaQueue.size()];
+		  if (currentPlayer == castPlayer && castPlayer.currentTimeline.isEmpty) { //      MediaQueueItem[] items = new MediaQueueItem[mediaQueue.size()];
 //      for (int i = 0; i < items.length; i++) {
 //        items[i] = mediaItemConverter.toMediaQueueItem(mediaQueue.get(i));
 //      }
 			   castPlayer.loadItems(
-					localPlayerView.castCurrent(),
+					localPlayerView().castCurrent(),
 					0,
 					positionMs,
 					Player.REPEAT_MODE_ALL
@@ -354,18 +313,21 @@ internal class PlayerManager(
 	 init {
 		  mediaQueue = ArrayList()
 		  currentItemIndex = C.INDEX_UNSET
-		  concatenatingMediaSource = ConcatenatingMediaSource()
+//		  concatenatingMediaSource = ConcatenatingMediaSource()
 		  mediaItemConverter = DefaultMediaItemConverter()
 		  trackSelector = trackSelectors//DefaultTrackSelector(context!!)
 		  exoPlayer =
-			   localPlayerView.player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
-		  exoPlayer.addListener(localPlayerView.eventListener)
+			   localPlayerView().player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
+		  exoPlayer.addListener(localPlayerView().eventListener)
 		  exoPlayer.addListener(this)
 		  castPlayer = CastPlayer(castContext!!)
-		  castPlayer.addListener(localPlayerView.eventListener)
+		  castPlayer.addListener(localPlayerView().eventListener)
 		  castPlayer.addListener(this)
 		  castPlayer.setSessionAvailabilityListener(this)
 
-		  setCurrentPlayer(if (castPlayer.isCastSessionAvailable) castPlayer else exoPlayer)
+		  setCurrentPlayer(
+			   if (castPlayer.isCastSessionAvailable) castPlayer else exoPlayer,
+			   skip = false
+		  )
 	 }
 }

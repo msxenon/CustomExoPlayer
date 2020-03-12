@@ -20,7 +20,6 @@ import com.appchief.msa.exoplayerawesome.ExoIntent.usedInistances
 import com.appchief.msa.exoplayerawesome.listeners.*
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.SingleSampleMediaSource
@@ -71,19 +70,19 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  Log.e("TAG2", "================================>>>> lifecycle ${player == null} ")
 	 }
 
-	 private var castExoPlayer: CastPlayer? = null
 	 private var playerManager: PlayerManager? = null
 	 fun initCast() {
 //		  castExoPlayer = CastPlayer(this.getCastContext())
 //		  castExoPlayer?.addListener(plistener)
 //		  castExoPlayer?.setSessionAvailabilityListener(this)
-		  playerManager = PlayerManager(object : PlayerManager.Listener {
+		  if (playerManager == null)
+			   playerManager = PlayerManager(object : PlayerManager.Listener {
 			   override fun onUnsupportedTrack(trackType: Int) {
 			   }
 
 			   override fun onQueuePositionChanged(previousIndex: Int, newIndex: Int) {
 			   }
-		  }, this, customController!!, context, this.getCastContext(), trackSelector)
+			   }, { this }, { customController }, this.getCastContext(), trackSelector)
 	 }
 	 @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
 	 fun stop() {
@@ -207,14 +206,14 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   return
 		  if (playerUiFinalListener == null)
 			   throw Exception("playerUiFinalListener not setted")
-		  lastPos_ = 0
 		  savePlayData()
-		  playerManager?.release()
 		  nowPlaying =
 			   NowPlaying(
 					movieId, episodeId, playerType, poster,
 					videoLink.encodeUrl(), geners, title, runtime, SrtLink?.encodeUrl()
 			   )
+		  lastPos_ = getLastPos("init")
+
 		  // if (playerUiFinalListener?.isConnectedToCast() != true) {
 			   initializePlayer()
 //		  } else {
@@ -384,15 +383,12 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 private var lastPos_ = 0L
 	 fun getLastPos(tag: String): Long {
-
-		  var res = 0L
 		  if (lastPos_ == 0L)
 			   playerUiFinalListener?.getLastPosition(nowPlaying)?.let {
-					res = it
 					lastPos_ = it
 			   }
-		  Log.e(taag, "getLastPos $tag $nowPlaying $res")
-		  return res
+		  Log.e(taag, "getLastPos $tag $nowPlaying $lastPos_")
+		  return lastPos_
 	 }
 	 private fun isSreaming(): Boolean {
 		  return nowPlaying?.type == PlayerType.CHANNEL
@@ -442,7 +438,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  if (reachedEndOfVideo()) {
 			   seekTo(0)
 		  } else
-			   seekTo(player?.currentPosition ?: 0)
+			   seekTo(lastPos_)
 
 		  player?.playWhenReady = canAutoPlay()
 	 }

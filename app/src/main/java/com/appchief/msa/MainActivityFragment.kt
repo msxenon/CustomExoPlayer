@@ -71,7 +71,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 	 override fun getLastPosition(modelId: NowPlaying?): Long {
 		  Log.e("main", "getLastPosition $modelId")
-		  return 1800000
+		  return 6000
 	 }
 
 	 override fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long) {

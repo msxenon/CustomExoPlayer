@@ -60,7 +60,7 @@ class VideoControllerView : FrameLayout {
 	 var currentState = ControllerVisState.Normal
 		  set(value) {
 			   field = value
-			   Log.e("VCV", "viewState Changed $field")
+			   //Log.e("VCV", "viewState Changed $field")
 			   controlVis()
 		  }
 	 private var mPlayer: CinamaticExoPlayer? =
@@ -138,7 +138,7 @@ class VideoControllerView : FrameLayout {
 		  if (currentState == ControllerVisState.Cast) {
 			   mPlayer?.playerUiFinalListener?.setMoviePoster(moviePoster)
 		  }
-		  Log.e("VCV", "controlVis ${mPlayer?.canSeekBackward()} $vis $currentState")
+		  //  Log.e("VCV", "controlVis ${mPlayer?.canSeekBackward()} $vis $currentState")
 
 		  setProgress()
 		  updateDownBtn()
@@ -151,7 +151,7 @@ class VideoControllerView : FrameLayout {
 		  val x =
 			   (boolean || currentState == ControllerVisState.Cast)//(mPlayer?.hasSettings == true)
 		  mVideoSettings?.visibility = x.controlVisibility()
-		  Log.e("VCV", " settingsVisiability $x")
+		  //  Log.e("VCV", " settingsVisiability $x")
 	 }
 	 /**
 	  * Set the view that acts as the anchor for the control view.
@@ -159,7 +159,7 @@ class VideoControllerView : FrameLayout {
 	  * @param view The view to which to anchor the controller when it is visible.
 	  */
 	 fun setAnchorView(view: CinamaticExoPlayer, title: String?, controllerLayout: Int?) {
-		  Log.e("VCV", "setAnchorView start $controllerLayout")
+		  //  Log.e("VCV", "setAnchorView start $controllerLayout")
 		  setMediaPlayer(view)
 		  mAnchor = view
 		  val frameParams = LayoutParams(
@@ -176,7 +176,7 @@ class VideoControllerView : FrameLayout {
 					visibility = View.VISIBLE
 			   }
 		  }
-		  Log.e("VCV", "setAnchorView end")
+		  //	  Log.e("VCV", "setAnchorView end")
 	 }
 
 	 /**
@@ -218,10 +218,10 @@ class VideoControllerView : FrameLayout {
 		  }
 
 		  fullscreenBtn = v.findViewById(R.id.toggle_fullscreen)
-		  Log.e(
-			   "VCV",
-			   "hass full screen ${fullscreenBtn != null} && ${mPlayer?.canHaveFullScreen}"
-		  )
+//		  Log.e(
+//			   "VCV",
+//			   "hass full screen ${fullscreenBtn != null} && ${mPlayer?.canHaveFullScreen}"
+//		  )
 		  updateFullScreen()
 		  mProgress =
 			   v.findViewById<View>(R.id.exo_progress) as? SeekBar
@@ -284,7 +284,7 @@ class VideoControllerView : FrameLayout {
 
 	 @JvmOverloads
 	 fun show(timeout: Int = sDefaultTimeout) {
-		  Log.e("VCV", "showcalled $isShowing ${mAnchor != null}")
+		  //  Log.e("VCV", "showcalled $isShowing ${mAnchor != null}")
 		  if (!isShowing && mAnchor != null) {
 			   setProgress()
 			   if (mPauseButton != null) {
@@ -344,7 +344,7 @@ class VideoControllerView : FrameLayout {
 		  } else {
 			   mFormatter?.format("%02d:%02d", minutes, seconds).toString()
 		  }
-		  Log.e("VCV", "stringForTime $m $timeMs")
+		  //  Log.e("VCV", "stringForTime $m $timeMs")
 		  return m
 	 }
 
@@ -430,7 +430,7 @@ class VideoControllerView : FrameLayout {
 		  }
 	 private val mFullscreenListener =
 		  OnClickListener {
-			   Log.e("VCV", "fulls clicklistener")
+			   //   Log.e("VCV", "fulls clicklistener")
 			   doToggleFullscreen()
 			   show(sDefaultTimeout)
 		  }
@@ -515,7 +515,7 @@ class VideoControllerView : FrameLayout {
 		  }
 
 		  override fun onStopTrackingTouch(bar: SeekBar) {
-			   Log.e("VCV", "onStopTrackingTouch")
+			   //   Log.e("VCV", "onStopTrackingTouch")
 			   mDragging = false
 			   setProgress()
 			   updatePausePlay()
@@ -550,7 +550,7 @@ class VideoControllerView : FrameLayout {
 			   }
 			   var pos = player.currentPosition
 			   pos -= 5000 // milliseconds
-			   Log.e("taag", "seekto $pos")
+			   //   Log.e("taag", "seekto $pos")
 			   player.seekTo(pos)
 			   setProgress()
 			   show(sDefaultTimeout)
@@ -562,7 +562,7 @@ class VideoControllerView : FrameLayout {
 			   }
 			   var pos = player.currentPosition
 			   pos += 15000 // milliseconds
-			   Log.e("taag", "seekto $pos")
+			   //   Log.e("taag", "seekto $pos")
 			   player.seekTo(pos)
 			   setProgress()
 			   show(sDefaultTimeout)
@@ -578,7 +578,7 @@ class VideoControllerView : FrameLayout {
 			   if (view?.mPlayer == null) {
 					return
 			   }
-			   Log.e("MessageHandler", "" + msg.toString() + " dragging${view.mDragging}")
+			   //  Log.e("MessageHandler", "" + msg.toString() + " dragging${view.mDragging}")
 			   val pos: Long
 			   when (msg.what) {
 					FADE_OUT -> view.hide()

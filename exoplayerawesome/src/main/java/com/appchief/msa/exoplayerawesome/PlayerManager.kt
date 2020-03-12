@@ -31,6 +31,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastState
 import java.util.*
 
 /** Manages players and an internal media queue for the demo app.  */ /* package */
@@ -38,7 +39,7 @@ internal class PlayerManager(
 	 private val listener: Listener,
 	 private val localPlayerView: () -> CinamaticExoPlayer,
 	 private val castControlView: () -> VideoControllerView?,
-	 castContext: CastContext?,
+	 private val castContext: CastContext?,
 	 trackSelectors: DefaultTrackSelector
 ) : Player.EventListener, SessionAvailabilityListener {
 	 //  public MediaSource mediaSource;
@@ -93,6 +94,7 @@ internal class PlayerManager(
 //		  mediaQueue.add(castCurrent)
 		  //concatenatingMediaSource.clear()
 		  //  concatenatingMediaSource.clear()
+
 		  concatenatingMediaSource = item!!
 		  val pos = localPlayerView().getLastPos("addItem")
 		  if (currentPlayer == castPlayer) {
@@ -319,6 +321,8 @@ internal class PlayerManager(
 	  * @param castContext The [CastContext].
 	  */
 	 init {
+		  if (castContext?.castState == CastState.CONNECTED)
+			   castContext.sessionManager.endCurrentSession(true)
 		  mediaQueue = ArrayList()
 		  currentItemIndex = C.INDEX_UNSET
 //		  concatenatingMediaSource = ConcatenatingMediaSource()
@@ -332,7 +336,9 @@ internal class PlayerManager(
 		  castPlayer.addListener(localPlayerView().eventListener)
 		  castPlayer.addListener(this)
 		  castPlayer.setSessionAvailabilityListener(this)
-
+		  castContext.addCastStateListener {
+			   localPlayerView().playerUiFinalListener?.onMessageRecived(CastState.toString(it), -1)
+		  }
 		  setCurrentPlayer(
 			   if (castPlayer.isCastSessionAvailable) castPlayer else exoPlayer,
 			   skip = false

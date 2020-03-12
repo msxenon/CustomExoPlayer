@@ -2,10 +2,11 @@ package com.appchief.msa
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
+import android.widget.Toast
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
 import com.appchief.msa.floating_player.FloatingPLayerFragment
@@ -52,13 +53,15 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 override fun onMessageRecived(msg: String?, state: Int) {
-		  msg?.takeIf { view != null }?.let {
+		  msg?.takeIf { view != null && state >= 0 }?.let {
 			   snackBar = Snackbar.make(view!!, msg, Snackbar.LENGTH_INDEFINITE)
 			   snackBar?.setAction("Retry") {
 					snackBar?.dismiss()
 					initPlayer()
 			   }
 			   snackBar?.show()
+		  } ?: kotlin.run {
+			   Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
 		  }
 
 		  Log.e("main", "$msg $state")
@@ -105,9 +108,11 @@ class MainActivityFragment : FloatingPLayerFragment() {
 		  }
 	 }
 
-	 override fun setMoviePoster(moviePoster: ImageView?) {
-//		  val url = URL(binding.videoOverlayView.player?.nowPlaying?.poster)
-//		 val x =  BitmapFactory.decodeStream(url.openConnection().getInputStream())
-//		   moviePoster?.setImageBitmap(x)
+	 override fun setMoviePoster(result: (it: Drawable) -> Unit) {
+		  val myIcon =
+			   resources.getDrawable(com.appchief.msa.awesomeplayer.R.drawable.castbg)
+		  result(myIcon)
 	 }
+
+
 }

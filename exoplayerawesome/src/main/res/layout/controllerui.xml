@@ -246,13 +246,5 @@
             app:layout_constraintVertical_bias="1.0"
             tools:visibility="visible" />
 
-    <ImageView
-            android:id="@+id/bg_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/cast_bg"
-            tools:layout_editor_absoluteX="189dp"
-            tools:layout_editor_absoluteY="165dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

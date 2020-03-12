@@ -160,6 +160,7 @@ class VideoControllerView : FrameLayout {
 	  * This can for example be a VideoView, or your Activity's main view.
 	  * @param view The view to which to anchor the controller when it is visible.
 	  */
+	 private var castState: TextView? = null
 	 fun setAnchorView(view: CinamaticExoPlayer, title: String?, controllerLayout: Int?) {
 		  //  Log.e("VCV", "setAnchorView start $controllerLayout")
 		  setMediaPlayer(view)
@@ -169,7 +170,13 @@ class VideoControllerView : FrameLayout {
 			   ViewGroup.LayoutParams.MATCH_PARENT
 		  )
 		  removeAllViews()
+		  moviePoster = ImageView(view.context)
+		  moviePoster?.scaleType = ImageView.ScaleType.CENTER_CROP
+		  view.addView(moviePoster, frameParams)
 
+		  castState = TextView(view.context)
+
+		  view.addView(castState, frameParams)
 		  val v = makeControllerView(controllerLayout)
 		  addView(v, frameParams)
 		  title?.let {
@@ -200,8 +207,10 @@ class VideoControllerView : FrameLayout {
 		  return mRoot
 	 }
 
+	 fun isNotCastingMode(): Boolean {
+		  return currentState != ControllerVisState.Cast
+	 }
 	 private fun initControllerView(v: View) {
-		  moviePoster = v.findViewById(R.id.bg_iv)
 		  mPauseButton = v.findViewById(R.id.exo_play_pause) as? ImageButton
 		  if (mPauseButton != null) {
 			   mPauseButton?.requestFocus()

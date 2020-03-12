@@ -32,7 +32,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:clickable="true"
-            android:text="Channel 1 bigbunny"
+            android:text="Http SCell"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

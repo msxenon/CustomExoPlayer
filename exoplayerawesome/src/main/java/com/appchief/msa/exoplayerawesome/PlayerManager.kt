@@ -161,6 +161,7 @@ internal class PlayerManager(
 	 // CastPlayer.SessionAvailabilityListener implementation.
 	 override fun onCastSessionAvailable() {
 		  setCurrentPlayer(castPlayer, skip = false)
+
 	 }
 
 	 override fun onCastSessionUnavailable() {
@@ -192,6 +193,12 @@ internal class PlayerManager(
 			   castControlView()?.player = castPlayer
 			   localPlayerView().player = castPlayer
 			   castControlView()?.show()
+			   castPlayer.loadItems(
+					localPlayerView().castCurrent(),
+					0,
+					pos ?: 0,
+					Player.REPEAT_MODE_ALL
+			   )
 //			   localPlayerView.rootView.findViewById<View>(R.id.overlayImage).visibility =
 //					View.VISIBLE
 //			   localPlayerView.rootView.findViewById<View>(R.id.overlayImage)
@@ -270,6 +277,7 @@ internal class PlayerManager(
 //      for (int i = 0; i < items.length; i++) {
 //        items[i] = mediaItemConverter.toMediaQueueItem(mediaQueue.get(i));
 //      }
+			   Log.e(tag, "currentItem")
 			   castPlayer.loadItems(
 					localPlayerView().castCurrent(),
 					0,

@@ -20,7 +20,7 @@ class DetailsFrag : Fragment() {
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		  super.onViewCreated(view, savedInstanceState)
 		  button2?.setOnClickListener {
-			   MainActivity.movieName = "dede"
+			   MainActivity.movieName = "https"
 			   MainActivity.link =
 					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
 			   val m =
@@ -28,7 +28,7 @@ class DetailsFrag : Fragment() {
 			   m!!.initPlayer()
 		  }
 		  button6?.setOnClickListener {
-			   MainActivity.movieName = "dede"
+			   MainActivity.movieName = "https"
 			   MainActivity.link =
 					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
 			   val m =
@@ -36,7 +36,7 @@ class DetailsFrag : Fragment() {
 			   m!!.initPlayer()
 		  }
 		  button7?.setOnClickListener {
-			   MainActivity.movieName = "dede"
+			   MainActivity.movieName = "https"
 			   MainActivity.link =
 					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
 			   val m =

@@ -125,6 +125,8 @@ class VideoControllerView : FrameLayout {
 	 }
 
 	 private var moviePoster: ImageView? = null
+	 private var imageCast: ImageView? = null
+
 	 private fun controlVis() {
 		  val vis =
 			   (currentState == ControllerVisState.Normal && mPlayer?.canSeekForward() == true).controlVisibility()
@@ -135,6 +137,8 @@ class VideoControllerView : FrameLayout {
 		  mEndTime?.visibility = vis
 		  fullscreenBtn?.visibility = vis
 		  moviePoster?.visibility = (currentState == ControllerVisState.Cast).controlVisibility()
+		  imageCast?.visibility = (currentState == ControllerVisState.Cast).controlVisibility()
+
 		  if (currentState == ControllerVisState.Cast) {
 			   mPlayer?.playerUiFinalListener?.setMoviePoster {
 					moviePoster?.setImageDrawable(it)
@@ -160,7 +164,6 @@ class VideoControllerView : FrameLayout {
 	  * This can for example be a VideoView, or your Activity's main view.
 	  * @param view The view to which to anchor the controller when it is visible.
 	  */
-	 private var castState: TextView? = null
 	 fun setAnchorView(view: CinamaticExoPlayer, title: String?, controllerLayout: Int?) {
 		  //  Log.e("VCV", "setAnchorView start $controllerLayout")
 		  setMediaPlayer(view)
@@ -173,10 +176,10 @@ class VideoControllerView : FrameLayout {
 		  moviePoster = ImageView(view.context)
 		  moviePoster?.scaleType = ImageView.ScaleType.CENTER_CROP
 		  view.addView(moviePoster, frameParams)
-
-		  castState = TextView(view.context)
-
-		  view.addView(castState, frameParams)
+		  imageCast = ImageView(view.context)
+		  imageCast?.scaleType = ImageView.ScaleType.CENTER_INSIDE
+		  imageCast?.setImageResource(R.drawable.ic_cast_connected_black_24dp)
+		  view.addView(imageCast, frameParams)
 		  val v = makeControllerView(controllerLayout)
 		  addView(v, frameParams)
 		  title?.let {

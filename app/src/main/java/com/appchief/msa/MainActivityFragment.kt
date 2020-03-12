@@ -109,9 +109,9 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 override fun setMoviePoster(result: (it: Drawable) -> Unit) {
-		  val myIcon =
-			   resources.getDrawable(com.appchief.msa.awesomeplayer.R.drawable.castbg)
-		  result(myIcon)
+//		  val myIcon =
+//			   resources.getDrawable(com.appchief.msa.awesomeplayer.R.drawable.castbg)
+//		  result(myIcon)
 	 }
 
 

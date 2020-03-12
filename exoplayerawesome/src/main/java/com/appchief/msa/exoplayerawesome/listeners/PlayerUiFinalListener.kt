@@ -1,6 +1,6 @@
 package com.appchief.msa.exoplayerawesome.listeners
 
-import android.widget.ImageView
+import android.graphics.drawable.Drawable
 
 interface CineamaticPlayerScreen {
 	 fun onMessageRecived(msg: String?, state: Int)
@@ -14,7 +14,7 @@ interface CineamaticPlayerScreen {
 	 fun setScreenOrentation(inFullScreenMode: Boolean)
 	 fun showSettings(forCasting: Boolean)
 	 fun showCustomUi(show: Boolean)
-	 fun setMoviePoster(moviePoster: ImageView?)
+	 fun setMoviePoster(result: (it: Drawable) -> Unit)
 }
 
 interface CinematicPlayerViews {

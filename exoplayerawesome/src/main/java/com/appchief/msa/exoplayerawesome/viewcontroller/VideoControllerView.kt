@@ -136,7 +136,9 @@ class VideoControllerView : FrameLayout {
 		  fullscreenBtn?.visibility = vis
 		  moviePoster?.visibility = (currentState == ControllerVisState.Cast).controlVisibility()
 		  if (currentState == ControllerVisState.Cast) {
-			   mPlayer?.playerUiFinalListener?.setMoviePoster(moviePoster)
+			   mPlayer?.playerUiFinalListener?.setMoviePoster {
+					moviePoster?.setImageDrawable(it)
+			   }
 		  }
 		  //  Log.e("VCV", "controlVis ${mPlayer?.canSeekBackward()} $vis $currentState")
 

@@ -320,6 +320,7 @@ internal class PlayerManager(
 	  * @param context A [Context].
 	  * @param castContext The [CastContext].
 	  */
+	 var isInCastContext = false
 	 init {
 		  if (castContext?.castState == CastState.CONNECTED)
 			   castContext.sessionManager.endCurrentSession(true)
@@ -337,7 +338,10 @@ internal class PlayerManager(
 		  castPlayer.addListener(this)
 		  castPlayer.setSessionAvailabilityListener(this)
 		  castContext.addCastStateListener {
-			   localPlayerView().playerUiFinalListener?.onMessageRecived(CastState.toString(it), -1)
+			   if (!isInCastContext)
+					isInCastContext = it == 3 || it == 4
+			   if (isInCastContext && localPlayerView().isForeground)
+					localPlayerView().playerUiFinalListener?.onMessageRecived(CastState.toString(it), -1)
 		  }
 		  setCurrentPlayer(
 			   if (castPlayer.isCastSessionAvailable) castPlayer else exoPlayer,

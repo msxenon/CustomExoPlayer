@@ -35,6 +35,7 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.CastContext
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.VisibilityListener,
 	 MediaPlayerControl, LifecycleObserver {
@@ -271,8 +272,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					unappliedRotationDegrees: Int,
 					pixelWidthHeightRatio: Float
 			   ) {
+					Log.e("sizeChanged", " $unappliedRotationDegrees $pixelWidthHeightRatio")
 					if (isFloatingPlayer) {
-						 videoSize(height, width, true)
+						 videoSize(height, ((width * pixelWidthHeightRatio).roundToInt()), true)
 					}
 			   }
 		  })

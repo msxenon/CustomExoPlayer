@@ -27,7 +27,6 @@
                 android:tag="player"
                 android:layout_gravity="center"
                 app:controller_layout_id="@layout/empty_layout_nothing"
-                app:resize_mode="fit"
                 app:use_controller="true" />
 
 

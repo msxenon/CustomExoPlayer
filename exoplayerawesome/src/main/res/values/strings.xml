@@ -7,4 +7,8 @@
     <string name="player_outofmem" tools:ignore="ExtraTranslation">الذاكرة العشوائية ممتلئه</string>
     <string name="player_render_issue" tools:ignore="ExtraTranslation">جهازك لايدعم مشغل الفيديو</string>
     <string name="player_unknown" tools:ignore="ExtraTranslation">حصل خطأ غير متوقع</string>
+    <string name="no_cast_device_available">لايوجد جهاز كاست متوفر</string>
+    <string name="cast_connected">متصل بخدمة الكاست</string>
+    <string name="cast_not_connected">غير متصل بخدمة الكاست</string>
+    <string name="connecting">جار الاتصال</string>
 </resources>

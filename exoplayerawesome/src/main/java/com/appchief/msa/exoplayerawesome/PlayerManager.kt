@@ -341,11 +341,24 @@ internal class PlayerManager(
 			   if (!isInCastContext)
 					isInCastContext = it == 3 || it == 4
 			   if (isInCastContext && localPlayerView().isForeground)
-					localPlayerView().playerUiFinalListener?.onMessageRecived(CastState.toString(it), -1)
+					localPlayerView().playerUiFinalListener?.onMessageRecived(
+						 localizeCastState(it),
+						 -1
+					)
 		  }
 		  setCurrentPlayer(
 			   if (castPlayer.isCastSessionAvailable) castPlayer else exoPlayer,
 			   skip = false
 		  )
+	 }
+
+	 fun localizeCastState(state: Int): String {
+		  return when (state) {
+			   1 -> localPlayerView().context.getString(R.string.no_cast_device_available)
+			   2 -> localPlayerView().context.getString(R.string.cast_not_connected)
+			   3 -> localPlayerView().context.getString(R.string.connecting)
+			   4 -> localPlayerView().context.getString(R.string.cast_connected)
+			   else -> String.format(Locale.ROOT, "UNKNOWN_STATE(%d)", state)
+		  }
 	 }
 }

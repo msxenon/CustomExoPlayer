@@ -456,9 +456,9 @@ class VideoControllerView : FrameLayout {
 			   return
 		  }
 		  if (player.isPlaying == true) {
-			   mPauseButton?.setImageResource(com.appchief.msa.exoplayerawesome.R.drawable.exo_controls_pause)
+			   mPauseButton?.setImageResource(R.drawable.exo_controls_pause)
 		  } else {
-			   mPauseButton?.setImageResource(com.appchief.msa.exoplayerawesome.R.drawable.exo_icon_play)
+			   mPauseButton?.setImageResource(R.drawable.exo_controls_play)
 		  }
 	 }
 

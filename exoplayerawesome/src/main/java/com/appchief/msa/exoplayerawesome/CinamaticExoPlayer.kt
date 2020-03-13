@@ -290,10 +290,12 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  } else
 			   height
 		  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			   TransitionManager.beginDelayedTransition(
-					rootView as ViewGroup, TransitionSet()
-						 .addTransition(ChangeBounds())
-			   )
+			   if (rootView as? ViewGroup != null) {
+					TransitionManager.beginDelayedTransition(
+						 rootView as? ViewGroup, TransitionSet()
+							  .addTransition(ChangeBounds())
+					)
+			   }
 		  }
 		  val m = layoutParams
 

@@ -214,7 +214,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					movieId, episodeId, playerType, poster,
 					videoLink.encodeUrl(), geners, title, runtime, SrtLink?.encodeUrl()
 			   )
-		  lastPos_ = getLastPos("init")
+		  lastPos_ = getLastPos("init", true)
 
 		  // if (playerUiFinalListener?.isConnectedToCast() != true) {
 			   initializePlayer()
@@ -384,8 +384,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 private var lastPos_ = 0L
-	 fun getLastPos(tag: String): Long {
-		  if (lastPos_ == 0L)
+	 fun getLastPos(tag: String, force: Boolean = false): Long {
+		  if (lastPos_ == 0L || force)
 			   playerUiFinalListener?.getLastPosition(nowPlaying)?.let {
 					lastPos_ = it
 			   }

@@ -10,6 +10,7 @@ import android.view.*
 import android.view.View.OnClickListener
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
 import com.appchief.msa.exoplayerawesome.ExoIntent
 import com.appchief.msa.exoplayerawesome.R
@@ -155,8 +156,9 @@ class VideoControllerView : FrameLayout {
 
 	 private fun settingsVisiability(boolean: Boolean) {
 		  val x =
-			   (boolean || currentState == ControllerVisState.Cast)//(mPlayer?.hasSettings == true)
+			   (boolean || !isNotCastingMode())//(mPlayer?.hasSettings == true)
 		  mVideoSettings?.visibility = x.controlVisibility()
+		  mVideoSettings?.setVector(if (isNotCastingMode()) R.drawable.ic_settings_black_24dp else R.drawable.ic_settings_remote_black_24dp)
 		  //  Log.e("VCV", " settingsVisiability $x")
 	 }
 	 /**
@@ -178,7 +180,7 @@ class VideoControllerView : FrameLayout {
 		  view.addView(moviePoster, frameParams)
 		  imageCast = ImageView(view.context)
 		  imageCast?.scaleType = ImageView.ScaleType.CENTER_INSIDE
-		  imageCast?.setImageResource(R.drawable.ic_cast_connected_black_24dp)
+		  imageCast?.setVector(R.drawable.ic_cast_connected_black_24dp)
 		  view.addView(imageCast, frameParams)
 		  val v = makeControllerView(controllerLayout)
 		  addView(v, frameParams)
@@ -454,9 +456,9 @@ class VideoControllerView : FrameLayout {
 			   return
 		  }
 		  if (player.isPlaying == true) {
-			   mPauseButton?.setImageResource(com.appchief.msa.exoplayerawesome.R.drawable.exo_controls_pause)
+			   mPauseButton?.setVector(com.appchief.msa.exoplayerawesome.R.drawable.exo_controls_pause)
 		  } else {
-			   mPauseButton?.setImageResource(com.appchief.msa.exoplayerawesome.R.drawable.exo_icon_play)
+			   mPauseButton?.setVector(com.appchief.msa.exoplayerawesome.R.drawable.exo_icon_play)
 		  }
 	 }
 
@@ -615,6 +617,16 @@ class VideoControllerView : FrameLayout {
 		  private const val FADE_OUT = 1
 		  private const val SHOW_PROGRESS = 2
 	 }
+}
+
+private fun ImageView?.setVector(icSettingsRemoteBlack24dp: Int) {
+	 if (this == null)
+		  return
+	 val x = VectorDrawableCompat.create(
+		  this.context.resources, icSettingsRemoteBlack24dp,
+		  this.context.theme
+	 )
+	 this.setImageDrawable(x)
 }
 
 fun Boolean?.controlVisibility(

@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clickable="false"
-            android:elevation="40dp"
+            android:elevation="400dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

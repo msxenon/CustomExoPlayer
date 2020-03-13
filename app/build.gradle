@@ -42,6 +42,9 @@ android {
         viewBinding {
             enabled = true
         }
+        aaptOptions {
+            cruncherEnabled = false
+        }
     }
 }
 
@@ -55,11 +58,11 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation project(path: ':exoplayerawesome')
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
+    implementation project(path: ':exoplayerawesome')
 
 }
 apply plugin: 'com.google.gms.google-services'

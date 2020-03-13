@@ -487,6 +487,8 @@ class VideoControllerView : FrameLayout {
 			   } else {
 					ExoIntent.paused = false
 					player.playWhenReady = true
+					if (player.playbackState == ExoPlayer.STATE_ENDED)
+						 player.seekTo(0)
 			   }
 			   updatePausePlay()
 		  } catch (e: Exception) {

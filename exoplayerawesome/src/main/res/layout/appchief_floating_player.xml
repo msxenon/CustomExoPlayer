@@ -10,28 +10,22 @@
         app:showPaths="false">
 
 
-    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+    <com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
             android:id="@+id/motionInteractView"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
+            android:layout_height="200dp"
             android:background="#000000"
+            android:keepScreenOn="true"
+            android:tag="player"
+            app:controller_layout_id="@layout/empty_layout_nothing"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        <com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
-                android:id="@+id/playerView"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:keepScreenOn="true"
-                android:tag="player"
-                app:controller_layout_id="@layout/empty_layout_nothing"
-                app:use_controller="true" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:surface_type="texture_view"
+            app:use_controller="true">
 
 
-    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+    </com.appchief.msa.exoplayerawesome.CinamaticExoPlayer>
 
     <TextView
             android:id="@+id/close_view"

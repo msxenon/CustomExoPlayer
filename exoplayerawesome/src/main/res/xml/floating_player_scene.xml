@@ -5,12 +5,11 @@
     <Transition
             motion:constraintSetEnd="@id/end"
             motion:constraintSetStart="@id/start"
-            motion:duration="50"
+            motion:duration="100"
             motion:motionInterpolator="linear">
 
         <OnSwipe
                 motion:dragDirection="dragDown"
-                motion:maxAcceleration="20"
                 motion:onTouchUp="autoComplete"
                 motion:touchRegionId="@id/motionInteractView" />
         <KeyFrameSet>
@@ -68,7 +67,7 @@
         <Constraint
                 android:id="@id/motionInteractView"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 motion:layout_constraintEnd_toEndOf="parent"
                 motion:layout_constraintStart_toStartOf="parent"
                 motion:layout_constraintTop_toTopOf="parent" />

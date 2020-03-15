@@ -24,7 +24,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 private var snackBar: Snackbar? = null
 	 //	 private var loadingView: View? = null
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		  binding.videoOverlayView.player?.cinematicPlayerViews = CinematicOnce()
+		  binding.videoOverlayView.playerContainer?.cinematicPlayerViews = CinematicOnce()
 		  super.onViewCreated(view, savedInstanceState)
 //		  loadingView = LoadingScBinding.inflate(layoutInflater).root
 //		  binding.videoOverlayView.player?.addView(loadingView)
@@ -41,8 +41,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 fun initPlayer() {
-
-		  binding.videoOverlayView.player?.playLinkNSub(
+		  binding.videoOverlayView.playerContainer?.playLinkNSub(
 			   MainActivity.link,
 			   null,
 			   null,
@@ -97,11 +96,11 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 override fun showSettings(forCasting: Boolean) {
-		  Log.e("smdd", "showsettttt ${binding.videoOverlayView.player != null}")
+//		  Log.e("smdd", "showsettttt ${binding.videoOverlayView.player != null}")
 		  if (!forCasting) {
 			   TrackSelectionDialog.createForTrackSelector(childFragmentManager,
 					activity,
-					binding.videoOverlayView.player!!.trackSelector,
+					binding.videoOverlayView.playerContainer!!.trackSelector,
 					DialogInterface.OnDismissListener { })
 		  } else {
 			   activity?.startActivity(Intent(activity, ExpandedControlsActivity::class.java))

@@ -10,7 +10,7 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:name="com.appchief.msa.AppMain"
-            android:hardwareAccelerated="false"
+            android:hardwareAccelerated="true"
             android:supportsRtl="false"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">

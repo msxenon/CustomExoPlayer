@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 override fun onBackPressed() {
-		  if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+		  if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 			   requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 		  else
 			   super.onBackPressed()

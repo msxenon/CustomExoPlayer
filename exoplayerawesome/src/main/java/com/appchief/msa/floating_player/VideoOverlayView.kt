@@ -10,8 +10,8 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
+import com.appchief.msa.exoplayerawesome.R
 import com.appchief.msa.exoplayerawesome.databinding.AppchiefFloatingPlayerBinding
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 
 // https://medium.com/vrt-digital-studio/picture-in-picture-video-overlay-with-motionlayout-a9404663b9e7
 class VideoOverlayView @JvmOverloads constructor(
@@ -21,24 +21,31 @@ class VideoOverlayView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
 	 var motionLayout: MotionLayout? = null
-	 var player: CinamaticExoPlayer? = null
-	 var playerContainer: AspectRatioFrameLayout? = null
+	 // var player: CinamaticExoPlayer? = null
+	 var playerContainer: CinamaticExoPlayer? = null
 	 private var startX: Float? = null
 	 private var startY: Float? = null
-
+	 fun setPortraitVideoHight(height: Int) {
+		  motionLayout?.getConstraintSet(R.id.start)?.let {
+			   it.constrainHeight(R.id.motionInteractView, height)
+			   motionLayout?.updateState()
+		  }
+	 }
 	 override fun onFinishInflate() {
 		  super.onFinishInflate()
 		  //LayoutInflater.from(context).inflate(R.layout.layout_detail, this, false) as MotionLayout
-		  if (motionLayout == null || player == null) {
+		  if (motionLayout == null) {
 			   //   (rootView as ViewGroup) .removeAllViews()
 			   motionLayout = AppchiefFloatingPlayerBinding.inflate(LayoutInflater.from(context))
 					.containerMotionLayout
+
+
 			   addView(motionLayout)
-			   player =
-					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.playerView)
+//			   player =
+//					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.motionInteractView)
 			   playerContainer =
 					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.motionInteractView)
-
+			   playerContainer?.videoOverlayView = this
 		  }
 	 }
 
@@ -55,7 +62,7 @@ class VideoOverlayView @JvmOverloads constructor(
 		  if (motionLayout == null)
 			   return false
 		  val isInProgress = isInProgress()
-		  val isInTarget = touchEventInsideTargetViewExceptTop(player!!, ev)
+		  val isInTarget = touchEventInsideTargetViewExceptTop(playerContainer!!, ev)
 		  val touchingTarget = touchEventInsideTargetView(playerContainer!!, ev)
 		  Log.e("VVO", "onInterceptTouchEvent 2 $isInProgress  $isInTarget $touchingTarget")
 		  return if (isInProgress || isInTarget || touchingTarget) {
@@ -96,13 +103,13 @@ class VideoOverlayView @JvmOverloads constructor(
 
 	 override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
 //		  Log.e("VVO", "dispatchTouchEvent ${motionLayout == null} ")
-		  if (player != null && motionLayout != null) {
-			   val consumed = player!!.dispatchTouchEvent(ev)
+		  if (playerContainer != null && motionLayout != null) {
+			   val consumed = playerContainer!!.dispatchTouchEvent(ev)
 //			   Log.e("VVO", "dispatchTouchEvent c1 ${consumed}  ")
 			   if (consumed) {
 					return consumed
 			   }
-			   if (touchEventInsideTargetView(player!!, ev)) {
+			   if (touchEventInsideTargetView(playerContainer!!, ev)) {
 					when (ev.action) {
 						 MotionEvent.ACTION_DOWN -> {
 							  startX = ev.x
@@ -115,7 +122,7 @@ class VideoOverlayView @JvmOverloads constructor(
 								   if (isClick(startX!!, endX, startY!!, endY)) {
 										if (motionLayout!!.currentState == motionLayout!!.startState) {
 											 Log.e("VVO", "dispatchTouchEvent preform pte ")
-											 player!!.performClick()
+											 playerContainer!!.performClick()
 										}
 										if (doClickTransition()) {
 											 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
@@ -161,7 +168,7 @@ class VideoOverlayView @JvmOverloads constructor(
 	 }
 
 	 fun isInFullScreen(): Boolean {
-		  return player?.playerUiFinalListener?.isInFullScreen() == true
+		  return playerContainer?.playerUiFinalListener?.isInFullScreen() == true
 	 }
 	 fun minimize() {
 		  motionLayout?.transitionToEnd()

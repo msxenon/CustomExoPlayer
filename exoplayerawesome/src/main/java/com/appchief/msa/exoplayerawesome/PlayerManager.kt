@@ -189,8 +189,7 @@ internal class PlayerManager(
 			   localPlayerView().player = exoPlayer
 			   castControlView()?.hide()
 			   castControlView()?.currentState = ControllerVisState.Normal
-			   //  localPlayerView.rootView.findViewById<View>(R.id.overlayImage).visibility = View.GONE
-		  } else  /* currentPlayer == castPlayer */ { //localPlayerView.setVisibility(View.GONE);
+		  } else  /* currentPlayer == castPlayer */ {
 			   castControlView()?.currentState = ControllerVisState.Cast
 			   castControlView()?.player = castPlayer
 			   localPlayerView().player = castPlayer
@@ -201,10 +200,7 @@ internal class PlayerManager(
 					pos ?: 0,
 					Player.REPEAT_MODE_ALL
 			   )
-//			   localPlayerView.rootView.findViewById<View>(R.id.overlayImage).visibility =
-//					View.VISIBLE
-//			   localPlayerView.rootView.findViewById<View>(R.id.overlayImage)
-//					.setBackgroundResource(R.drawable.cast_bg)
+			   localPlayerView().playerUiFinalListener?.forcePortrait()
 		  }
 
 		  // Player state management.

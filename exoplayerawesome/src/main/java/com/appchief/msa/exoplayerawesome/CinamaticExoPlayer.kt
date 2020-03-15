@@ -19,6 +19,7 @@ import com.appchief.msa.CastApp
 import com.appchief.msa.exoplayerawesome.ExoIntent.usedInistances
 import com.appchief.msa.exoplayerawesome.listeners.*
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
+import com.appchief.msa.floating_player.VideoOverlayView
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MergingMediaSource
@@ -121,7 +122,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  }
 	 }
 
-	 private val isFloatingPlayer = R.id.playerView == id
+	 private val isFloatingPlayer = R.id.motionInteractView == id
 	 private val taag = "CEP isFloating = ${isFloatingPlayer}"
 	 var controllerViiablilityListener:PlayerControlView.VisibilityListener? = null
 	 var cinematicPlayerViews: CinematicPlayerViews? = null
@@ -275,9 +276,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					pixelWidthHeightRatio: Float
 			   ) {
 					Log.e("sizeChanged", " $unappliedRotationDegrees $pixelWidthHeightRatio")
-					if (isFloatingPlayer) {
-						 videoSize(height, ((width * pixelWidthHeightRatio).roundToInt()), true)
-					}
+					videoSize(height, ((width * pixelWidthHeightRatio).roundToInt()), true)
+
 			   }
 		  })
 	 }
@@ -314,16 +314,22 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 private var realHeight = 200.DpToPx()
 	 private fun applyHeight(height: Int) {
-		  val m = layoutParams
+		  //val m = layoutParams
 
 		  if (playerUiFinalListener?.isInFullScreen() == true) {
-			   m.height = ViewGroup.LayoutParams.MATCH_PARENT
+//			   m.height = ViewGroup.LayoutParams.MATCH_PARENT
 		  } else {
-			   m.height = height
+			   findParentMotionLayout(height)
 		  }
-		  Log.e("applyHeight", "$realHeight && ${m.height} ${200.DpToPx()}")
-		  layoutParams = m
+		  //  Log.e("applyHeight", "$realHeight && ${m.height} ${200.DpToPx()}")
+		  // layoutParams = m
 	 }
+
+	 var videoOverlayView: VideoOverlayView? = null
+	 private fun findParentMotionLayout(height: Int) {
+		  videoOverlayView?.setPortraitVideoHight(height)
+	 }
+
 	 fun canAutoPlay(): Boolean {
 		  return !ExoIntent.paused
 	 }

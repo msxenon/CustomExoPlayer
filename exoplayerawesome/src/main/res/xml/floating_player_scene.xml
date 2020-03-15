@@ -5,12 +5,13 @@
     <Transition
             motion:constraintSetEnd="@id/end"
             motion:constraintSetStart="@id/start"
-            motion:duration="100"
+            motion:duration="350"
             motion:motionInterpolator="linear">
 
         <OnSwipe
                 motion:dragDirection="dragDown"
                 motion:onTouchUp="autoComplete"
+                motion:maxAcceleration="20"
                 motion:touchRegionId="@id/motionInteractView" />
         <KeyFrameSet>
             <KeyAttribute

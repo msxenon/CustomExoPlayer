@@ -22,7 +22,7 @@ class DetailsFrag : Fragment() {
 		  button2?.setOnClickListener {
 			   MainActivity.movieName = "https"
 			   MainActivity.link =
-					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
+					"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
 			   val m =
 					activity?.supportFragmentManager?.findFragmentByTag("ff") as? MainActivityFragment
 			   m!!.initPlayer()
@@ -30,7 +30,7 @@ class DetailsFrag : Fragment() {
 		  button6?.setOnClickListener {
 			   MainActivity.movieName = "https"
 			   MainActivity.link =
-					"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
+					"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
 			   val m =
 					activity?.supportFragmentManager?.findFragmentByTag("ff") as? MainActivityFragment
 			   m!!.initPlayer()

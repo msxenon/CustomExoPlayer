@@ -11,10 +11,11 @@ interface CineamaticPlayerScreen {
 	 fun doMinimizePlayer()
 	 fun isFirstItem(): Boolean
 	 fun isPlayList(): Boolean
-	 fun setScreenOrentation(inFullScreenMode: Boolean)
+	 fun setScreenOrentation()
 	 fun showSettings(forCasting: Boolean)
 	 fun showCustomUi(show: Boolean)
 	 fun setMoviePoster(result: (it: Drawable) -> Unit)
+	 fun isInFullScreen(): Boolean
 }
 
 interface CinematicPlayerViews {

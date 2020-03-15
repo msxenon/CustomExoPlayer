@@ -27,18 +27,10 @@ class FullScreenPlayer : AppCompatActivity(), FullScreenActivity {
 	 override fun onDestroy() {
 		  playerViewFull?.videoSurfaceView
 		  super.onDestroy()
-		  ExoIntent.isInFullScreen = false
-	 }
-
-	 override fun onResume() {
-		  super.onResume()
-
-		  ExoIntent.isInFullScreen = true
 	 }
 
 	 override fun ondissmiss() {
 		  Log.e("FullScreen", "Dismiss called")
-		  ExoIntent.isInFullScreen = false
 		  onBackPressed()
 	 }
 //	 override fun onBackPressed() {

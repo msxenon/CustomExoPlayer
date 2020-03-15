@@ -1,6 +1,8 @@
 package com.appchief.msa
 
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -30,8 +32,13 @@ class MainActivity : AppCompatActivity() {
 		  return true
 	 }
 
-
-
+	 @SuppressLint("SourceLockedOrientationActivity")
+	 override fun onBackPressed() {
+		  if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+			   requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+		  else
+			   super.onBackPressed()
+	 }
 	 override fun onCreate(savedInstanceState: Bundle?) {
 		  Timber.plant(Timber.DebugTree())
 		  super.onCreate(savedInstanceState)

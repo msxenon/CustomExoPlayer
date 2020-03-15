@@ -446,7 +446,7 @@ class VideoControllerView : FrameLayout {
 		  }
 	 private val mFullscreenListener =
 		  OnClickListener {
-			   //   Log.e("VCV", "fulls clicklistener")
+			   Log.e("VCV", "fulls clicklistener")
 			   doToggleFullscreen()
 			   show(sDefaultTimeout)
 		  }
@@ -473,7 +473,7 @@ class VideoControllerView : FrameLayout {
 
 	 private fun updateDownBtn() {
 		  mDownPlayer?.visibility =
-			   (!ExoIntent.isInFullScreen && mPlayer?.minimizeAble() == true).controlVisibility(
+			   (mPlayer?.playerUiFinalListener?.isInFullScreen() != true && mPlayer?.minimizeAble() == true).controlVisibility(
 					currentState == ControllerVisState.Normal
 			   )
 	 }
@@ -499,9 +499,6 @@ class VideoControllerView : FrameLayout {
 	 }
 
 	 private fun doToggleFullscreen() {
-		  if (mPlayer == null) {
-			   return
-		  }
 		  mPlayer?.toggleFullScreen()
 	 }
 	 private val mSeekListener: OnSeekBarChangeListener = object : OnSeekBarChangeListener {

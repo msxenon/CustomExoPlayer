@@ -1,25 +1,24 @@
 package com.appchief.msa.exoplayerawesome
 
-import android.content.Intent
 import android.util.Log
 
 object ExoIntent {
 	 //private var player: Player? = null
 	 var usedInistances = 0
-	 var isInFullScreen = false
+	 //	 var isInFullScreen = false
 	 var pview: CinamaticExoPlayer? = null
 	 // var savedPlayer : Player? = null
 	 var fullScreenActivity: FullScreenActivity? = null
 	 var paused = false
 	 fun openFullScreenMode(playerView: CinamaticExoPlayer?) {
-		  savePlayer(playerView)?.let {
-			   playerView?.context?.startActivity(
-					Intent(
-						 playerView.context,
-						 FullScreenPlayer::class.java
-					)
-			   )
-		  }
+//		  savePlayer(playerView)?.let {
+//			   playerView?.context?.startActivity(
+////					Intent(
+////						 playerView.context,
+////						 FullScreenPlayer::class.java
+////					)
+//			   )
+//		  }
 	 }
 
 	 fun savePlayer(playerView: CinamaticExoPlayer?): Any? {

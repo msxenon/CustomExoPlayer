@@ -1,6 +1,8 @@
 package com.appchief.msa.floating_player
 
 import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
-import com.appchief.msa.exoplayerawesome.ExoIntent
+import com.appchief.msa.exoplayerawesome.R
 import com.appchief.msa.exoplayerawesome.databinding.VideoOverViewBinding
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.appchief.msa.exoplayerawesome.listeners.CloseReason
@@ -26,6 +28,9 @@ abstract class FloatingPLayerFragment : Fragment(),
 
 	 }
 
+	 override fun isInFullScreen(): Boolean {
+		  return activity?.requestedOrientation != Configuration.ORIENTATION_PORTRAIT
+	 }
 	 override fun onDestroy() {
 		  miniControllerFragment?.onDestroy()
 		  super.onDestroy()
@@ -37,18 +42,53 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  view?.requestFocus()
 	 }
 
-	 override fun setScreenOrentation(inFullScreenMode: Boolean) {
-
-		  if (!inFullScreenMode) {
-			   ExoIntent.openFullScreenMode(binding.videoOverlayView.player)
+	 override fun onConfigurationChanged(newConfig: Configuration) {
+		  super.onConfigurationChanged(newConfig)
+		  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			   binding.videoOverlayView.motionLayout?.transitionToState(R.id.fullScreen)
 		  } else {
-			   ExoIntent.dismissFullScreen()
+			   binding.videoOverlayView.motionLayout?.transitionToStart()
+
 		  }
-		  Log.e("xx", "setScreenOrentation $inFullScreenMode ")
-
-
+		  applyVisibility()
 	 }
 
+	 private fun applyVisibility() {
+		  if (isInFullScreen()) {
+			   activity?.window?.decorView?.apply {
+					// Hide both the navigation bar and the status bar.
+					// SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+					// a general rule, you should design your app to hide the status bar whenever you
+					// hide the navigation bar.
+					systemUiVisibility =
+						 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+			   }
+			   binding.videoOverlayView.player?.fullSize()
+		  } else {
+			   activity?.window?.decorView?.apply {
+					// Hide both the navigation bar and the status bar.
+					// SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+					// a general rule, you should design your app to hide the status bar whenever you
+					// hide the navigation bar.
+					systemUiVisibility =
+						 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+			   }
+			   binding.videoOverlayView.player?.minSize()
+		  }
+	 }
+
+	 @SuppressLint("SourceLockedOrientationActivity")
+	 override fun setScreenOrentation() {
+		  Log.e("xx", "setScreenOrentation ${isInFullScreen()} ")
+		  activity!!.requestedOrientation =
+			   if (isInFullScreen()) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+	 }
+
+	 override fun onResume() {
+		  super.onResume()
+		  Log.e("on", "Onresume called")
+		  applyVisibility()
+	 }
 	 override fun onDissmiss(reason: CloseReason) {
 		  fragmentManager?.beginTransaction()?.remove(this)?.commit()
 	 }

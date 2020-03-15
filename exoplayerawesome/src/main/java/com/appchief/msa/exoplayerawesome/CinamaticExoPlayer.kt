@@ -68,8 +68,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  )
 //			onResume()
 		  Log.e("TAG", "================================>>>> lifecycle ${player == null} ")
-		  ExoIntent.getPlayerHere(this)
-		  //  start()
+		  //  ExoIntent.getPlayerHere(this)
+		  start()
 		  Log.e("TAG2", "================================>>>> lifecycle ${player == null} ")
 	 }
 
@@ -90,6 +90,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
 	 fun stop() {
 		  isForeground = false
+
 		  pause()
 		  onPauseSave()
 		  Log.e("TAG", "================================>>>> lifecycle owner STOPED  $taag")
@@ -97,6 +98,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
 	 fun destroy() {
+
 		  usedInistances -= 1
 		  releasePlayer()
 		  Log.e(
@@ -301,16 +303,27 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					}
 			   }
 		  }
-		  val m = layoutParams
 
 		  Log.e(
 			   "videoSizeCHanged",
 			   " $width $height  $respectAspectRatio $aspectRatio $actualHeight $screenHeightPx , $screenWPx }"
 		  )
-		  m.height = min(screenHeightPx.div(2), actualHeight)
-		  layoutParams = m
+		  realHeight = min(screenHeightPx.div(2), actualHeight)
+		  applyHeight(realHeight)
 	 }
 
+	 private var realHeight = 200.DpToPx()
+	 private fun applyHeight(height: Int) {
+		  val m = layoutParams
+
+		  if (playerUiFinalListener?.isInFullScreen() == true) {
+			   m.height = ViewGroup.LayoutParams.MATCH_PARENT
+		  } else {
+			   m.height = height
+		  }
+		  Log.e("applyHeight", "$realHeight && ${m.height} ${200.DpToPx()}")
+		  layoutParams = m
+	 }
 	 fun canAutoPlay(): Boolean {
 		  return !ExoIntent.paused
 	 }
@@ -512,13 +525,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 override val canHaveFullScreen: Boolean
 		  get() = playerUiFinalListener?.canMinimize() != false
 
-	 //	 var isInFullScreenMode_: Boolean = false
-//		  set(value) {
-//			   field = value
-//			   customController?.updateFullScreen()
-//		  }
+
 	 override fun toggleFullScreen() {
-		  playerUiFinalListener?.setScreenOrentation(ExoIntent.isInFullScreen)
+		  playerUiFinalListener?.setScreenOrentation()
 	 }
 
 	 override fun canShowController(useController_: Boolean) {
@@ -529,7 +538,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 override fun minimizeAble(): Boolean {
-		  return playerUiFinalListener?.canMinimize() == true && !ExoIntent.isInFullScreen
+		  return playerUiFinalListener?.canMinimize() == true && playerUiFinalListener?.isInFullScreen() != true
 	 }
 
 	 override fun minmize() {
@@ -551,13 +560,13 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   }
 		  }
 		  val x = super.dispatchTouchEvent(ev)
-		  Log.e("CEP", "dispatchTouchEvent end ${ExoIntent.isInFullScreen} $x")
+		  Log.e("CEP", "dispatchTouchEvent end   $x")
 
 		  return x
 	 }
 
 	 override fun onTouchEvent(event: MotionEvent): Boolean {
-		  if (ExoIntent.isInFullScreen) {
+		  if (playerUiFinalListener?.isInFullScreen() == true) {
 			   customController?.toggleShowHide()
 		  }
 		  return false
@@ -589,8 +598,12 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  )
 	 }
 
+	 fun fullSize() {
+		  applyHeight(ViewGroup.LayoutParams.MATCH_PARENT)
+	 }
+
 	 fun minSize() {
-		  videoSize(100.DpToPx())
+		  applyHeight(realHeight)
 	 }
 }
 

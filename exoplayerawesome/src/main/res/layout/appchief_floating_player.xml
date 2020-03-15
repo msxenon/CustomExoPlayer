@@ -6,6 +6,7 @@
         android:layout_height="match_parent"
         app:applyMotionScene="true"
         app:layoutDescription="@xml/floating_player_scene"
+        app:currentState="@id/start"
         app:showPaths="false">
 
 
@@ -23,9 +24,9 @@
                 android:id="@+id/playerView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_gravity="center"
                 android:keepScreenOn="true"
                 android:tag="player"
-                android:layout_gravity="center"
                 app:controller_layout_id="@layout/empty_layout_nothing"
                 app:use_controller="true" />
 

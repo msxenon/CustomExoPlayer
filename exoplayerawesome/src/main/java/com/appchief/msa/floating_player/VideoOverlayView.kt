@@ -25,13 +25,7 @@ class VideoOverlayView @JvmOverloads constructor(
 	 var playerContainer: AspectRatioFrameLayout? = null
 	 private var startX: Float? = null
 	 private var startY: Float? = null
-	 //	 override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-//		  super.onLayout(changed, left, top, right, bottom)
-//		  if (changed){
-//			   player =
-//					motionLayout?.findViewById(com.appchief.msa.exoplayerawesome.R.id.playerView)
-//		  }
-//	 }
+
 	 override fun onFinishInflate() {
 		  super.onFinishInflate()
 		  //LayoutInflater.from(context).inflate(R.layout.layout_detail, this, false) as MotionLayout
@@ -93,8 +87,11 @@ class VideoOverlayView @JvmOverloads constructor(
 //					x =  true
 //			   }
 //		  }
-		  Log.e("VOV", "top $x ${ev.x} ${ev.y} ${v.left} ${v.top} ${v.right} ${v.bottom}")
-		  return !isMinimized()
+		  Log.e(
+			   "VOV",
+			   "top ${isMinimized()}   kj $x ${ev.x} ${ev.y} ${v.left} ${v.top} ${v.right} ${v.bottom}"
+		  )
+		  return !isMinimized() && !isInFullScreen()
 	 }
 
 	 override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -161,6 +158,10 @@ class VideoOverlayView @JvmOverloads constructor(
 
 	 fun isMinimized(): Boolean {
 		  return motionLayout?.currentState == com.appchief.msa.exoplayerawesome.R.id.end
+	 }
+
+	 fun isInFullScreen(): Boolean {
+		  return player?.playerUiFinalListener?.isInFullScreen() == true
 	 }
 	 fun minimize() {
 		  motionLayout?.transitionToEnd()

@@ -54,7 +54,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			   binding.videoOverlayView.motionLayout?.transitionToState(R.id.fullScreen)
 		  } else {
-			   binding.videoOverlayView.motionLayout?.transitionToStart()
+			   binding.videoOverlayView.motionLayout?.transitionToState(R.id.start)
 
 		  }
 		  applyVisibility()

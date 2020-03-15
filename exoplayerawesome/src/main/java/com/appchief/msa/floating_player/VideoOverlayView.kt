@@ -26,9 +26,12 @@ class VideoOverlayView @JvmOverloads constructor(
 	 private var startX: Float? = null
 	 private var startY: Float? = null
 	 fun setPortraitVideoHight(height: Int) {
+		  Log.e("setPortraitVideoHightA", "$height")
 		  motionLayout?.getConstraintSet(R.id.start)?.let {
 			   it.constrainHeight(R.id.motionInteractView, height)
 			   motionLayout?.updateState()
+			   Log.e("setPortraitVideoHightB", "$height")
+
 		  }
 	 }
 	 override fun onFinishInflate() {
@@ -175,6 +178,6 @@ class VideoOverlayView @JvmOverloads constructor(
 		  return playerContainer?.playerUiFinalListener?.isInFullScreen() == true
 	 }
 	 fun minimize() {
-		  motionLayout?.transitionToEnd()
+		  motionLayout?.transitionToState(com.appchief.msa.exoplayerawesome.R.id.end)
 	 }
 }

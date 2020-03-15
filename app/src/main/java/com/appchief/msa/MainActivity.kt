@@ -1,11 +1,8 @@
 package com.appchief.msa
 
-import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import com.appchief.msa.awesomeplayer.R
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
@@ -16,25 +13,12 @@ class MainActivity : BaseActivityFloatingNavigation() {
 		  var movieName = ""
 	 }
 
-	 private fun isGooglePlayServicesAvailable(): Boolean {
-		  val googleApiAvailability = GoogleApiAvailability.getInstance()
-		  val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(this)
-		  if (resultCode != ConnectionResult.SUCCESS) {
-			   val dialog: Dialog? = googleApiAvailability.getErrorDialog(this, resultCode, 0)
-			   if (dialog != null) {
-					dialog.show()
-			   }
-			   return false
-		  }
-		  return true
-	 }
 
 	 override fun onCreate(savedInstanceState: Bundle?) {
 		  Timber.plant(Timber.DebugTree())
 		  super.onCreate(savedInstanceState)
 		  setContentView(R.layout.activity_main)
 		  Timber.e("kkmkmk ")
-		  isGooglePlayServicesAvailable()
 		  button4?.setOnClickListener {
 			   link =
 					"http://appchief.net/bigBunny.mp4"//"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"

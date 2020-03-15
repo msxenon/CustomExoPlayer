@@ -1,18 +1,15 @@
 package com.appchief.msa
 
-import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import com.appchief.msa.awesomeplayer.R
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivityFloatingNavigation() {
 	 companion object {
 		  var link = ""
 		  var poster = ""
@@ -32,13 +29,6 @@ class MainActivity : AppCompatActivity() {
 		  return true
 	 }
 
-	 @SuppressLint("SourceLockedOrientationActivity")
-	 override fun onBackPressed() {
-		  if (requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-			   requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-		  else
-			   super.onBackPressed()
-	 }
 	 override fun onCreate(savedInstanceState: Bundle?) {
 		  Timber.plant(Timber.DebugTree())
 		  super.onCreate(savedInstanceState)

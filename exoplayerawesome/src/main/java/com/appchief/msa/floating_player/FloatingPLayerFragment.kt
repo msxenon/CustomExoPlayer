@@ -194,5 +194,9 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 override fun showCustomUi(show: Boolean) {
 		  //  binding.videoOverlayView.playerImage.visibility = show.controlVisibility()
 	 }
+
+	 fun canGoBack(): Boolean {
+		  return binding.videoOverlayView.isMinimized()
+	 }
 }
 

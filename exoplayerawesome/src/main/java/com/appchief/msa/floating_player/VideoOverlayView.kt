@@ -164,7 +164,11 @@ class VideoOverlayView @JvmOverloads constructor(
 	 }
 
 	 fun isMinimized(): Boolean {
-		  return motionLayout?.currentState == com.appchief.msa.exoplayerawesome.R.id.end
+		  Log.e(
+			   "mmm",
+			   "${com.appchief.msa.exoplayerawesome.R.id.end} ${motionLayout?.currentState}"
+		  )
+		  return motionLayout?.currentState == com.appchief.msa.exoplayerawesome.R.id.end || motionLayout?.currentState == -1
 	 }
 
 	 fun isInFullScreen(): Boolean {

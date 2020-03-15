@@ -1,8 +1,13 @@
 package com.appchief.msa
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.appchief.msa.floating_player.FloatingPLayerFragment
 import com.google.android.gms.cast.framework.*
 
 interface CastListener {
@@ -92,4 +97,41 @@ abstract class CastApp : Application() {
 
 	 private val castStateListener =
 		  CastStateListener { p0 -> listeners.map { it.isCastAvailable(p0 != CastState.NO_DEVICES_AVAILABLE) } }
+}
+
+open class BaseActivityFloatingNavigation : AppCompatActivity() {
+	 open fun getPlayerFragment(): FloatingPLayerFragment? {
+		  return supportFragmentManager.findFragmentByTag("ff") as? FloatingPLayerFragment
+	 }
+
+	 @SuppressLint("SourceLockedOrientationActivity")
+	 fun canGoBack(): Boolean {
+		  val orientation = this.resources.configuration.orientation
+		  if (orientation != Configuration.ORIENTATION_PORTRAIT) {
+			   // code for landscape mode
+			   requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+			   return false
+		  }
+		  val pc = getPlayerFragment()
+		  Log.e("ss,", "player canGoBack isPlayer ${pc == null}")
+
+		  pc?.takeIf { pc.isVisible }?.let {
+			   val canGoBack = it.canGoBack()
+			   if (!canGoBack) {
+					pc.doMinimizePlayer()
+					return false
+			   }
+		  }
+
+		  return goUpFragments()
+	 }
+
+	 open fun goUpFragments(): Boolean {
+		  return true
+	 }
+
+	 override fun onBackPressed() {
+		  if (canGoBack())
+			   super.onBackPressed()
+	 }
 }

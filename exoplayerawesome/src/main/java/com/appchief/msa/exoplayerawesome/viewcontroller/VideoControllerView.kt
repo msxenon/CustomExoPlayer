@@ -136,7 +136,7 @@ class VideoControllerView : FrameLayout {
 		  mRewButton?.visibility = vis
 		  mCurrentTime?.visibility = vis
 		  mEndTime?.visibility = vis
-		  fullscreenBtn?.visibility = vis
+		  fullscreenBtn?.visibility = (mPlayer?.canHaveFullScreen).controlVisibility()
 		  moviePoster?.visibility = (currentState == ControllerVisState.Cast).controlVisibility()
 		  imageCast?.visibility = (currentState == ControllerVisState.Cast).controlVisibility()
 

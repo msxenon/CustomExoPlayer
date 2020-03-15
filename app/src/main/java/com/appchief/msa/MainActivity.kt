@@ -11,6 +11,7 @@ class MainActivity : BaseActivityFloatingNavigation() {
 		  var link = ""
 		  var poster = ""
 		  var movieName = ""
+		  var isChannel = true
 	 }
 
 
@@ -20,6 +21,7 @@ class MainActivity : BaseActivityFloatingNavigation() {
 		  setContentView(R.layout.activity_main)
 		  Timber.e("kkmkmk ")
 		  button4?.setOnClickListener {
+			   isChannel = false
 			   link =
 					"http://appchief.net/bigBunny.mp4"//"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
 			   movieName = "Tiktok"
@@ -28,6 +30,7 @@ class MainActivity : BaseActivityFloatingNavigation() {
 			   removeIfExist()
 		  }
 		  button3?.setOnClickListener {
+			   isChannel = true
 			   link =
 					"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"//"http://cinema.supercellnetwork.com:8081/vod/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/NxSxsu0xvAzvrqo/,NxSxsu0xvAzvrqo_1080.mp4,NxSxsu0xvAzvrqo_720.mp4,NxSxsu0xvAzvrqo_480.mp4,NxSxsu0xvAzvrqo.srt,.urlset/master.m3u8"//
 			   movieName = "TigBunny"

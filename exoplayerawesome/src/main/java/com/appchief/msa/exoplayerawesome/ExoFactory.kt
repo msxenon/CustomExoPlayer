@@ -14,10 +14,13 @@ import com.google.android.exoplayer2.source.SingleSampleMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
-import com.google.android.exoplayer2.upstream.*
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
@@ -46,20 +49,22 @@ class ExoFactory internal constructor(private val context: Context?) {
 			   userAgent = Util.getUserAgent(context, "ExoPlayerDemo")
 	 }
 
-	 fun buildMediaSource(uri: Uri, srtLink: String?): MediaSource? {
+	 fun buildMediaSource(uri: Uri, srtLink: String?, noChache: Boolean): MediaSource? {
 		  return if (!srtLink.isNullOrBlank()) {
 			   addSubTitlesToMediaSource(
-					ExoFactorySingeleton.getInstance().buildMediaSource(uri),
-					srtLink.encodeUrl()
+					ExoFactorySingeleton.getInstance().buildMediaSource(uri, noChache),
+					srtLink.encodeUrl(),
+					noChache
 			   )
 		  } else {
-			   ExoFactorySingeleton.getInstance().buildMediaSource(uri)
+			   ExoFactorySingeleton.getInstance().buildMediaSource(uri, noChache)
 		  }
 	 }
 
 	 private fun addSubTitlesToMediaSource(
 		  mediaSource: MediaSource?,
-		  subTitlesUrl: String
+		  subTitlesUrl: String,
+		  noChache: Boolean
 	 ): MediaSource {
 		  val textFormat = Format.createTextSampleFormat(
 			   null, MimeTypes.APPLICATION_SUBRIP,
@@ -68,31 +73,36 @@ class ExoFactory internal constructor(private val context: Context?) {
 		  val uri = Uri.parse(subTitlesUrl)
 		  Log.e("subtitleURI", uri.toString() + " ")
 		  val subtitleSource =
-			   SingleSampleMediaSource.Factory(ExoFactorySingeleton.getInstance().buildDataSourceFactory())
+			   SingleSampleMediaSource.Factory(
+					ExoFactorySingeleton.getInstance().buildDataSourceFactory(
+						 noChache
+					)
+			   )
 					.createMediaSource(uri, textFormat, C.TIME_UNSET)
 
 		  return MergingMediaSource(mediaSource, subtitleSource)
 	 }
-	 fun buildMediaSource(uri: Uri): MediaSource? {
+
+	 fun buildMediaSource(uri: Uri, noChache: Boolean): MediaSource? {
 		  try {//here put url
 			   @C.ContentType val type = Util.inferContentType(uri, null)
 			   Log.e("exoFactory", "buildMediaSource $uri $type")
 
 			   return when (type) {
-					C.TYPE_DASH -> DashMediaSource.Factory(buildDataSourceFactory()!!).createMediaSource(
+					C.TYPE_DASH -> DashMediaSource.Factory(buildDataSourceFactory(noChache)!!).createMediaSource(
 						 uri
 					)
-					C.TYPE_SS -> SsMediaSource.Factory(buildDataSourceFactory()!!).createMediaSource(
+					C.TYPE_SS -> SsMediaSource.Factory(buildDataSourceFactory(noChache)!!).createMediaSource(
 						 uri
 					)
 					C.TYPE_HLS -> {
-						 val m = HlsMediaSource.Factory(buildDataSourceFactory()!!)
+						 val m = HlsMediaSource.Factory(buildDataSourceFactory(noChache)!!)
 							  .setAllowChunklessPreparation(true)
 						 m.createMediaSource(
 						 uri
 					)
 					}
-					C.TYPE_OTHER -> ProgressiveMediaSource.Factory(buildDataSourceFactory()!!).createMediaSource(
+					C.TYPE_OTHER -> ProgressiveMediaSource.Factory(buildDataSourceFactory(noChache)!!).createMediaSource(
 						 uri
 					)
 					else -> throw Throwable("Unsupported type: $type")
@@ -105,10 +115,12 @@ class ExoFactory internal constructor(private val context: Context?) {
 	 }
 
 	 /** Returns a [DataSource.Factory].  */
-	 fun buildDataSourceFactory(): DataSource.Factory? {
+	 fun buildDataSourceFactory(noChache: Boolean): DataSource.Factory? {
 		  val upstreamFactory = DefaultDataSourceFactory(context, buildHttpDataSourceFactory())
-
-		  return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache())
+		  return if (noChache) {
+			   upstreamFactory
+		  } else
+			   buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache(noChache))
 	 }
 
 	 val twoMins = 8000
@@ -117,13 +129,18 @@ class ExoFactory internal constructor(private val context: Context?) {
 		  return DefaultHttpDataSourceFactory(userAgent, twoMins, twoMins, true)
 	 }
 
+	 val sizeCache = 100 * 1024 * 1024
 	 @Synchronized
-	 protected fun getDownloadCache(): com.google.android.exoplayer2.upstream.cache.Cache? {
+	 protected fun getDownloadCache(noChache: Boolean): com.google.android.exoplayer2.upstream.cache.Cache? {
 		  if (downloadCache == null) {
 			   val downloadContentDirectory =
 					File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY)
 			   downloadCache =
-					SimpleCache(downloadContentDirectory, NoOpCacheEvictor(), getDatabaseProvider())
+					SimpleCache(
+						 downloadContentDirectory,
+						 LeastRecentlyUsedCacheEvictor(sizeCache.toLong()),
+						 getDatabaseProvider()
+					)
 		  }
 		  return downloadCache
 	 }
@@ -151,12 +168,15 @@ class ExoFactory internal constructor(private val context: Context?) {
 		  upstreamFactory: DataSource.Factory,
 		  cache: com.google.android.exoplayer2.upstream.cache.Cache?
 	 ): CacheDataSourceFactory? {
+		  val cacheFlags =
+			   CacheDataSource.FLAG_BLOCK_ON_CACHE
+
 		  return CacheDataSourceFactory(
 			   cache,
-			   upstreamFactory,
-			   FileDataSource.Factory(),
-			   /* eventListener= */ null,
-			   CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null
+			   upstreamFactory, cacheFlags
+//			   FileDataSource.Factory(),
+//			   /* eventListener= */ null,
+//			   CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null
 		  )
 	 }
 }

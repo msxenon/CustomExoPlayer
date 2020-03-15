@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.appchief.msa.MainActivity.Companion.isChannel
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
 import com.appchief.msa.floating_player.FloatingPLayerFragment
@@ -45,7 +46,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   MainActivity.link,
 			   null,
 			   null,
-			   PlayerType.MOVIE,
+			   if (isChannel) PlayerType.CHANNEL else PlayerType.MOVIE,
 			   "https://mkvtoolnix.download/samples/vsshort-en.srt",
 			   MainActivity.poster, "Action", MainActivity.movieName, 10000
 		  )

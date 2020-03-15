@@ -372,7 +372,11 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 
 			   mediaSource =
-					buildMediaSource(Uri.parse(nowPlaying?.videoLink), nowPlaying?.srtLink)
+					buildMediaSource(
+						 Uri.parse(nowPlaying?.videoLink),
+						 nowPlaying?.srtLink,
+						 noCache = isSreaming()
+					)
 
 			   initCast()
 
@@ -423,14 +427,14 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  return nowPlaying?.type == PlayerType.CHANNEL
 	 }
 
-	 private fun buildMediaSource(uri: Uri, srtLink: String?): MediaSource? {
+	 private fun buildMediaSource(uri: Uri, srtLink: String?, noCache: Boolean): MediaSource? {
 		  return if (!srtLink.isNullOrBlank()) {
 			   addSubTitlesToMediaSource(
-					ExoFactorySingeleton.getInstance().buildMediaSource(uri),
+					ExoFactorySingeleton.getInstance().buildMediaSource(uri, noCache),
 					srtLink.encodeUrl()
 			   )
 		  } else {
-			   ExoFactorySingeleton.getInstance().buildMediaSource(uri)
+			   ExoFactorySingeleton.getInstance().buildMediaSource(uri, noCache)
 		  }
 	 }
 
@@ -445,7 +449,11 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  val uri = Uri.parse(subTitlesUrl)
 		  Log.e("subtitleURI", uri.toString() + " ")
 		  val subtitleSource =
-			   SingleSampleMediaSource.Factory(ExoFactorySingeleton.getInstance().buildDataSourceFactory())
+			   SingleSampleMediaSource.Factory(
+					ExoFactorySingeleton.getInstance().buildDataSourceFactory(
+						 isSreaming()
+					)
+			   )
 					.createMediaSource(uri, textFormat, C.TIME_UNSET)
 		  return MergingMediaSource(mediaSource, subtitleSource)
 	 }

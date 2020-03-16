@@ -5,7 +5,7 @@
     <Transition
             motion:constraintSetEnd="@id/end"
             motion:constraintSetStart="@id/start"
-            motion:duration="350"
+            motion:duration="50"
             motion:motionInterpolator="linear">
 
         <OnSwipe
@@ -71,6 +71,8 @@
                 android:layout_height="200dp"
                 motion:layout_constraintEnd_toEndOf="parent"
                 motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintVertical_bias="0.0"
                 motion:layout_constraintTop_toTopOf="parent" />
         <!--        //                motion:layout_constraintDimensionRatio="16:9"-->
 

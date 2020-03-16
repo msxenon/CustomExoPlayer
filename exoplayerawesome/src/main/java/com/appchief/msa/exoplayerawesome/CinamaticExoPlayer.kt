@@ -362,7 +362,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   return null
 		  try {
 			   ExoIntent.paused = false
-			   player = null
+			   player?.release()
+			   playerManager?.release()
 			   player = SimpleExoPlayer.Builder(context).setBandwidthMeter(bMeter)
 					.setTrackSelector(trackSelector)
 					.build()

@@ -319,38 +319,43 @@ internal class PlayerManager(
 	  */
 	 var isInCastContext = false
 	 init {
-		  update()
+		  update(true)
 	 }
 
-	 fun update() {
-		  if (castContext?.castState == CastState.CONNECTED)
+	 fun update(freshUpdate: Boolean = false) {
+		  if (castContext?.castState == CastState.CONNECTED && freshUpdate)
 			   castContext.sessionManager.endCurrentSession(true)
-		  mediaQueue = ArrayList()
-		  currentItemIndex = C.INDEX_UNSET
-//		  concatenatingMediaSource = ConcatenatingMediaSource()
-		  mediaItemConverter = DefaultMediaItemConverter()
-		  trackSelector = trackSelectors()//DefaultTrackSelector(context!!)
+
 		  exoPlayer =
 			   localPlayerView().player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
 		  exoPlayer.addListener(localPlayerView().eventListener)
 		  exoPlayer.addListener(this)
-		  castPlayer = CastPlayer(castContext!!)
-		  castPlayer.addListener(localPlayerView().eventListener)
-		  castPlayer.addListener(this)
-		  castPlayer.setSessionAvailabilityListener(this)
-		  castContext.addCastStateListener {
-			   if (!isInCastContext)
-					isInCastContext = it == 3 || it == 4
-			   if (isInCastContext && localPlayerView().isForeground)
-					localPlayerView().playerUiFinalListener?.onMessageRecived(
-						 localizeCastState(it),
-						 -1
-					)
+		  if (freshUpdate) {
+			   mediaQueue = ArrayList()
+
+			   currentItemIndex = C.INDEX_UNSET
+//		  concatenatingMediaSource = ConcatenatingMediaSource()
+			   mediaItemConverter = DefaultMediaItemConverter()
+			   trackSelector = trackSelectors()//DefaultTrackSelector(context!!)
+			   castPlayer = CastPlayer(castContext!!)
+			   castPlayer.addListener(localPlayerView().eventListener)
+			   castPlayer.addListener(this)
+			   castPlayer.setSessionAvailabilityListener(this)
+			   castContext.addCastStateListener {
+					if (!isInCastContext)
+						 isInCastContext = it == 3 || it == 4
+					if (isInCastContext && localPlayerView().isForeground)
+						 localPlayerView().playerUiFinalListener?.onMessageRecived(
+							  localizeCastState(it),
+							  -1
+						 )
+			   }
+
+			   setCurrentPlayer(
+					if (castPlayer.isCastSessionAvailable) castPlayer else exoPlayer,
+					skip = false
+			   )
 		  }
-		  setCurrentPlayer(
-			   if (castPlayer.isCastSessionAvailable) castPlayer else exoPlayer,
-			   skip = false
-		  )
 	 }
 	 fun localizeCastState(state: Int): String {
 		  return when (state) {

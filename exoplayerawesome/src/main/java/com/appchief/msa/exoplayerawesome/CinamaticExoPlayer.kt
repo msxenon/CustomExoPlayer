@@ -112,13 +112,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 fun releasePlayer() {
 		  try {
-			   if (player != null && usedInistances == 0) {
-					playerManager?.release()
+			   playerManager?.release()
 					removeAllViews()
 					ExoIntent.reInit()
-			   } else {
-					pause()
-			   }
 		  } catch (e: Exception) {
 			   e.printStackTrace()
 		  }

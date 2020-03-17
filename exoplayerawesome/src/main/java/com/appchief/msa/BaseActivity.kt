@@ -99,6 +99,7 @@ abstract class CastApp : Application() {
 		  CastStateListener { p0 -> listeners.map { it.isCastAvailable(p0 != CastState.NO_DEVICES_AVAILABLE) } }
 }
 
+////////
 open class BaseActivityFloatingNavigation : AppCompatActivity() {
 	 open fun getPlayerFragment(): FloatingPLayerFragment? {
 		  return supportFragmentManager.findFragmentByTag("ff") as? FloatingPLayerFragment

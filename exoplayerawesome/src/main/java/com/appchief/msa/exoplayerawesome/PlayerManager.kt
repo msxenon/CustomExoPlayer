@@ -15,6 +15,7 @@
  */
 package com.appchief.msa.exoplayerawesome
 
+import android.content.Context
 import android.util.Log
 import com.appchief.msa.exoplayerawesome.viewcontroller.ControllerVisState
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
@@ -28,6 +29,7 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.CastContext
@@ -36,6 +38,7 @@ import java.util.*
 
 /** Manages players and an internal media queue for the demo app.  */ /* package */
 internal class PlayerManager(
+	 private val context: Context,
 	 private val listener: Listener,
 	 private val localPlayerView: () -> CinamaticExoPlayer,
 	 private val castControlView: () -> VideoControllerView?,
@@ -318,25 +321,26 @@ internal class PlayerManager(
 	  * @param castContext The [CastContext].
 	  */
 	 var isInCastContext = false
-	 init {
-		  update(true)
-	 }
+	 val bMeter by lazy { DefaultBandwidthMeter.Builder(context).build() }
 
 	 fun update(freshUpdate: Boolean = false) {
 		  if (castContext?.castState == CastState.CONNECTED && freshUpdate)
 			   castContext.sessionManager.endCurrentSession(true)
-
+		  if (freshUpdate) {
+			   trackSelector = trackSelectors()//DefaultTrackSelector(context!!)
+			   localPlayerView().player = SimpleExoPlayer.Builder(context).setBandwidthMeter(bMeter)
+					.setTrackSelector(trackSelector)
+					.build()
 		  exoPlayer =
 			   localPlayerView().player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
 		  exoPlayer.addListener(localPlayerView().eventListener)
 		  exoPlayer.addListener(this)
-		  if (freshUpdate) {
+
 			   mediaQueue = ArrayList()
 
 			   currentItemIndex = C.INDEX_UNSET
 //		  concatenatingMediaSource = ConcatenatingMediaSource()
 			   mediaItemConverter = DefaultMediaItemConverter()
-			   trackSelector = trackSelectors()//DefaultTrackSelector(context!!)
 			   castPlayer = CastPlayer(castContext!!)
 			   castPlayer.addListener(localPlayerView().eventListener)
 			   castPlayer.addListener(this)

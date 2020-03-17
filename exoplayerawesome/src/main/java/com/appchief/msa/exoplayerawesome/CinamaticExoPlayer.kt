@@ -29,7 +29,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.video.VideoListener
 import com.google.android.gms.cast.MediaQueueItem
@@ -79,14 +78,16 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  //		  castExoPlayer = CastPlayer(this.getCastContext())
 //		  castExoPlayer?.addListener(plistener)
 //		  castExoPlayer?.setSessionAvailabilityListener(this)
-		  if (playerManager == null)
-			   playerManager = PlayerManager(object : PlayerManager.Listener {
-			   override fun onUnsupportedTrack(trackType: Int) {
-			   }
+		  if (playerManager == null) {
+			   playerManager = PlayerManager(context, object : PlayerManager.Listener {
+					override fun onUnsupportedTrack(trackType: Int) {
+					}
 
-			   override fun onQueuePositionChanged(previousIndex: Int, newIndex: Int) {
-			   }
+					override fun onQueuePositionChanged(previousIndex: Int, newIndex: Int) {
+					}
 			   }, { this }, { customController }, this.getCastContext(), { trackSelector })
+			   playerManager?.update(true)
+		  }
 		  else
 			   playerManager?.update()
 	 }
@@ -353,20 +354,16 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 }
 
-	 val bMeter by lazy { DefaultBandwidthMeter.Builder(context).build() }
 	 fun initializePlayer(force: Boolean): Boolean? {
 		  mediaSource = null
 		  if (nowPlaying?.videoLink == null)
 			   return null
 		  try {
 			   ExoIntent.paused = false
-			   player?.release()
 
-			   playerManager?.release()
 
-			   player = SimpleExoPlayer.Builder(context).setBandwidthMeter(bMeter)
-					.setTrackSelector(trackSelector)
-					.build()
+
+			   initCast(forceReplay)
 
 
 			   applySettings()
@@ -379,7 +376,6 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 						 noCache = isSreaming()
 					)
 
-			   initCast(forceReplay)
 
 			   setListeners()
 			   val x = CastUtil.castThisMI(
@@ -393,10 +389,6 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					getLastPos("pairinit")
 			   )
 			   playerManager?.addItem(mediaSource, x.second)
-//			   if (mediaSource != null) {
-//					(player as ExoPlayer).prepare(mediaSource!!, !haveStartPosition, false)
-//					player?.seekTo(sp)
-//			   }
 			   return true
 		  } catch (e: Exception) {
 			   playerUiFinalListener?.onMessageRecived(
@@ -641,7 +633,7 @@ fun CinamaticExoPlayer.copyFrom(oldCinamaticExoPlayer: CinamaticExoPlayer) {
 	 if (player == null)
 		  player = oldCinamaticExoPlayer.player
 	 playerUiFinalListener = oldCinamaticExoPlayer.playerUiFinalListener
-	 setController(null)
+//	 setController(null)
 //	 hasSettingsListener = oldCinamaticExoPlayer.hasSettingsListener
 	 setListeners()
 	 applySettings()

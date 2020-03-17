@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.appchief.msa.floating_player.FloatingPLayerFragment
 import com.google.android.gms.cast.framework.*
 
+//done by mohammed hh
 interface CastListener {
 	 fun isCastConnected(isConnected: Boolean)
 	 fun isCastAvailable(isAvailable: Boolean)

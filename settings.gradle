@@ -1,2 +1,2 @@
 include ':app', ':exoplayerawesome'
-rootProject.name='AwesomePLayer'
+//rootProject.name='AwesomePLayer'

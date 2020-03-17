@@ -40,7 +40,7 @@ internal class PlayerManager(
 	 private val localPlayerView: () -> CinamaticExoPlayer,
 	 private val castControlView: () -> VideoControllerView?,
 	 private val castContext: CastContext?,
-	 trackSelectors: DefaultTrackSelector
+	 private val trackSelectors: () -> DefaultTrackSelector
 ) : Player.EventListener, SessionAvailabilityListener {
 	 //  public MediaSource mediaSource;
 	 /** Listener for events.  */
@@ -57,15 +57,15 @@ internal class PlayerManager(
 		  fun onUnsupportedTrack(trackType: Int)
 	 }
 
-	 private val trackSelector: DefaultTrackSelector
-	 private val exoPlayer: SimpleExoPlayer
-	 private val castPlayer: CastPlayer
-	 private val mediaQueue: ArrayList<MediaItem>
+	 private lateinit var trackSelector: DefaultTrackSelector
+	 private lateinit var exoPlayer: SimpleExoPlayer
+	 private lateinit var castPlayer: CastPlayer
+	 private lateinit var mediaQueue: ArrayList<MediaItem>
 	 private var concatenatingMediaSource: MediaSource? = null
-	 private val mediaItemConverter: MediaItemConverter
+	 private lateinit var mediaItemConverter: MediaItemConverter
 //	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
 	 /** Returns the index of the currently played item.  */
-	 var currentItemIndex: Int
+	 var currentItemIndex: Int = -1
 		  private set
 	 private var currentPlayer: Player? = null
 	 // Queue manipulation methods.
@@ -104,7 +104,7 @@ internal class PlayerManager(
 			   )
 		  } else {
 			   // setCurrentItem(concatenatingMediaSource.size-1,pos,true)
-			   this.currentPlayer?.stop()
+//todo			   this.currentPlayer?.stop()
 			   setCurrentPlayer(exoPlayer, pos, true)
 		  }
 		  Log.e(tag, " addItem")
@@ -117,6 +117,7 @@ internal class PlayerManager(
 	 /** Releases the manager and the players that it holds.  */
 	 fun release() {
 		  currentItemIndex = C.INDEX_UNSET
+		  exoPlayer.stop()
 		  mediaQueue.clear()
 //		  concatenatingMediaSource.clear()
 		  castPlayer.setSessionAvailabilityListener(null)
@@ -318,13 +319,17 @@ internal class PlayerManager(
 	  */
 	 var isInCastContext = false
 	 init {
+		  update()
+	 }
+
+	 fun update() {
 		  if (castContext?.castState == CastState.CONNECTED)
 			   castContext.sessionManager.endCurrentSession(true)
 		  mediaQueue = ArrayList()
 		  currentItemIndex = C.INDEX_UNSET
 //		  concatenatingMediaSource = ConcatenatingMediaSource()
 		  mediaItemConverter = DefaultMediaItemConverter()
-		  trackSelector = trackSelectors//DefaultTrackSelector(context!!)
+		  trackSelector = trackSelectors()//DefaultTrackSelector(context!!)
 		  exoPlayer =
 			   localPlayerView().player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
 		  exoPlayer.addListener(localPlayerView().eventListener)
@@ -347,7 +352,6 @@ internal class PlayerManager(
 			   skip = false
 		  )
 	 }
-
 	 fun localizeCastState(state: Int): String {
 		  return when (state) {
 			   1 -> localPlayerView().context.getString(R.string.no_cast_device_available)

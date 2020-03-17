@@ -75,7 +75,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 private var playerManager: PlayerManager? = null
-	 fun initCast() {
+	 fun initCast(force: Boolean) {
 		  //		  castExoPlayer = CastPlayer(this.getCastContext())
 //		  castExoPlayer?.addListener(plistener)
 //		  castExoPlayer?.setSessionAvailabilityListener(this)
@@ -86,7 +86,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 			   override fun onQueuePositionChanged(previousIndex: Int, newIndex: Int) {
 			   }
-			   }, { this }, { customController }, this.getCastContext(), trackSelector)
+			   }, { this }, { customController }, this.getCastContext(), { trackSelector })
+		  else
+			   playerManager?.update()
 	 }
 	 @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
 	 fun stop() {
@@ -221,7 +223,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  lastPos_ = getLastPos("init", true)
 
 		  // if (playerUiFinalListener?.isConnectedToCast() != true) {
-			   initializePlayer()
+		  initializePlayer(false)
 //		  } else {
 //			   castCurrent()
 //		  }
@@ -356,14 +358,16 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 val bMeter by lazy { DefaultBandwidthMeter.Builder(context).build() }
-	 fun initializePlayer(): Boolean? {
+	 fun initializePlayer(force: Boolean): Boolean? {
 		  mediaSource = null
 		  if (nowPlaying?.videoLink == null)
 			   return null
 		  try {
 			   ExoIntent.paused = false
 			   player?.release()
+
 			   playerManager?.release()
+
 			   player = SimpleExoPlayer.Builder(context).setBandwidthMeter(bMeter)
 					.setTrackSelector(trackSelector)
 					.build()
@@ -379,7 +383,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 						 noCache = isSreaming()
 					)
 
-			   initCast()
+			   initCast(forceReplay)
 
 			   setListeners()
 			   val x = CastUtil.castThisMI(

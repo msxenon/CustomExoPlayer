@@ -376,6 +376,6 @@ internal class PlayerManager(
 	 }
 
 	 fun isConnected(): Boolean {
-		  return castContext?.castState == CastState.CONNECTED && localPlayerView().playerUiFinalListener?.canUseCast() != false
+		  return castContext?.castState == CastState.CONNECTED
 	 }
 }

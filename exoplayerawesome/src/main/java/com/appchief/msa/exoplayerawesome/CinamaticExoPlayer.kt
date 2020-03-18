@@ -763,8 +763,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   // Second tap (ACTION_UP) of both taps
 			   if (e.actionMasked == MotionEvent.ACTION_UP && isDoubleTap) {
 					if (DEBUG) Log.d(TAG, "onDoubleTapEvent, ACTION_UP")
-					customController?.hide()
-					controls?.onDoubleTapProgressUp(e.x, e.y)
+					if (playerManager?.isConnected() != true) {
+						 customController?.hide()
+						 controls?.onDoubleTapProgressUp(e.x, e.y)
+					}
 					return true
 			   }
 			   return super.onDoubleTapEvent(e)

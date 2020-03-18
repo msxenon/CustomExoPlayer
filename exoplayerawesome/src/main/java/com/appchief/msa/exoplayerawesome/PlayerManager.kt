@@ -328,9 +328,12 @@ internal class PlayerManager(
 			   castContext.sessionManager.endCurrentSession(true)
 		  if (freshUpdate) {
 			   trackSelector = trackSelectors()//DefaultTrackSelector(context!!)
-			   localPlayerView().player = SimpleExoPlayer.Builder(context).setBandwidthMeter(bMeter)
+			   val sexo = SimpleExoPlayer.Builder(context).setBandwidthMeter(bMeter)
 					.setTrackSelector(trackSelector)
 					.build()
+			   sexo.setHandleAudioBecomingNoisy(true)
+
+			   localPlayerView().player = sexo
 		  exoPlayer =
 			   localPlayerView().player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
 		  exoPlayer.addListener(localPlayerView().eventListener)
@@ -369,5 +372,9 @@ internal class PlayerManager(
 			   4 -> localPlayerView().context.getString(R.string.cast_connected)
 			   else -> String.format(Locale.ROOT, "UNKNOWN_STATE(%d)", state)
 		  }
+	 }
+
+	 fun isConnected(): Boolean {
+		  return castContext?.castState == CastState.CONNECTED
 	 }
 }

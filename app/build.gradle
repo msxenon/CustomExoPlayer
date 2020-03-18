@@ -63,6 +63,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
     implementation project(path: ':exoplayerawesome')
+    implementation 'com.shakebugs.android:shake:10.0.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

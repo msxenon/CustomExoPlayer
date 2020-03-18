@@ -15,7 +15,6 @@
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:background="#000000"
-            android:keepScreenOn="true"
             android:tag="player"
             app:controller_layout_id="@layout/empty_layout_nothing"
             app:layout_constraintEnd_toEndOf="parent"

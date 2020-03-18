@@ -83,6 +83,9 @@ class PlayerEventListener(
 
 	 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
 		  try {
+			   cinemPlayer?.keepScreenOn =
+					!(playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED ||
+							!playWhenReady)
 			   Log.e("PEL", "$playWhenReady $playbackState ")
 			   cinemPlayer?.customController?.showLoading(false)
 			   if (playbackState == ExoPlayer.STATE_BUFFERING) {

@@ -12,6 +12,7 @@
             android:name="com.appchief.msa.AppMain"
             android:hardwareAccelerated="true"
             android:supportsRtl="false"
+            tools:replace="android:supportsRtl"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity
@@ -39,6 +40,12 @@
         <meta-data
                 android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
                 android:value="com.appchief.msa.CastOptionsProvider" />
+        <meta-data
+                android:name="com.shakebugs.APIClientID"
+                android:value="wDKk67mR4MIE9A6LmCaTI4slHFEd25po2WV3FAYe" />
+        <meta-data
+                android:name="com.shakebugs.APIClientSecret"
+                android:value="Th8eNbHCLQrFBugqaYWrDOitMZw2iKV4CiLJ7aveHlQ0WMhv2n5DnoV" />
     </application>
 
 </manifest>

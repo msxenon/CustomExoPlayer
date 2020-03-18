@@ -69,8 +69,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 //			onResume()
 		  Log.e("TAG", "================================>>>> lifecycle ${player == null} ")
 		  //  ExoIntent.getPlayerHere(this)
-		  start()
+		  if (playerManager?.isConnected() != true)
+			   start()
 		  Log.e("TAG2", "================================>>>> lifecycle ${player == null} ")
+
 	 }
 
 	 private var playerManager: PlayerManager? = null
@@ -574,8 +576,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 override fun onTouchEvent(event: MotionEvent): Boolean {
 		  if (playerUiFinalListener?.isInFullScreen() == true) {
-			   customController?.toggleShowHide()
+			   if (event.action == MotionEvent.ACTION_UP) customController?.toggleShowHide()
+			   return true
 		  }
+
 		  return false
 	 }
 

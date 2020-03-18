@@ -166,7 +166,8 @@ internal class PlayerManager(
 
 	 // CastPlayer.SessionAvailabilityListener implementation.
 	 override fun onCastSessionAvailable() {
-		  setCurrentPlayer(castPlayer, skip = false)
+		  if (localPlayerView().playerUiFinalListener?.canUseCast() != false)
+			   setCurrentPlayer(castPlayer, skip = false)
 
 	 }
 
@@ -351,7 +352,7 @@ internal class PlayerManager(
 			   castContext.addCastStateListener {
 					if (!isInCastContext)
 						 isInCastContext = it == 3 || it == 4
-					if (isInCastContext && localPlayerView().isForeground)
+					if (isInCastContext && localPlayerView().isForeground && localPlayerView().playerUiFinalListener?.canUseCast() != false)
 						 localPlayerView().playerUiFinalListener?.onMessageRecived(
 							  localizeCastState(it),
 							  -1
@@ -375,6 +376,6 @@ internal class PlayerManager(
 	 }
 
 	 fun isConnected(): Boolean {
-		  return castContext?.castState == CastState.CONNECTED
+		  return castContext?.castState == CastState.CONNECTED && localPlayerView().playerUiFinalListener?.canUseCast() != false
 	 }
 }

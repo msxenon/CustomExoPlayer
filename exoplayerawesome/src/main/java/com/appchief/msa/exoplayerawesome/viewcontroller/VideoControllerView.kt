@@ -152,6 +152,9 @@ class VideoControllerView : FrameLayout {
 		  mPauseButton?.visibility =
 			   (player.playbackState == ExoPlayer.STATE_BUFFERING).invertedControlVisibility()
 
+		  mRoot?.exo_cast?.visibility =
+			   (mPlayer?.playerUiFinalListener?.canUseCast() != false).controlVisibility()
+
 	 }
 
 	 private fun settingsVisiability(boolean: Boolean) {

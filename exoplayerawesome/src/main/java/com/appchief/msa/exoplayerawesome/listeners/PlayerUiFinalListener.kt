@@ -17,6 +17,7 @@ interface CineamaticPlayerScreen {
 	 fun setMoviePoster(result: (it: Drawable) -> Unit)
 	 fun isInFullScreen(): Boolean
 	 fun forcePortrait()
+	 fun canUseCast(): Boolean
 }
 
 interface CinematicPlayerViews {

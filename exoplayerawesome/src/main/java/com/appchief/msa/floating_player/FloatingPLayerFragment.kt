@@ -60,6 +60,9 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  applyVisibility()
 	 }
 
+	 override fun canUseCast(): Boolean {
+		  return true
+	 }
 
 	 private fun applyVisibility() {
 		  if (isInFullScreen()) {

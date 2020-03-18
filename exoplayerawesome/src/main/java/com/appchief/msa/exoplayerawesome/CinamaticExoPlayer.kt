@@ -559,19 +559,22 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-		  Log.e("CEP", "dispatchTouchEvent $childCount")
-		  for (i in 0..childCount) {
-			   getChildAt(i)?.let {
-					val consumed = it.dispatchTouchEvent(ev)
-					if (consumed) {
-						 return consumed
+		  Log.e("CEP", "dispatchTouchEvent $childCount ")
+		  if (customController?.isShowing == true || playerUiFinalListener?.isInFullScreen() == true) {
+			   for (i in 0..childCount) {
+					getChildAt(i)?.let {
+						 val consumed = it.dispatchTouchEvent(ev)
+						 if (consumed) {
+							  return consumed
+						 }
 					}
 			   }
-		  }
-		  val x = super.dispatchTouchEvent(ev)
-		  Log.e("CEP", "dispatchTouchEvent end   $x")
+			   val x = super.dispatchTouchEvent(ev)
+			   Log.e("CEP", "dispatchTouchEvent end   $x")
 
-		  return x
+			   return x
+		  }
+		  return false
 	 }
 
 	 override fun onTouchEvent(event: MotionEvent): Boolean {

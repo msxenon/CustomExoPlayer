@@ -11,4 +11,6 @@
     <string name="cast_connected">متصل بخدمة الكاست</string>
     <string name="cast_not_connected">غير متصل بخدمة الكاست</string>
     <string name="connecting">جار الاتصال</string>
+    <string name="video_start_reached">Start video reached</string>
+    <string name="video_end_reached">End video reached</string>
 </resources>

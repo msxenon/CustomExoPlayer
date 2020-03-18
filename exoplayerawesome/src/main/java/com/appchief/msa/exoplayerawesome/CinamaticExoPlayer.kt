@@ -12,7 +12,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.core.view.GestureDetectorCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -663,17 +662,17 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   seekListener = object : SeekListener {
 					override fun onVideoStartReached() {
 						 pause()
-						 Toast.makeText(
-							  context,
-							  "Video start reached", Toast.LENGTH_SHORT
-						 ).show()
+						 playerUiFinalListener?.onMessageRecived(
+							  context.getString(R.string.video_start_reached),
+							  -1
+						 )
 					}
 
 					override fun onVideoEndReached() {
-						 Toast.makeText(
-							  context,
-							  "Video end reached", Toast.LENGTH_SHORT
-						 ).show()
+						 playerUiFinalListener?.onMessageRecived(
+							  context.getString(R.string.video_end_reached),
+							  -1
+						 )
 					}
 			   }
 			   performListener = object : YouTubeOverlay.PerformListener {
@@ -764,6 +763,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   // Second tap (ACTION_UP) of both taps
 			   if (e.actionMasked == MotionEvent.ACTION_UP && isDoubleTap) {
 					if (DEBUG) Log.d(TAG, "onDoubleTapEvent, ACTION_UP")
+					customController?.hide()
 					controls?.onDoubleTapProgressUp(e.x, e.y)
 					return true
 			   }

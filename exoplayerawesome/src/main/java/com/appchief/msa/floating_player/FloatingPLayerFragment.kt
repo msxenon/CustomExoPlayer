@@ -166,10 +166,12 @@ abstract class FloatingPLayerFragment : Fragment(),
 
 			   override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
 					Log.e("FPF", "onTransitionStarted ")
+					binding.videoOverlayView.playerContainer?.hideController()
 			   }
 
 			   override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
 					Log.e("FPF", "onTransitionChange second$p2 prog=$p3")
+					binding.videoOverlayView.playerContainer?.customController?.hide()
 					if (p2 == com.appchief.msa.exoplayerawesome.R.id.finish_left && p3 > 0.8) {
 						 Log.e("FPF", "onTransitionChange dissmisscall prog=$p3")
 						 callDissmiss()

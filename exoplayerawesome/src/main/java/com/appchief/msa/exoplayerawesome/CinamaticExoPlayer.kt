@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.transition.TransitionSet
@@ -11,15 +12,23 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.core.view.GestureDetectorCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.appchief.msa.CastApp
+import com.appchief.msa.exoplayerawesome.BuildConfig.DEBUG
+import com.appchief.msa.exoplayerawesome.ExoIntent.Tag
 import com.appchief.msa.exoplayerawesome.ExoIntent.usedInistances
 import com.appchief.msa.exoplayerawesome.listeners.*
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.appchief.msa.floating_player.VideoOverlayView
+import com.appchief.msa.youtube.PlayerDoubleTapListener
+import com.appchief.msa.youtube.SeekListener
+import com.appchief.msa.youtube.YouTubeOverlay
+import com.appchief.msa.youtube.YouTubeOverlay.Companion.TAG
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MergingMediaSource
@@ -33,6 +42,7 @@ import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.video.VideoListener
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.CastContext
+import kotlinx.android.synthetic.main.appchief_floating_player.view.*
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -52,6 +62,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   "TAG",
 			   "================================>>>> lifecycle owner ON_CREATE $usedInistances $taag"
 		  )
+		  mDetector = GestureDetectorCompat(context, DoubleTapGestureListener())
 	 }
 
 	 @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -170,10 +181,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 private fun controlController(visibility: Int) {
-		  if (visibility == View.VISIBLE)
-			   customController?.show()
-		  else
-			   customController?.hide()
+//		  if (visibility == View.VISIBLE)
+//			   customController?.show()
+//		  else
+//			   customController?.hide()
 	 }
 
 	 var forceReplay = true
@@ -560,7 +571,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
 		  Log.e("CEP", "dispatchTouchEvent $childCount ")
-		  if (customController?.isShowing == true || playerUiFinalListener?.isInFullScreen() == true) {
+		  if (customController?.isShowing == true) {//|| playerUiFinalListener?.isInFullScreen() == true) {
 			   for (i in 0..childCount) {
 					getChildAt(i)?.let {
 						 val consumed = it.dispatchTouchEvent(ev)
@@ -569,36 +580,120 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 						 }
 					}
 			   }
-			   val x = super.dispatchTouchEvent(ev)
+			   // val x = super.dispatchTouchEvent(ev)
 			   Log.e("CEP", "dispatchTouchEvent end   $x")
-
-			   return x
+//			   return x
 		  }
+		  if (ev != null)
+			   this.onTouchEvent(ev)
 		  return false
 	 }
 
+	 internal var isDoubleTap = false
+	 private var doubleTapActivated = true
+	 private var mDetector: GestureDetectorCompat? = null
+	 var controls: PlayerDoubleTapListener? = null
+
+	 // Variable to save current state
+	 private val mHandler = Handler()
+	 private val mRunnable = Runnable {
+		  Log.d(TAG, "Runnable called")
+		  isDoubleTap = false
+		  controls?.onDoubleTapFinished()
+	 }
+	 var doubleTapDelay: Long = 650
+
+	 /**
+	  * Sets whether the PlayerView recognizes double tap gestures or not
+	  */
+	 private fun activateDoubleTap(active: Boolean) {
+		  this.doubleTapActivated = active
+	 }
+
+	 fun setDoubleTapListener(layout: PlayerDoubleTapListener?) {
+		  if (layout != null) {
+			   controls = layout
+		  }
+	 }
+
+	 /**
+	  * Resets the timeout to keep in double tap mode.
+	  *
+	  * Called once in [PlayerDoubleTapListener.onDoubleTapStarted] Needs to be called
+	  * from outside if the double tap is customized / overridden to detect ongoing taps
+	  */
+	 fun keepInDoubleTapMode() {
+		  isDoubleTap = true
+		  mHandler.removeCallbacks(mRunnable)
+		  mHandler.postDelayed(mRunnable, doubleTapDelay)
+	 }
+
+	 /**
+	  * Cancels double tap mode instantly by calling [PlayerDoubleTapListener.onDoubleTapFinished]
+	  */
+	 fun cancelInDoubleTapMode() {
+		  mHandler.removeCallbacks(mRunnable)
+		  isDoubleTap = false
+		  controls?.onDoubleTapFinished()
+	 }
 	 override fun onTouchEvent(event: MotionEvent): Boolean {
-		  if (playerUiFinalListener?.isInFullScreen() == true) {
-			   if (event.action == MotionEvent.ACTION_UP) customController?.toggleShowHide()
+		  if (doubleTapActivated) {
+			   mDetector?.onTouchEvent(event)
+			   // Do not trigger original behavior when double tapping
+			   // otherwise the controller would show/hide - it would flack
 			   return true
+		  } else {
+			   if (playerUiFinalListener?.isInFullScreen() == true) {
+//					customController?.toggleShowHide()
+//					return true
+			   }
 		  }
 
 		  return false
 	 }
 
-	 //	 fun castCurrentMI(): MediaItem {
-//		  return  CastUtil.castThisMI(
-//			   context,
-//			   nowPlaying?.title,
-//			   nowPlaying?.videoLink,
-//			   nowPlaying!!.geners,
-//			   nowPlaying!!.poster,
-//			   nowPlaying!!.runtime,
-//			   isSreaming(),
-//			   getLastPos()
-//		  )
-//
-//	 }
+	 private fun ffwdRewd() {
+		  Log.e(Tag, "View Double Tapped")
+	 }
+
+	 fun setDoubleTapActivated() {
+		  rootView.ytController?.apply {
+			   animationDuration = 800
+			   fastForwardRewindDuration = 10000
+			   seekListener = object : SeekListener {
+					override fun onVideoStartReached() {
+						 pause()
+						 Toast.makeText(
+							  context,
+							  "Video start reached", Toast.LENGTH_SHORT
+						 ).show()
+					}
+
+					override fun onVideoEndReached() {
+						 Toast.makeText(
+							  context,
+							  "Video end reached", Toast.LENGTH_SHORT
+						 ).show()
+					}
+			   }
+			   performListener = object : YouTubeOverlay.PerformListener {
+					override fun onAnimationStart() {
+						 // Do UI changes when double tapping / animation starts including showing the overlay
+//						 playerView?.useController = false
+						 rootView.ytController?.visibility = View.VISIBLE
+					}
+
+					override fun onAnimationEnd() {
+						 // Do UI changes when double tap animation ends including hiding the overlay
+						 rootView.ytController?.visibility = View.GONE
+						 // if (!player?.playWhenReady!!) this@CinamaticExoPlayer.showController()
+					}
+			   }
+		  }
+
+		  this.activateDoubleTap(true)
+		  this.setDoubleTapListener(rootView.ytController)
+	 }
 	 fun castCurrent(): Array<MediaQueueItem> {
 		  return CastUtil.castThis(
 			   context,
@@ -618,6 +713,62 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 fun minSize() {
 		  applyHeight(realHeight)
+	 }
+
+	 /**
+	  * Gesture Listener for double tapping
+	  *
+	  * For more information which methods are called in certain situations look for
+	  * [GestureDetectorCompat.onTouchEvent], especially for ACTION_DOWN and ACTION_UP
+	  */
+	 inner class DoubleTapGestureListener : GestureDetector.SimpleOnGestureListener() {
+
+		  override fun onDown(e: MotionEvent): Boolean {
+			   // Used to override the other methods
+			   if (isDoubleTap) {
+					controls?.onDoubleTapProgressDown(e.x, e.y)
+			   }
+			   return true
+		  }
+
+		  override fun onSingleTapUp(e: MotionEvent): Boolean {
+			   if (isDoubleTap) {
+					if (DEBUG) Log.d(TAG, "onSingleTapUp: isDoubleTap = true")
+					controls?.onDoubleTapProgressUp(e.x, e.y)
+			   }
+			   return true
+		  }
+
+		  override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+			   // Ignore this event if double tapping is still active
+			   // Return true needed because this method is also called if you tap e.g. three times
+			   // in a row, therefore the controller would appear since the original behavior is
+			   // to hide and show on single tap
+			   if (isDoubleTap) return true
+			   if (DEBUG) Log.d(TAG, "onSingleTapConfirmed: isDoubleTap = false")
+			   return customController?.toggleShowHide() == true
+		  }
+
+		  override fun onDoubleTap(e: MotionEvent): Boolean {
+			   // First tap (ACTION_DOWN) of both taps
+			   if (DEBUG) Log.d(TAG, "onDoubleTap")
+			   if (!isDoubleTap) {
+					isDoubleTap = true
+					keepInDoubleTapMode()
+					controls?.onDoubleTapStarted(e.x, e.y)
+			   }
+			   return true
+		  }
+
+		  override fun onDoubleTapEvent(e: MotionEvent): Boolean {
+			   // Second tap (ACTION_UP) of both taps
+			   if (e.actionMasked == MotionEvent.ACTION_UP && isDoubleTap) {
+					if (DEBUG) Log.d(TAG, "onDoubleTapEvent, ACTION_UP")
+					controls?.onDoubleTapProgressUp(e.x, e.y)
+					return true
+			   }
+			   return super.onDoubleTapEvent(e)
+		  }
 	 }
 }
 

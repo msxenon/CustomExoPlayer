@@ -337,7 +337,7 @@ class VideoControllerView : FrameLayout {
 	  * Remove the controller from the screen.
 	  */
 	 fun hide() {
-		  if (mAnchor == null || mDragging) {
+		  if (mAnchor == null || mDragging || !isShowing) {
 			   return
 		  }
 		  try {
@@ -550,11 +550,12 @@ class VideoControllerView : FrameLayout {
 		  controlVis()
 	 }
 
-	 fun toggleShowHide() {
+	 fun toggleShowHide(): Boolean {
 		  if (isShowing)
 			   hide()
 		  else
 			   show()
+		  return true
 	 }
 
 	 fun showLoading(b: Boolean) {

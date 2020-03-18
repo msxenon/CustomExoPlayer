@@ -23,7 +23,10 @@
             app:surface_type="texture_view"
             app:use_controller="true">
 
-
+        <com.appchief.msa.youtube.YouTubeOverlay
+                android:id="@+id/ytController"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
     </com.appchief.msa.exoplayerawesome.CinamaticExoPlayer>
 
     <TextView

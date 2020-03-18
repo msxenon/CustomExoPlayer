@@ -50,7 +50,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   "https://mkvtoolnix.download/samples/vsshort-en.srt",
 			   MainActivity.poster, "Action", MainActivity.movieName, 10000
 		  )
-		  // binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
+		  binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
 	 }
 
 	 override fun onMessageRecived(msg: String?, state: Int) {

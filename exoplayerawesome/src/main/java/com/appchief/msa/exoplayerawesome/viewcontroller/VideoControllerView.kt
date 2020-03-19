@@ -77,6 +77,7 @@ class VideoControllerView : FrameLayout {
 	 private var mVideoSettings: ImageButton? = null
 	 var isShowing = false
 		  private set
+
 	 private var mDragging = false
 	 private var mUseFastForward: Boolean
 	 private var mFromXml = false
@@ -304,6 +305,8 @@ class VideoControllerView : FrameLayout {
 	 @JvmOverloads
 	 fun show(timeout: Int = sDefaultTimeout) {
 		  //  Log.e("VCV", "showcalled $isShowing ${mAnchor != null}")
+		  if (mPlayer?.useController != true)
+			   return
 		  if (!isShowing && mAnchor != null) {
 			   setProgress()
 			   if (mPauseButton != null) {

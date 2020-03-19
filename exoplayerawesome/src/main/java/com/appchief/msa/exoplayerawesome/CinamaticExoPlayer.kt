@@ -180,12 +180,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  }
 	 }
 
-	 private fun controlController(visibility: Int) {
-//		  if (visibility == View.VISIBLE)
-//			   customController?.show()
-//		  else
-//			   customController?.hide()
-	 }
+
 
 	 var forceReplay = true
 	 var nowPlaying: NowPlaying? = null
@@ -278,7 +273,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  )
 		  controllerViiablilityListener =
 			   PlayerControlView.VisibilityListener { visibility ->
-					controlController(visibility)
+					//	controlController(visibility)
 			   }
 		  player?.videoComponent?.addVideoListener(object : VideoListener {
 			   override fun onVideoSizeChanged(
@@ -469,7 +464,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 override fun onVisibilityChange(visibility: Int) {
 		  Log.e("msdmdsmd vischange", "$visibility $useController ${customController != null}")
-		  controlController(visibility)
+		  //controlController(visibility)
 	 }
 
 	 override fun start() {
@@ -554,7 +549,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  Log.e("canShowController", "$useController_")
 		  useController = useController_
 		  if (!useController_)
-			   controlController(View.GONE)
+			   customController?.hide()
 	 }
 
 	 override fun minimizeAble(): Boolean {

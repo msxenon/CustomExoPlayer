@@ -183,7 +183,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 						 callDissmiss()
 					}
 					val isMain =
-						 p1 == com.appchief.msa.exoplayerawesome.R.id.start
+						 p1 == com.appchief.msa.exoplayerawesome.R.id.start || p1 == R.id.fullScreen
 					Log.e("FPF", "onTransitionCompleted $isMain")
 
 					binding.videoOverlayView.playerContainer?.canShowController(isMain)

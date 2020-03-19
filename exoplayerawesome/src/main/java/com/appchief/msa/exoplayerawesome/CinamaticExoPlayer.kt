@@ -24,6 +24,7 @@ import com.appchief.msa.exoplayerawesome.ExoIntent.usedInistances
 import com.appchief.msa.exoplayerawesome.listeners.*
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.appchief.msa.floating_player.VideoOverlayView
+import com.appchief.msa.floating_player.touchEventInsideTargetView
 import com.appchief.msa.youtube.PlayerDoubleTapListener
 import com.appchief.msa.youtube.SeekListener
 import com.appchief.msa.youtube.YouTubeOverlay
@@ -583,11 +584,21 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   Log.e("CEP", "dispatchTouchEvent end   $x")
 //			   return x
 		  }
-		  if (ev != null)
-			   this.onTouchEvent(ev)
-		  return false
+		  return if (ev?.touchEventInsideTargetView(this) == true)
+			   super.dispatchTouchEvent(ev) //
+		  else
+			   false
 	 }
 
+	 override fun onTouchEvent(event: MotionEvent): Boolean {
+		  if (doubleTapActivated) {
+			   mDetector?.onTouchEvent(event)
+			   // Do not trigger original behavior when double tapping
+			   // otherwise the controller would show/hide - it would flack
+		  }
+
+		  return false
+	 }
 	 internal var isDoubleTap = false
 	 private var doubleTapActivated = true
 	 private var mDetector: GestureDetectorCompat? = null
@@ -635,21 +646,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  isDoubleTap = false
 		  controls?.onDoubleTapFinished()
 	 }
-	 override fun onTouchEvent(event: MotionEvent): Boolean {
-		  if (doubleTapActivated) {
-			   mDetector?.onTouchEvent(event)
-			   // Do not trigger original behavior when double tapping
-			   // otherwise the controller would show/hide - it would flack
-			   return true
-		  } else {
-			   if (playerUiFinalListener?.isInFullScreen() == true) {
-//					customController?.toggleShowHide()
-//					return true
-			   }
-		  }
 
-		  return false
-	 }
 
 	 private fun ffwdRewd() {
 		  Log.e(Tag, "View Double Tapped")

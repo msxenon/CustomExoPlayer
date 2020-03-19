@@ -66,7 +66,7 @@ class VideoOverlayView @JvmOverloads constructor(
 			   return false
 		  val isInProgress = isInProgress()
 		  val isInTarget = touchEventInsideTargetViewExceptTop(playerContainer!!, ev)
-		  val touchingTarget = touchEventInsideTargetView(playerContainer!!, ev)
+		  val touchingTarget = ev.touchEventInsideTargetView(playerContainer)
 		  Log.e("VVO", "onInterceptTouchEvent 2 $isInProgress  $isInTarget $touchingTarget")
 		  return if (isInProgress || isInTarget || touchingTarget) {
 			   super.onInterceptTouchEvent(ev)
@@ -75,20 +75,7 @@ class VideoOverlayView @JvmOverloads constructor(
 		  }
 	 }
 
-	 private fun touchEventInsideTargetView(v: View, ev: MotionEvent): Boolean {
-		  var x = false
-		  if (ev.x > v.left && ev.x < v.right) {
-			   if (ev.y > v.top && ev.y < v.bottom) {
-					x = true
-			   }
-		  }
-		  Log.e(
-			   "VOV",
-			   "target touched$x ex${ev.x} ey${ev.y} ${v.left} ${v.top} ${v.right} ${v.bottom}"
-		  )
 
-		  return x
-	 }
 
 	 private fun touchEventInsideTargetViewExceptTop(v: View, ev: MotionEvent): Boolean {
 //		  var x = false
@@ -112,7 +99,7 @@ class VideoOverlayView @JvmOverloads constructor(
 			   if (consumed) {
 					return consumed
 			   }
-			   if (touchEventInsideTargetView(playerContainer!!, ev)) {
+			   if (ev.touchEventInsideTargetView(playerContainer)) {
 					when (ev.action) {
 						 MotionEvent.ACTION_DOWN -> {
 							  startX = ev.x
@@ -180,4 +167,20 @@ class VideoOverlayView @JvmOverloads constructor(
 	 fun minimize() {
 		  motionLayout?.transitionToState(com.appchief.msa.exoplayerawesome.R.id.end)
 	 }
+}
+
+fun MotionEvent.touchEventInsideTargetView(v: View?): Boolean {
+	 var x = false
+	 if (v == null)
+		  return x
+	 if (this.x > v.left && this.x < v.right) {
+		  if (this.y > v.top && this.y < v.bottom) {
+			   x = true
+		  }
+	 }
+//	 Log.e(
+//		  "EXT",
+//		  "target touched$x ex${ev.x} ey${ev.y} ${v.left} ${v.top} ${v.right} ${v.bottom}"
+//	 )
+	 return x
 }

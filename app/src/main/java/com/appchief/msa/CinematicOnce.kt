@@ -1,6 +1,5 @@
 package com.appchief.msa
 
-import android.view.View
 import com.appchief.msa.awesomeplayer.R
 import com.appchief.msa.exoplayerawesome.listeners.CinematicPlayerViews
 import com.google.android.exoplayer2.C
@@ -21,7 +20,4 @@ class CinematicOnce : CinematicPlayerViews {
 		  get() = R.layout.exo_player_controller
 	 override val loaderSizeInP: Int
 		  get() = 100
-
-	 override fun addtionalControllerButtonsInit(view: View?) {
-	 }
 }

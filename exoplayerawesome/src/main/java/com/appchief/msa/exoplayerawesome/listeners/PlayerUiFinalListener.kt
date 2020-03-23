@@ -19,6 +19,7 @@ interface CineamaticPlayerScreen {
 	 fun isInFullScreen(): Boolean
 	 fun forcePortrait()
 	 fun canUseCast(): Boolean
+	 fun addtionalControllerButtonsInit(view: View?)
 }
 
 interface CinematicPlayerViews {
@@ -28,7 +29,6 @@ interface CinematicPlayerViews {
 	 val loadingView: Int?
 	 val controlLayout: Int?
 	 val loaderSizeInP: Int
-	 fun addtionalControllerButtonsInit(view: View?)
 }
 enum class PlayerStatus {
 	 Playing, CantPlay, Error, JustMSG, InternalError

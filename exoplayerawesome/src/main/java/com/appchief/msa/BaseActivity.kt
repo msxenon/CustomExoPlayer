@@ -22,19 +22,20 @@ abstract class CastApp : Application() {
 	 }
 
 	 val listeners = mutableListOf<CastListener>()
-	 val mCastContext: CastContext by lazy { CastContext.getSharedInstance(this) }
+	 var mCastContext: CastContext? = null
 	 private var mCastSession: CastSession? = null
 	 override fun onCreate() {
 		  super.onCreate()
 		  try {
+			   mCastContext = CastContext.getSharedInstance(this)
 			   if (mCastSession == null) {
 					mCastSession = CastContext.getSharedInstance(this).sessionManager
 						 .currentCastSession
 			   }
-			   mCastContext.sessionManager.addSessionManagerListener(
+			   mCastContext?.sessionManager?.addSessionManagerListener(
 					mSessionManagerListener, CastSession::class.java
 			   )
-			   mCastContext.addCastStateListener(castStateListener)
+			   mCastContext?.addCastStateListener(castStateListener)
 		  } catch (e: Exception) {
 		  }
 	 }
@@ -109,7 +110,7 @@ open class BaseActivityFloatingNavigation : AppCompatActivity() {
 		  val orientation = this.resources.configuration.orientation
 		  if (orientation != Configuration.ORIENTATION_PORTRAIT) {
 			   // code for landscape mode
-			   requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+			   requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 			   return false
 		  }
 		  val pc = getPlayerFragment()

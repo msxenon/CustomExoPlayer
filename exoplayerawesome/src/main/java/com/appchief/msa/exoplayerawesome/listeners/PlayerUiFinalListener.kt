@@ -1,6 +1,7 @@
 package com.appchief.msa.exoplayerawesome.listeners
 
 import android.graphics.drawable.Drawable
+import android.view.View
 
 interface CineamaticPlayerScreen {
 	 fun onMessageRecived(msg: String?, state: Int)
@@ -27,6 +28,7 @@ interface CinematicPlayerViews {
 	 val loadingView: Int?
 	 val controlLayout: Int?
 	 val loaderSizeInP: Int
+	 fun addtionalControllerButtonsInit(view: View?)
 }
 enum class PlayerStatus {
 	 Playing, CantPlay, Error, JustMSG, InternalError

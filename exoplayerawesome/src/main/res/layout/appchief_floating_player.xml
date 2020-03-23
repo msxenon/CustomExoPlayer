@@ -5,9 +5,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:applyMotionScene="true"
-        app:layoutDescription="@xml/floating_player_scene"
         app:currentState="@id/start"
-        app:showPaths="false">
+        app:layoutDescription="@xml/floating_player_scene"
+        app:showPaths="true">
 
 
     <com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
@@ -61,6 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="60dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     <FrameLayout

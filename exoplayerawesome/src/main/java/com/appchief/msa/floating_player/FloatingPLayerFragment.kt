@@ -26,15 +26,18 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  super.onCreate(null)
 	 }
 
+	 abstract fun initPlayer(res: String? = null)
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 override fun forcePortrait() {
-		  activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+		  activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 	 }
+
 	 override fun isInFullScreen(): Boolean {
 		  val x = isFullScreen
 		  Log.e("isin", "isInFullScreen $x ${activity?.requestedOrientation}")
 		  return x
 	 }
+
 	 override fun onDestroy() {
 		  forcePortrait()
 		  super.onDestroy()
@@ -52,10 +55,9 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  super.onConfigurationChanged(newConfig)
 		  isFullScreen = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
 		  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			   binding.videoOverlayView.motionLayout?.transitionToState(R.id.fullScreen)
+			   binding.videoOverlayView.motionLayout.transitionToState(R.id.fullScreen)
 		  } else {
-			   binding.videoOverlayView.motionLayout?.transitionToState(R.id.start)
-
+			   binding.videoOverlayView.motionLayout.transitionToState(R.id.start)
 		  }
 		  applyVisibility()
 	 }
@@ -74,7 +76,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 					systemUiVisibility =
 						 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 			   }
-			   binding.videoOverlayView.playerContainer?.fullSize()
+			   binding.videoOverlayView.playerContainer.fullSize()
 		  } else {
 			   activity?.window?.decorView?.apply {
 					// Hide both the navigation bar and the status bar.
@@ -84,7 +86,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 					systemUiVisibility =
 						 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 			   }
-			   binding.videoOverlayView.playerContainer?.minSize()
+			   binding.videoOverlayView.playerContainer.minSize()
 		  }
 	 }
 
@@ -92,7 +94,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 override fun setScreenOrentation() {
 		  Log.e("xx", "setScreenOrentation ${isInFullScreen()} ")
 		  activity?.requestedOrientation =
-			   if (isInFullScreen()) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+			   if (isInFullScreen()) ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
 	 }
 
 	 override fun onDissmiss(reason: CloseReason) {
@@ -113,7 +115,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		  binding.videoOverlayView.playerContainer?.attachObersver(viewLifecycleOwner)
+		  binding.videoOverlayView.playerContainer.attachObersver(viewLifecycleOwner)
 		  initFloating()
 
 		  super.onViewCreated(view, savedInstanceState)
@@ -140,18 +142,18 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 private fun callDissmiss(closeReason: CloseReason = CloseReason.Swipe) {
 		  if (!dissmissCalled) {
-			   binding.videoOverlayView.playerContainer?.playerUiFinalListener?.onDissmiss(
-						 closeReason
-					)
-					dissmissCalled = true
+			   binding.videoOverlayView.playerContainer.playerUiFinalListener.onDissmiss(
+					closeReason
+			   )
+			   dissmissCalled = true
 		  } else {
 			   fragmentManager?.beginTransaction()?.remove(this)?.commitAllowingStateLoss()
 		  }
 	 }
 	 fun initFloating() {
 		  Log.e("FPF", "${binding.videoOverlayView.motionLayout != null}")
-		  binding.videoOverlayView.playerContainer?.init(this)
-		  binding.videoOverlayView.motionLayout?.setTransitionListener(object :
+		  binding.videoOverlayView.playerContainer.init(this)
+		  binding.videoOverlayView.motionLayout.setTransitionListener(object :
 			   MotionLayout.TransitionListener {
 			   override fun onTransitionTrigger(
 					p0: MotionLayout?,
@@ -161,17 +163,17 @@ abstract class FloatingPLayerFragment : Fragment(),
 			   ) {
 					Log.e("FPF", "onTransitionTrigger $p2 ===== $p3")
 
-					binding.videoOverlayView.playerContainer?.canShowController(p3 == 0f || p3 == 1f || p3 == -1f)
+					binding.videoOverlayView.playerContainer.canShowController(p3 == 0f || p3 == 1f || p3 == -1f)
 			   }
 
 			   override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
 					Log.e("FPF", "onTransitionStarted ")
-					binding.videoOverlayView.playerContainer?.hideController()
+					binding.videoOverlayView.playerContainer.hideController()
 			   }
 
 			   override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
 					Log.e("FPF", "onTransitionChange second$p2 prog=$p3")
-					binding.videoOverlayView.playerContainer?.customController?.hide()
+					binding.videoOverlayView.playerContainer.customController.hide()
 					if (p2 == com.appchief.msa.exoplayerawesome.R.id.finish_left && p3 > 0.8) {
 						 Log.e("FPF", "onTransitionChange dissmisscall prog=$p3")
 						 callDissmiss()
@@ -186,7 +188,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 						 p1 == com.appchief.msa.exoplayerawesome.R.id.start || p1 == R.id.fullScreen
 					Log.e("FPF", "onTransitionCompleted $isMain")
 
-					binding.videoOverlayView.playerContainer?.canShowController(isMain)
+					binding.videoOverlayView.playerContainer.canShowController(isMain)
 			   }
 		  })
 	 }

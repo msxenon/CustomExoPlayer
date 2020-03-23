@@ -212,7 +212,11 @@ class VideoControllerView : FrameLayout {
 
 		  initControllerView(mRoot!!)
 		  CastButtonFactory.setUpMediaRouteButton(context, mRoot!!.exo_cast)
-
+		  controllerLayout?.let {
+			   mRoot?.let {
+					mPlayer?.cinematicPlayerViews?.addtionalControllerButtonsInit(it)
+			   }
+		  }
 		  return mRoot
 	 }
 

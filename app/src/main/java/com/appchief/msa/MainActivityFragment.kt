@@ -25,7 +25,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 private var snackBar: Snackbar? = null
 	 //	 private var loadingView: View? = null
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		  binding.videoOverlayView.playerContainer?.cinematicPlayerViews = CinematicOnce()
+		  binding.videoOverlayView.playerContainer.cinematicPlayerViews = CinematicOnce()
 		  super.onViewCreated(view, savedInstanceState)
 //		  loadingView = LoadingScBinding.inflate(layoutInflater).root
 //		  binding.videoOverlayView.player?.addView(loadingView)
@@ -42,7 +42,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 fun initPlayer() {
-		  binding.videoOverlayView.playerContainer?.playLinkNSub(
+		  binding.videoOverlayView.playerContainer.playLinkNSub(
 			   MainActivity.link,
 			   null,
 			   null,
@@ -50,7 +50,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   "https://mkvtoolnix.download/samples/vsshort-en.srt",
 			   MainActivity.poster, "Action", MainActivity.movieName, 10000
 		  )
-		  binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
+		  binding.videoOverlayView.playerContainer.setDoubleTapActivated()
 	 }
 
 	 override fun onMessageRecived(msg: String?, state: Int) {
@@ -68,11 +68,15 @@ class MainActivityFragment : FloatingPLayerFragment() {
 		  Log.e("main", "$msg $state")
 	 }
 
+	 override fun initPlayer(res: String?) {
+	 }
+
 	 override fun onDestroy() {
 		  snackBar?.dismiss()
 
 		  super.onDestroy()
 	 }
+
 	 override fun getLastPosition(modelId: NowPlaying?): Long {
 		  Log.e("main", "getLastPosition $modelId")
 		  return 6000

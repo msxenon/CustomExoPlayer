@@ -755,7 +755,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   // Second tap (ACTION_UP) of both taps
 			   if (e.actionMasked == MotionEvent.ACTION_UP && isDoubleTap) {
 					if (DEBUG) Log.d(TAG, "onDoubleTapEvent, ACTION_UP")
-					if (playerManager?.isConnected() != true) {
+					if (playerManager?.isConnected() != true && videoOverlayView?.isMinimized() != true) {
 						 customController?.hide()
 						 controls?.onDoubleTapProgressUp(e.x, e.y)
 					}
@@ -768,7 +768,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 fun Int.DpToPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-private fun CinamaticExoPlayer.getCastContext(): CastContext {
+private fun CinamaticExoPlayer.getCastContext(): CastContext? {
 	 return (this.context.applicationContext as CastApp).mCastContext
 }
 

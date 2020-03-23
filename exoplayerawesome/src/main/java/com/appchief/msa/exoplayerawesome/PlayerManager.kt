@@ -62,7 +62,7 @@ internal class PlayerManager(
 
 	 private lateinit var trackSelector: DefaultTrackSelector
 	 private lateinit var exoPlayer: SimpleExoPlayer
-	 private lateinit var castPlayer: CastPlayer
+	 private var castPlayer: CastPlayer? = null
 	 private lateinit var mediaQueue: ArrayList<MediaItem>
 	 private var concatenatingMediaSource: MediaSource? = null
 	 private lateinit var mediaItemConverter: MediaItemConverter
@@ -101,7 +101,7 @@ internal class PlayerManager(
 		  concatenatingMediaSource = item!!
 		  val pos = localPlayerView().getLastPos("addItem")
 		  if (currentPlayer == castPlayer) {
-			   castPlayer.loadItems(
+			   castPlayer?.loadItems(
 					castCurrent, 0, pos,
 					REPEAT_MODE_ALL
 			   )
@@ -123,8 +123,8 @@ internal class PlayerManager(
 		  exoPlayer.stop()
 		  mediaQueue.clear()
 //		  concatenatingMediaSource.clear()
-		  castPlayer.setSessionAvailabilityListener(null)
-		  castPlayer.release()
+		  castPlayer?.setSessionAvailabilityListener(null)
+		  castPlayer?.release()
 		  localPlayerView().player = null
 		  exoPlayer.release()
 	 }
@@ -184,22 +184,22 @@ internal class PlayerManager(
 		  )
 	 }
 
-	 private fun setCurrentPlayer(currentPlayer: Player, pos: Long? = null, skip: Boolean) {
-//		  if (this.currentPlayer == currentPlayer) {
-// 			   return
-//		  }
+	 private fun setCurrentPlayer(currentPlayer: Player?, pos: Long? = null, skip: Boolean) {
+		  if (currentPlayer == null) {
+			   return
+		  }
 		  // View management.
 		  if (currentPlayer == exoPlayer) {
 			   castControlView()?.player = exoPlayer
 			   localPlayerView().player = exoPlayer
 			   castControlView()?.hide()
 			   castControlView()?.currentState = ControllerVisState.Normal
-		  } else  /* currentPlayer == castPlayer */ {
+		  } else if (castPlayer != null) /* currentPlayer == castPlayer */ {
 			   castControlView()?.currentState = ControllerVisState.Cast
-			   castControlView()?.player = castPlayer
+			   castControlView()?.player = castPlayer!!
 			   localPlayerView().player = castPlayer
 			   castControlView()?.show()
-			   castPlayer.loadItems(
+			   castPlayer?.loadItems(
 					localPlayerView().castCurrent(),
 					0,
 					pos ?: 0,
@@ -276,12 +276,12 @@ internal class PlayerManager(
 		  playWhenReady: Boolean
 	 ) {
 		  maybeSetCurrentItemAndNotify(itemIndex)
-		  if (currentPlayer == castPlayer && castPlayer.currentTimeline.isEmpty) { //      MediaQueueItem[] items = new MediaQueueItem[mediaQueue.size()];
+		  if (currentPlayer == castPlayer && castPlayer?.currentTimeline?.isEmpty == true) { //      MediaQueueItem[] items = new MediaQueueItem[mediaQueue.size()];
 //      for (int i = 0; i < items.length; i++) {
 //        items[i] = mediaItemConverter.toMediaQueueItem(mediaQueue.get(i));
 //      }
 			   Log.e(tag, "currentItem")
-			   castPlayer.loadItems(
+			   castPlayer?.loadItems(
 					localPlayerView().castCurrent(),
 					0,
 					positionMs,
@@ -335,21 +335,23 @@ internal class PlayerManager(
 			   sexo.setHandleAudioBecomingNoisy(true)
 
 			   localPlayerView().player = sexo
-		  exoPlayer =
-			   localPlayerView().player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
-		  exoPlayer.addListener(localPlayerView().eventListener)
-		  exoPlayer.addListener(this)
+			   exoPlayer =
+					localPlayerView().player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
+			   exoPlayer.addListener(localPlayerView().eventListener)
+			   exoPlayer.addListener(this)
 
 			   mediaQueue = ArrayList()
 
 			   currentItemIndex = C.INDEX_UNSET
 //		  concatenatingMediaSource = ConcatenatingMediaSource()
 			   mediaItemConverter = DefaultMediaItemConverter()
-			   castPlayer = CastPlayer(castContext!!)
-			   castPlayer.addListener(localPlayerView().eventListener)
-			   castPlayer.addListener(this)
-			   castPlayer.setSessionAvailabilityListener(this)
-			   castContext.addCastStateListener {
+			   if (castContext != null) {
+					castPlayer = CastPlayer(castContext)
+					castPlayer?.addListener(localPlayerView().eventListener)
+					castPlayer?.addListener(this)
+					castPlayer?.setSessionAvailabilityListener(this)
+			   }
+			   castContext?.addCastStateListener {
 					if (!isInCastContext)
 						 isInCastContext = it == 3 || it == 4
 					if (isInCastContext && localPlayerView().isForeground && localPlayerView().playerUiFinalListener?.canUseCast() != false)
@@ -360,7 +362,7 @@ internal class PlayerManager(
 			   }
 
 			   setCurrentPlayer(
-					if (castPlayer.isCastSessionAvailable) castPlayer else exoPlayer,
+					if (castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer,
 					skip = false
 			   )
 		  }

@@ -47,11 +47,20 @@
             app:layout_constraintStart_toStartOf="@+id/motionInteractView"
             app:layout_constraintTop_toTopOf="@id/motionInteractView" />
 
+    <View
+            android:id="@+id/detailsBg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/player_dbg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/motionInteractView" />
+
     <FrameLayout
             android:id="@+id/detailsView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="#C600537E"
             android:clickable="true"
             android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,6 +85,8 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintVertical_bias="0.5">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

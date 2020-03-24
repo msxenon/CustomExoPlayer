@@ -18,6 +18,16 @@
                     android:alpha="0"
                     motion:curveFit="linear"
                     motion:framePosition="20"
+                    motion:motionTarget="@id/detailsBg" />
+            <KeyAttribute
+                    android:alpha="0"
+                    motion:curveFit="linear"
+                    motion:framePosition="100"
+                    motion:motionTarget="@id/detailsBg" />
+            <KeyAttribute
+                    android:alpha="0"
+                    motion:curveFit="linear"
+                    motion:framePosition="20"
                     motion:motionTarget="@id/detailsView" />
             <KeyAttribute
                     android:alpha="0"

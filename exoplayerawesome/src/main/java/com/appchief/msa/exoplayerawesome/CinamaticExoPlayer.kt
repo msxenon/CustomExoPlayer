@@ -208,7 +208,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 fun playLinkNSub(
 		  videoLink: String?,
-		  episodeId: Long?,
+		  episode: Any?,
 		  movieId: Long?,
 		  playerType: PlayerType,
 		  SrtLink: String?,
@@ -222,7 +222,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  savePlayData()
 		  nowPlaying =
 			   NowPlaying(
-					movieId, episodeId, playerType, poster,
+					movieId, episode, playerType, poster,
 					videoLink.encodeUrl(), geners, title, runtime, SrtLink?.encodeUrl()
 			   )
 		  lastPos_ = getLastPos("init", true)
@@ -746,7 +746,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   if (!isDoubleTap) {
 					isDoubleTap = true
 					keepInDoubleTapMode()
-					controls?.onDoubleTapStarted(e.x, e.y)
+					if (videoOverlayView?.isMinimized() != true)
+						 controls?.onDoubleTapStarted(e.x, e.y)
 			   }
 			   return true
 		  }
@@ -755,7 +756,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   // Second tap (ACTION_UP) of both taps
 			   if (e.actionMasked == MotionEvent.ACTION_UP && isDoubleTap) {
 					if (DEBUG) Log.d(TAG, "onDoubleTapEvent, ACTION_UP")
-					if (playerManager?.isConnected() != true && videoOverlayView?.isMinimized() != true) {
+					if (playerManager?.isConnected() != true && videoOverlayView?.isMinimized() != true && !isSreaming()) {
 						 customController?.hide()
 						 controls?.onDoubleTapProgressUp(e.x, e.y)
 					}
@@ -772,22 +773,7 @@ private fun CinamaticExoPlayer.getCastContext(): CastContext? {
 	 return (this.context.applicationContext as CastApp).mCastContext
 }
 
-private fun CinamaticExoPlayer.attachCastListener() {
-	 // (this.context.applicationContext as CastApp).listeners.add(this)
-}
 
 private fun Context.isCastConnected(): Boolean {
 	 return (this.applicationContext as CastApp).isCastConnected()
-}
-fun CinamaticExoPlayer.copyFrom(oldCinamaticExoPlayer: CinamaticExoPlayer) {
-	 nowPlaying = oldCinamaticExoPlayer.nowPlaying
-	 cinematicPlayerViews = oldCinamaticExoPlayer.cinematicPlayerViews
-	 if (player == null)
-		  player = oldCinamaticExoPlayer.player
-	 playerUiFinalListener = oldCinamaticExoPlayer.playerUiFinalListener
-//	 setController(null)
-//	 hasSettingsListener = oldCinamaticExoPlayer.hasSettingsListener
-	 setListeners()
-	 applySettings()
-//	 loadingV = oldCinamaticExoPlayer.loadingV
 }

@@ -13,4 +13,5 @@
     <string name="connecting">جار الاتصال</string>
     <string name="video_start_reached">Start video reached</string>
     <string name="video_end_reached">End video reached</string>
+    <string name="player_close">إغلاق</string>
 </resources>

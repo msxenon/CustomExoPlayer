@@ -30,9 +30,6 @@ interface CinematicPlayerViews {
 	 val controlLayout: Int?
 	 val loaderSizeInP: Int
 }
-enum class PlayerStatus {
-	 Playing, CantPlay, Error, JustMSG, InternalError
-}
 
 enum class CloseReason {
 	 Swipe, BackButton, Casting
@@ -43,7 +40,7 @@ enum class PlayerType {
 
 data class NowPlaying(
 	 val movieId: Long?,
-	 val episodeId: Long?,
+	 val episode: Any?,
 	 val type: PlayerType,
 	 val poster: String,
 	 val videoLink: String?,
@@ -51,13 +48,4 @@ data class NowPlaying(
 	 val title: String,
 	 val runtime: Long,
 	 val srtLink: String?
-) {
-
-	 fun nowPlayingId(): Long {
-		  return when (type) {
-			   PlayerType.CHANNEL -> 0L
-			   PlayerType.MOVIE -> movieId ?: 0
-			   PlayerType.EPISODE -> episodeId ?: 0
-		  }
-	 }
-}
+)

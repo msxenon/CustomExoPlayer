@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/container_motionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:applyMotionScene="true"
         app:currentState="@id/start"
         app:layoutDescription="@xml/floating_player_scene"
-        app:showPaths="true">
+        app:showPaths="false">
 
 
     <com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
@@ -39,7 +40,7 @@
             android:autoSizeTextType="uniform"
             android:background="#000000"
             android:gravity="center"
-            android:text="إغلاق"
+            android:text="@string/player_close"
             android:textColor="#fff"
             app:layout_constraintBottom_toBottomOf="@id/motionInteractView"
             app:layout_constraintEnd_toEndOf="@id/motionInteractView"
@@ -49,20 +50,22 @@
     <FrameLayout
             android:id="@+id/detailsView"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintEnd_toEndOf="@id/motionInteractView"
-            app:layout_constraintStart_toStartOf="@id/motionInteractView"
-            app:layout_constraintTop_toTopOf="@id/motionInteractView">
-
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:background="#C600537E"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/motionInteractView"
+            tools:background="@tools:sample/avatars" />
 
     <Space
             android:id="@+id/bottom_nav_spacer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="60dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     <FrameLayout
             android:id="@+id/idPlayerContainer"

@@ -6,4 +6,5 @@
     <color name="dtp_yt_animation_3">#FFFFFFFF</color>
 
     <color name="dtp_overlay_dim">#77000000</color>
+    <color name="player_dbg">#004480</color>
 </resources>

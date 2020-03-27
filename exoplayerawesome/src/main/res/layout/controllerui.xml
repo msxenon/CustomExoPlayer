@@ -73,6 +73,30 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
+            android:id="@+id/mNext"
+            style="@style/ExoMediaButton.FastForward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            app:layout_constraintBottom_toBottomOf="@+id/exo_next"
+            app:layout_constraintEnd_toStartOf="@+id/exo_next"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/exo_rew"
+            app:layout_constraintTop_toTopOf="@+id/exo_next" />
+
+    <ImageButton
+            android:id="@+id/mPrev"
+            style="@style/ExoMediaButton.Next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/exo_ffwd"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
             android:id="@id/exo_ffwd"
             style="@style/ExoMediaButton.FastForward"
             android:layout_width="wrap_content"

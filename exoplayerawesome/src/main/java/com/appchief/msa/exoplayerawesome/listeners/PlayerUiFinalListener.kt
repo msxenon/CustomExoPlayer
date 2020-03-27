@@ -10,8 +10,10 @@ interface CineamaticPlayerScreen {
 	 fun canMinimize(): Boolean
 	 fun onDissmiss(reason: CloseReason)
 	 fun doMinimizePlayer()
-	 fun isFirstItem(): Boolean
-	 fun isPlayList(): Boolean
+	 fun hasPrevItem(): Boolean
+	 fun hasNextItem(): Boolean
+	 fun playNext()
+	 fun playPrev()
 	 fun setScreenOrentation()
 	 fun showSettings(forCasting: Boolean)
 	 fun showCustomUi(show: Boolean)
@@ -25,7 +27,6 @@ interface CineamaticPlayerScreen {
 interface CinematicPlayerViews {
 	 fun resizeMode(): Int
 	 fun videoScalingMode(): Int
-
 	 val loadingView: Int?
 	 val controlLayout: Int?
 	 val loaderSizeInP: Int

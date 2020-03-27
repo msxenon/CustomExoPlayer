@@ -153,16 +153,15 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 fun setController(title: String?) {
-		  if (customController == null) {
-			   customController = VideoControllerView(context!!)
-			   Log.e(taag, "controller ${cinematicPlayerViews?.controlLayout != null}")
-			   customController?.setAnchorView(this, title, cinematicPlayerViews?.controlLayout)
-			   customController?.updateViews(null)
-			   customController?.show()
-		  } else {
-			   customController?.updateViews(true)
-		  }
-
+		  //  if (customController == null) {
+//			   customController = VideoControllerView(context)
+		  Log.e(taag, "controller ${cinematicPlayerViews?.controlLayout != null}")
+		  customController?.setAnchorView(this, title, cinematicPlayerViews?.controlLayout)
+		  customController?.updateViews(null)
+		  customController?.show()
+//		  } else {
+//			   customController?.updateViews(true)
+//		  }
 		  try {
 			   cinematicPlayerViews?.loadingView?.let {
 					if (loadingV == null) {
@@ -529,13 +528,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  return !isSreaming()
 	 }
 
-	 override fun hasNext(): Boolean {
-		  return false
-	 }
 
-	 override fun isFirstItem(): Boolean {
-		  return true
-	 }
 
 	 override val canHaveFullScreen: Boolean
 		  get() = playerUiFinalListener?.canMinimize() != false
@@ -723,7 +716,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  }
 
 		  override fun onSingleTapUp(e: MotionEvent): Boolean {
-			   if (isDoubleTap) {
+			   if (isDoubleTap && videoOverlayView?.isMinimized() != true) {
 					if (DEBUG) Log.d(TAG, "onSingleTapUp: isDoubleTap = true")
 					controls?.onDoubleTapProgressUp(e.x, e.y)
 			   }
@@ -737,7 +730,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   // to hide and show on single tap
 			   if (isDoubleTap) return true
 			   if (DEBUG) Log.d(TAG, "onSingleTapConfirmed: isDoubleTap = false")
-			   return customController?.toggleShowHide() == true
+			   customController?.toggleShowHide()
+			   return true
 		  }
 
 		  override fun onDoubleTap(e: MotionEvent): Boolean {

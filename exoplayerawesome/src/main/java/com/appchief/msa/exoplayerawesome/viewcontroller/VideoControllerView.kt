@@ -57,17 +57,17 @@ enum class ControllerVisState {
 
 	 Normal, Cast
 }
-class VideoControllerView : FrameLayout {
+
+abstract class VideoControllerView : FrameLayout {
 	 var currentState = ControllerVisState.Normal
 		  set(value) {
 			   field = value
-			   //Log.e("VCV", "viewState Changed $field")
 			   controlVis()
 		  }
-	 private var mPlayer: CinamaticExoPlayer? =
+	 var mPlayer: CinamaticExoPlayer? =
 		  null
 	 lateinit var player: Player
-	 private var mContext: Context
+	 private var mContext: Context? = null
 	 private var mAnchor: ViewGroup? = null
 	 private var mRoot: View? = null
 	 private var mProgress: SeekBar? = null
@@ -77,17 +77,17 @@ class VideoControllerView : FrameLayout {
 	 private var mVideoSettings: ImageButton? = null
 	 var isShowing = false
 		  private set
-
 	 private var mDragging = false
-	 private var mUseFastForward: Boolean
+	 private var mUseFastForward: Boolean = false
 	 private var mFromXml = false
-
 	 var mFormatBuilder: StringBuilder? = null
 	 var mFormatter: Formatter? = null
 	 private var fullscreenBtn: ImageButton? = null
 	 private var mPauseButton: ImageButton? = null
 	 private var mFfwdButton: ImageButton? = null
 	 private var mRewButton: ImageButton? = null
+	 private var mNext: ImageButton? = null
+	 private var mPrev: ImageButton? = null
 	 private val mHandler: Handler =
 		  MessageHandler(this)
 
@@ -115,10 +115,10 @@ class VideoControllerView : FrameLayout {
 		  Log.i(TAG, TAG)
 	 }
 
+
 	 public override fun onFinishInflate() {
 		  super.onFinishInflate()
 		  if (mRoot != null) initControllerView(mRoot!!)
-
 	 }
 
 	 fun setMediaPlayer(player: CinamaticExoPlayer?) {
@@ -129,7 +129,7 @@ class VideoControllerView : FrameLayout {
 	 private var moviePoster: ImageView? = null
 	 private var imageCast: ImageView? = null
 
-	 private fun controlVis() {
+	 open fun controlVis() {
 		  val vis =
 			   (currentState == ControllerVisState.Normal && mPlayer?.canSeekForward() == true).controlVisibility()
 		  mProgress?.visibility = vis
@@ -146,8 +146,12 @@ class VideoControllerView : FrameLayout {
 					moviePoster?.setImageDrawable(it)
 			   }
 		  }
-		  //  Log.e("VCV", "controlVis ${mPlayer?.canSeekBackward()} $vis $currentState")
 
+		  mNext?.visibility =
+			   (mPlayer?.playerUiFinalListener?.hasNextItem() == true && currentState == ControllerVisState.Normal).controlVisibility()
+		  mPrev?.visibility =
+			   (mPlayer?.playerUiFinalListener?.hasPrevItem() == true && currentState == ControllerVisState.Normal).controlVisibility()
+		  //  Log.e("VCV", "controlVis ${mPlayer?.canSeekBackward()} $vis $currentState")
 		  setProgress()
 		  updateDownBtn()
 		  mPauseButton?.visibility =
@@ -209,7 +213,6 @@ class VideoControllerView : FrameLayout {
 		  mRoot = inflate.inflate(
 			   controllerLayout ?: com.appchief.msa.exoplayerawesome.R.layout.controllerui, null
 		  )
-
 		  initControllerView(mRoot!!)
 		  CastButtonFactory.setUpMediaRouteButton(context, mRoot!!.exo_cast)
 		  controllerLayout?.let {
@@ -223,7 +226,8 @@ class VideoControllerView : FrameLayout {
 	 fun isNotCastingMode(): Boolean {
 		  return currentState != ControllerVisState.Cast
 	 }
-	 private fun initControllerView(v: View) {
+
+	 open fun initControllerView(v: View) {
 		  mPauseButton = v.findViewById(R.id.exo_play_pause) as? ImageButton
 		  if (mPauseButton != null) {
 			   mPauseButton?.requestFocus()
@@ -233,14 +237,19 @@ class VideoControllerView : FrameLayout {
 		  mFfwdButton = v.findViewById<View>(R.id.exo_ffwd) as? ImageButton
 		  if (mFfwdButton != null) {
 			   mFfwdButton?.setOnClickListener(mFfwdListener)
-
 		  }
 		  mRewButton = v.findViewById<View>(R.id.exo_rew) as? ImageButton
 		  if (mRewButton != null) {
 			   mRewButton?.setOnClickListener(mRewListener)
-
 		  }
-
+		  mNext = v.findViewById(R.id.mNext) as? ImageButton
+		  mNext?.setOnClickListener {
+			   mPlayer?.playerUiFinalListener?.playNext()
+		  }
+		  mPrev = v.findViewById(R.id.mPrev) as? ImageButton
+		  mPrev?.setOnClickListener {
+			   mPlayer?.playerUiFinalListener?.playPrev()
+		  }
 		  fullscreenBtn = v.findViewById(R.id.toggle_fullscreen)
 //		  Log.e(
 //			   "VCV",
@@ -481,7 +490,7 @@ class VideoControllerView : FrameLayout {
 		  updateDownBtn()
 	 }
 
-	 private fun updateDownBtn() {
+	 open fun updateDownBtn() {
 		  mDownPlayer?.visibility =
 			   (mPlayer?.playerUiFinalListener?.isInFullScreen() != true && mPlayer?.minimizeAble() == true).controlVisibility(
 					currentState == ControllerVisState.Normal

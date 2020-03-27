@@ -49,7 +49,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     api 'com.google.android.exoplayer:exoplayer:2.11.1'
-      implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+      api 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
     implementation 'com.google.android.exoplayer:extension-cast:2.11.1'
 //    implementation 'com.github.vkay94:DoubleTapPlayerView:0.7.0'

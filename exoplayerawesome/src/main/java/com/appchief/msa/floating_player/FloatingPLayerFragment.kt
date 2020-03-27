@@ -193,11 +193,6 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  })
 	 }
 
-	 fun setDetails(fragment: Fragment) {
-		  childFragmentManager.beginTransaction()
-			   .replace(com.appchief.msa.exoplayerawesome.R.id.detailsView, fragment).commit()
-	 }
-
 	 override fun showCustomUi(show: Boolean) {
 		  //  binding.videoOverlayView.playerImage.visibility = show.controlVisibility()
 	 }

@@ -316,8 +316,7 @@ abstract class VideoControllerView : FrameLayout {
 	 }
 
 	 @JvmOverloads
-	 fun show(timeout: Int = sDefaultTimeout) {
-		  //  Log.e("VCV", "showcalled $isShowing ${mAnchor != null}")
+	 fun show(timeout: Int = sDefaultTimeout, keep: Boolean = false) {
 		  if (mPlayer?.useController != true)
 			   return
 		  if (!isShowing && mAnchor != null) {
@@ -340,12 +339,14 @@ abstract class VideoControllerView : FrameLayout {
 		  // cause the progress bar to be updated even if mShowing
 		  // was already true.  This happens, for example, if we're
 		  // paused with the progress bar showing the user hits play.
-		  mHandler.sendEmptyMessage(SHOW_PROGRESS)
-		  val msg =
-			   mHandler.obtainMessage(FADE_OUT)
-		  if (timeout != 0) {
-			   mHandler.removeMessages(FADE_OUT)
-			   mHandler.sendMessageDelayed(msg, timeout.toLong())
+		  if (!keep) {
+			   mHandler.sendEmptyMessage(SHOW_PROGRESS)
+			   val msg =
+					mHandler.obtainMessage(FADE_OUT)
+			   if (timeout != 0) {
+					mHandler.removeMessages(FADE_OUT)
+					mHandler.sendMessageDelayed(msg, timeout.toLong())
+			   }
 		  }
 	 }
 

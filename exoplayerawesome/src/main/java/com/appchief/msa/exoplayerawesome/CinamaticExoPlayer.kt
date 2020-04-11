@@ -83,11 +83,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  if (playerManager?.isConnected() != true)
 			   start()
 		  Log.e("TAG2", "================================>>>> lifecycle ${player == null} ")
-
 	 }
 
 	 private var playerManager: PlayerManager? = null
-	 fun initCast(force: Boolean) {
+	 fun initCast() {
 		  //		  castExoPlayer = CastPlayer(this.getCastContext())
 //		  castExoPlayer?.addListener(plistener)
 //		  castExoPlayer?.setSessionAvailabilityListener(this)
@@ -179,12 +178,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  }
 	 }
 
-
-
-	 var forceReplay = true
 	 var nowPlaying: NowPlaying? = null
 	 var mediaSource: MediaSource? = null
-
 	 val trackSelector: DefaultTrackSelector by lazy {
 		  val trackSelectionFactory: com.google.android.exoplayer2.trackselection.TrackSelection.Factory
 		  trackSelectionFactory = AdaptiveTrackSelection.Factory()
@@ -250,13 +245,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   }
 	 }
 	 var hasSettings = false
-	 private val plistener = object : Player.EventListener {
-		  override fun onPlayerStateChanged(
-			   playWhenReady: Boolean,
-			   playbackState: Int
-		  ) {
-		  }
-	 }
+
 	 val eventListener = PlayerEventListener(
 		  context,
 		  this,
@@ -266,7 +255,6 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  setControllerVisibilityListener(this)
 		  setErrorMessageProvider(PlayerErrorMessageProvider())
 		  setPlaybackPreparer(this)
-		  player?.addListener(plistener)
 		  player?.addListener(
 			   eventListener
 		  )
@@ -370,7 +358,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 
 
-			   initCast(forceReplay)
+			   initCast()
 
 
 			   applySettings()
@@ -469,7 +457,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 override fun start() {
 		  Log.e(
 			   "msdmdsmd start",
-			   "${reachedEndOfVideo()}${player?.currentPosition} ${player?.duration} "
+			   "${reachedEndOfVideo()}${playerManager?.exoPlayer?.currentPosition} ${playerManager?.exoPlayer?.duration} "
 		  )
 
 		  if (reachedEndOfVideo()) {
@@ -558,7 +546,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	 }
 
 	 override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-		  Log.e("CEP", "dispatchTouchEvent $childCount ")
+		  //  Log.e("CEP", "dispatchTouchEvent $childCount ")
 		  if (customController?.isShowing == true) {//|| playerUiFinalListener?.isInFullScreen() == true) {
 			   for (i in 0..childCount) {
 					getChildAt(i)?.let {
@@ -569,7 +557,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 					}
 			   }
 			   // val x = super.dispatchTouchEvent(ev)
-			   Log.e("CEP", "dispatchTouchEvent end   $x")
+			   //   Log.e("CEP", "dispatchTouchEvent end   $x")
 //			   return x
 		  }
 		  return if (ev?.touchEventInsideTargetView(this) == true)
@@ -699,6 +687,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  applyHeight(realHeight)
 	 }
 
+	 var isPlayerReady: Boolean = false
+
 	 /**
 	  * Gesture Listener for double tapping
 	  *
@@ -707,16 +697,20 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 	  */
 	 inner class DoubleTapGestureListener : GestureDetector.SimpleOnGestureListener() {
 
+		  fun canDoubleTab(): Boolean {
+			   return videoOverlayView?.isMinimized() != true && !isSreaming() && isPlayerReady
+		  }
+
 		  override fun onDown(e: MotionEvent): Boolean {
 			   // Used to override the other methods
-			   if (isDoubleTap) {
+			   if (isDoubleTap && canDoubleTab()) {
 					controls?.onDoubleTapProgressDown(e.x, e.y)
 			   }
 			   return true
 		  }
 
 		  override fun onSingleTapUp(e: MotionEvent): Boolean {
-			   if (isDoubleTap && videoOverlayView?.isMinimized() != true) {
+			   if (isDoubleTap && canDoubleTab()) {
 					if (DEBUG) Log.d(TAG, "onSingleTapUp: isDoubleTap = true")
 					controls?.onDoubleTapProgressUp(e.x, e.y)
 			   }
@@ -740,7 +734,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   if (!isDoubleTap) {
 					isDoubleTap = true
 					keepInDoubleTapMode()
-					if (videoOverlayView?.isMinimized() != true)
+					if (canDoubleTab())
 						 controls?.onDoubleTapStarted(e.x, e.y)
 			   }
 			   return true
@@ -750,7 +744,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   // Second tap (ACTION_UP) of both taps
 			   if (e.actionMasked == MotionEvent.ACTION_UP && isDoubleTap) {
 					if (DEBUG) Log.d(TAG, "onDoubleTapEvent, ACTION_UP")
-					if (playerManager?.isConnected() != true && videoOverlayView?.isMinimized() != true && !isSreaming()) {
+					if (playerManager?.isConnected() != true && canDoubleTab()) {
 						 customController?.hide()
 						 controls?.onDoubleTapProgressUp(e.x, e.y)
 					}

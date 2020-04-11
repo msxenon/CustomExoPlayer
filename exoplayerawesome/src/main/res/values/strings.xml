@@ -1,17 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">AwesomePlayer</string>
-    <string name="videonotav">المقطع الذي طلبت تشغيله غير متوفر حاليا من المصدر</string>
-    <string name="error_unsupported_video">Media includes video tracks, but none are playable by this device</string>
-    <string name="error_unsupported_audio">Media includes audio tracks, but none are playable by this device</string>
-    <string name="faild_to_connect" tools:ignore="ExtraTranslation">فشل الإتصال بالخادم</string>
-    <string name="player_outofmem" tools:ignore="ExtraTranslation">الذاكرة العشوائية ممتلئه</string>
-    <string name="player_render_issue" tools:ignore="ExtraTranslation">جهازك لايدعم مشغل الفيديو</string>
-    <string name="player_unknown" tools:ignore="ExtraTranslation">حصل خطأ غير متوقع</string>
-    <string name="no_cast_device_available">لايوجد جهاز كاست متوفر</string>
-    <string name="cast_connected">متصل بخدمة الكاست</string>
-    <string name="cast_not_connected">غير متصل بخدمة الكاست</string>
-    <string name="connecting">جار الاتصال</string>
+    <string name="videonotav">Data can\'t be reached [server issue]</string>
+    <string name="error_unsupported_video">unsupported video</string>
+    <string name="error_unsupported_audio">unsupported audio</string>
+    <string name="faild_to_connect" tools:ignore="ExtraTranslation">Failed to connect</string>
+    <string name="player_outofmem" tools:ignore="ExtraTranslation">Device memory is full</string>
+    <string name="player_render_issue" tools:ignore="ExtraTranslation">Player renderer is not working</string>
+    <string name="player_unknown" tools:ignore="ExtraTranslation">Unexpected player error</string>
+    <string name="no_cast_device_available">No cast device available</string>
+    <string name="cast_connected">Cast connected</string>
+    <string name="cast_not_connected">Cast not connected</string>
+    <string name="connecting">Connecting</string>
     <string name="video_start_reached">Start video reached</string>
     <string name="video_end_reached">End video reached</string>
-    <string name="player_close">إغلاق</string>
+    <string name="player_close">Close</string>
 </resources>

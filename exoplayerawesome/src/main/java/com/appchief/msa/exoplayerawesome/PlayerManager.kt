@@ -61,7 +61,7 @@ internal class PlayerManager(
 	 }
 
 	 private lateinit var trackSelector: DefaultTrackSelector
-	 private lateinit var exoPlayer: SimpleExoPlayer
+	 lateinit var exoPlayer: SimpleExoPlayer
 	 private var castPlayer: CastPlayer? = null
 	 private lateinit var mediaQueue: ArrayList<MediaItem>
 	 private var concatenatingMediaSource: MediaSource? = null

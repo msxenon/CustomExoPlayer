@@ -1,6 +1,7 @@
 package com.appchief.msa.exoplayerawesome
 
 import android.content.Context
+import android.os.SystemClock
 import android.util.Log
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
 import com.google.android.exoplayer2.C
@@ -37,6 +38,7 @@ class PlayerEventListener(
 
 	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
 	 override fun onPlayerError(error: ExoPlaybackException) {
+		  cinemPlayer?.isPlayerReady = false
 		  val m = isBehindLiveWindow(error)
 		  Log.e("PlayerEventListener", "err ${error.type} isbehind=$m")
 		  if (m) {
@@ -81,6 +83,7 @@ class PlayerEventListener(
 		  }
 	 }
 
+	 private var lastTimeClicked = 0L
 	 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
 		  try {
 			   cinemPlayer?.keepScreenOn =
@@ -92,18 +95,22 @@ class PlayerEventListener(
 					cinemPlayer?.customController?.showLoading(true)
 					cinemPlayer?.hideController()
 			   } else if (playbackState == ExoPlayer.STATE_READY) {
-					cinemPlayer?.forceReplay = false
-
+					cinemPlayer?.isPlayerReady = true
+					lastTimeClicked = SystemClock.elapsedRealtime()
 					cinemPlayer?.checkHasSettings()
 			   } else if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
-					//cinemPlayer?.seekTo(0)
-					if (playWhenReady && cinemPlayer?.forceReplay == true) {
-						 cinemPlayer.start()
+					cinemPlayer?.isPlayerReady = false
+					if (SystemClock.elapsedRealtime() - lastTimeClicked <= 5000) {
+						 lastTimeClicked = 0
+						 cinemPlayer?.seekTo(0)
+					} else {
+						 cinemPlayer?.customController?.show(keep = true)
 					}
 			   }
 			   cinemPlayer?.customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)
 		  } catch (e: Exception) {
 			   e.printStackTrace()
+			   cinemPlayer?.isPlayerReady = false
 		  }
 	 }
 }

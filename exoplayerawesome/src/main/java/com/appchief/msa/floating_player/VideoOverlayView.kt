@@ -111,11 +111,11 @@ class VideoOverlayView @JvmOverloads constructor(
 								   val endY = ev.y
 								   if (isClick(startX!!, endX, startY!!, endY)) {
 										if (motionLayout!!.currentState == motionLayout!!.startState) {
-											 Log.e("VVO", "dispatchTouchEvent preform pte ")
+											 //	 Log.e("VVO", "dispatchTouchEvent preform pte ")
 											 playerContainer!!.performClick()
 										}
 										if (doClickTransition()) {
-											 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
+											 //	 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
 											 return true
 										}
 								   }

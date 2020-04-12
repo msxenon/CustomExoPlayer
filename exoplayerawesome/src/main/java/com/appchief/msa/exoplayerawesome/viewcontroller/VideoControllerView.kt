@@ -18,9 +18,13 @@ import com.appchief.msa.exoplayerawesome.SettingsListener
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.gms.cast.framework.CastButtonFactory
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.controllerui.view.*
 import java.lang.ref.WeakReference
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 /**
@@ -124,6 +128,15 @@ abstract class VideoControllerView : FrameLayout {
 	 fun setMediaPlayer(player: CinamaticExoPlayer?) {
 		  mPlayer = player
 		  this.player = player?.player!!
+		  val x = Observable.interval(500, TimeUnit.MILLISECONDS)
+			   .subscribeOn(Schedulers.io())
+			   .observeOn(AndroidSchedulers.mainThread())
+			   .map { mPlayer?.bufferPercentage ?: 0 }
+			   .filter { it > 0 }
+			   .distinctUntilChanged()
+			   .subscribe {
+					mProgress?.secondaryProgress = it
+			   }
 	 }
 
 	 private var moviePoster: ImageView? = null

@@ -23,7 +23,7 @@ class MainActivity : BaseActivityFloatingNavigation() {
 		  button4?.setOnClickListener {
 			   isChannel = false
 			   link =
-					"http://appchief.net/bigBunny.mp4"//"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
+					"http://cinema.supercellnetwork.com/f1a21737-0a5c-4dec-8bca-7bd4b431cb26/NxSxsu0xvAzvrqo/NxSxsu0xvAzvrqo_480.mp4"//	"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"//"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
 			   movieName = "Tiktok"
 			   poster =
 					"https://kaboompics.com/cache/b/2/8/8/3/b2883703308df69a2c024a1eacae859cbf227364.jpeg"

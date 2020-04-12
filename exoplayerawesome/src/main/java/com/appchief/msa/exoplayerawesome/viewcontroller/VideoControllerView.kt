@@ -18,13 +18,9 @@ import com.appchief.msa.exoplayerawesome.SettingsListener
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.gms.cast.framework.CastButtonFactory
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.controllerui.view.*
 import java.lang.ref.WeakReference
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 /**
@@ -128,15 +124,22 @@ abstract class VideoControllerView : FrameLayout {
 	 fun setMediaPlayer(player: CinamaticExoPlayer?) {
 		  mPlayer = player
 		  this.player = player?.player!!
-		  val x = Observable.interval(500, TimeUnit.MILLISECONDS)
-			   .subscribeOn(Schedulers.io())
-			   .observeOn(AndroidSchedulers.mainThread())
-			   .map { mPlayer?.bufferPercentage ?: 0 }
-			   .filter { it > 0 }
-			   .distinctUntilChanged()
-			   .subscribe {
-					mProgress?.secondaryProgress = it
-			   }
+		  Log.e("VCV", "set buffer--")
+//		  val x = Observable.interval(500, TimeUnit.MILLISECONDS)
+//			   .subscribeOn(Schedulers.io())
+//			   .observeOn(AndroidSchedulers.mainThread())
+//			   .map { val estimatedBufferDuration= this.player.contentBufferedPosition.toFloat().div(this.player.duration.toFloat()).times(1000f).toInt()
+//					Log.e("VCV","map buffer-- ${this.player.contentBufferedPosition}||$estimatedBufferDuration = ${this.player.bufferedPosition} ${this.player.duration}")
+//
+//					estimatedBufferDuration}
+// 		   .filter { it > 0 }
+// 			 .distinctUntilChanged()
+//			   .subscribe {
+//
+//					Log.e("VCV","$it buffer   ${this.player.duration} ${this.player.bufferedPosition} ${this.player .totalBufferedDuration} ")
+//					//val x = TimeBar
+//					mProgress?.secondaryProgress = it
+//			   }
 	 }
 
 	 private var moviePoster: ImageView? = null
@@ -408,8 +411,6 @@ abstract class VideoControllerView : FrameLayout {
 					val pos = 1000L * position / duration
 					mProgress?.progress = pos.toInt()
 			   }
-			   val percent = mPlayer?.bufferPercentage
-			   mProgress?.secondaryProgress = percent ?: 0 * 10
 		  }
 		  mEndTime?.text = stringForTime(duration)
 		  if (mCurrentTime != null) mCurrentTime?.text = stringForTime(position)

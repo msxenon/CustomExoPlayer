@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.appchief.msa.MainActivity.Companion.isChannel
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
+import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.appchief.msa.floating_player.FloatingPLayerFragment
 import com.google.android.material.snackbar.Snackbar
 
@@ -26,6 +27,9 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 //	 private var loadingView: View? = null
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		  binding.videoOverlayView.playerContainer?.cinematicPlayerViews = CinematicOnce()
+		  binding.videoOverlayView.playerContainer?.customController =
+			   object : VideoControllerView(context!!) {
+			   }
 		  super.onViewCreated(view, savedInstanceState)
 //		  loadingView = LoadingScBinding.inflate(layoutInflater).root
 //		  binding.videoOverlayView.player?.addView(loadingView)
@@ -47,7 +51,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			   null,
 			   null,
 			   if (isChannel) PlayerType.CHANNEL else PlayerType.MOVIE,
-			   "https://mkvtoolnix.download/samples/vsshort-en.srt",
+			   null,//"https://mkvtoolnix.download/samples/vsshort-en.srt",
 			   MainActivity.poster, "Action", MainActivity.movieName, 10000
 		  )
 		  binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
@@ -79,26 +83,28 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 	 override fun getLastPosition(modelId: NowPlaying?): Long {
 		  Log.e("main", "getLastPosition $modelId")
-		  return 6000
+		  return 0
 	 }
 
 	 override fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long) {
 	 }
 
-
-
 	 override fun canMinimize(): Boolean {
 		  return true
 	 }
 
-
-
-	 override fun isFirstItem(): Boolean {
+	 override fun hasPrevItem(): Boolean {
 		  return false
 	 }
 
-	 override fun isPlayList(): Boolean {
-		  return false
+	 override fun hasNextItem(): Boolean {
+		  return true
+	 }
+
+	 override fun playNext() {
+	 }
+
+	 override fun playPrev() {
 	 }
 
 	 override fun showSettings(forCasting: Boolean) {

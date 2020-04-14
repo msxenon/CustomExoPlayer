@@ -22,14 +22,20 @@
                     motion:percentHeight="0"
                     motion:percentX="0" />
             <KeyAttribute
-                    android:translationY="0dp"
                     motion:framePosition="25"
-                    motion:motionTarget="@+id/detailsView_container" />
+                    motion:motionTarget="@+id/detailsView_container">
+                <CustomAttribute
+                        motion:attributeName="topy"
+                        motion:customIntegerValue="0" />
+            </KeyAttribute>
 
             <KeyAttribute
-                    android:translationY="300dp"
                     motion:framePosition="100"
-                    motion:motionTarget="@+id/detailsView_container" />
+                    motion:motionTarget="@+id/detailsView_container">
+                <CustomAttribute
+                        motion:attributeName="topy"
+                        motion:customIntegerValue="100" />
+            </KeyAttribute>
 
         </KeyFrameSet>
 
@@ -133,7 +139,9 @@
                 motion:layout_constraintStart_toStartOf="parent"
                 android:layout_height="0dp"
                 motion:layout_constraintBottom_toBottomOf="@+id/idPlayerContainer"
-                motion:layout_constraintTop_toBottomOf="@+id/motionInteractView" />
+                motion:layout_constraintTop_toBottomOf="@+id/motionInteractView">
+
+        </Constraint>
 
 
     </ConstraintSet>

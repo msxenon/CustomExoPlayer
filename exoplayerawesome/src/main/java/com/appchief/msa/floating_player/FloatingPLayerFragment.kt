@@ -27,6 +27,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 abstract fun initPlayer(res: String? = null)
+
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 override fun forcePortrait() {
 		  activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT

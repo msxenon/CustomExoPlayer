@@ -97,10 +97,9 @@ internal class PlayerManager(
 //		  mediaQueue.add(castCurrent)
 		  //concatenatingMediaSource.clear()
 		  //  concatenatingMediaSource.clear()
-
 		  concatenatingMediaSource = item!!
 		  val pos = localPlayerView().getLastPos("addItem")
-		  if (currentPlayer == castPlayer) {
+		  if (castPlayer != null && currentPlayer == castPlayer) {
 			   castPlayer?.loadItems(
 					castCurrent, 0, pos,
 					REPEAT_MODE_ALL

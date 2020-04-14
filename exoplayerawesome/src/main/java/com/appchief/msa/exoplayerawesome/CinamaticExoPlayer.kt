@@ -75,13 +75,19 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  isForeground = true
 		  Log.e(
 			   "TAG",
-			   "================================>>>> lifecycle owner ON_RESUME "
+			   "================================>>>> lifecycle owner ON_RESUME  "
 		  )
 //			onResume()
 		  Log.e("TAG", "================================>>>> lifecycle ${player == null} ")
 		  //  ExoIntent.getPlayerHere(this)
+		  lastPos_ = 0L
+		  getLastPos("resume")
 		  if (playerManager?.isConnected() != true)
 			   start()
+
+
+
+
 		  Log.e("TAG2", "================================>>>> lifecycle ${player == null} ")
 	 }
 
@@ -404,7 +410,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
 	 private var lastPos_ = 0L
 	 fun getLastPos(tag: String, force: Boolean = false): Long {
-		  if (lastPos_ == 0L || force)
+		  if ((lastPos_ == 0L || force) && nowPlaying?.type != PlayerType.CHANNEL)
 			   playerUiFinalListener?.getLastPosition(nowPlaying)?.let {
 					lastPos_ = it
 			   }

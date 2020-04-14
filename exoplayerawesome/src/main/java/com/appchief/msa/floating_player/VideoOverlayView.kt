@@ -92,40 +92,43 @@ class VideoOverlayView @JvmOverloads constructor(
 	 }
 
 	 override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-//		  Log.e("VVO", "dispatchTouchEvent ${motionLayout == null} ")
-		  if (playerContainer != null && motionLayout != null) {
-			   val consumed = playerContainer!!.dispatchTouchEvent(ev)
-//			   Log.e("VVO", "dispatchTouchEvent c1 ${consumed}  ")
-			   if (consumed) {
-					return consumed
-			   }
-			   if (ev.touchEventInsideTargetView(playerContainer)) {
-					when (ev.action) {
-						 MotionEvent.ACTION_DOWN -> {
-							  startX = ev.x
-							  startY = ev.y
-						 }
-						 MotionEvent.ACTION_UP -> {
-							  if (startX != null && startY != null) {
-								   val endX = ev.x
-								   val endY = ev.y
-								   if (isClick(startX!!, endX, startY!!, endY)) {
-										if (motionLayout!!.currentState == motionLayout!!.startState) {
-											 //	 Log.e("VVO", "dispatchTouchEvent preform pte ")
-											 playerContainer!!.performClick()
-										}
-										if (doClickTransition()) {
-											 //	 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
-											 return true
+		  try {//		  Log.e("VVO", "dispatchTouchEvent ${motionLayout == null} ")
+			   if (playerContainer != null && motionLayout != null) {
+					val consumed = playerContainer!!.dispatchTouchEvent(ev)
+					//			   Log.e("VVO", "dispatchTouchEvent c1 ${consumed}  ")
+					if (consumed) {
+						 return consumed
+					}
+					if (ev.touchEventInsideTargetView(playerContainer)) {
+						 when (ev.action) {
+							  MotionEvent.ACTION_DOWN -> {
+								   startX = ev.x
+								   startY = ev.y
+							  }
+							  MotionEvent.ACTION_UP -> {
+								   if (startX != null && startY != null) {
+										val endX = ev.x
+										val endY = ev.y
+										if (isClick(startX!!, endX, startY!!, endY)) {
+											 if (motionLayout!!.currentState == motionLayout!!.startState) {
+												  //	 Log.e("VVO", "dispatchTouchEvent preform pte ")
+												  playerContainer!!.performClick()
+											 }
+											 if (doClickTransition()) {
+												  //	 Log.e("VVO", "dispatchTouchEvent c2 doclick ")
+												  return true
+											 }
 										}
 								   }
 							  }
 						 }
 					}
 			   }
-		  }
 
-		  return super.dispatchTouchEvent(ev)
+			   return super.dispatchTouchEvent(ev)
+		  } catch (e: Exception) {
+			   return false
+		  }
 	 }
 
 	 private fun doClickTransition(): Boolean {

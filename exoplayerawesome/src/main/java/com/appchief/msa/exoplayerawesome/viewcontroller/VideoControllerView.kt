@@ -19,9 +19,9 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.gms.cast.framework.CastButtonFactory
 import kotlinx.android.synthetic.main.controllerui.view.*
+import java.lang.StrictMath.max
 import java.lang.ref.WeakReference
 import java.util.*
-import kotlin.math.max
 
 /**
  * A view containing controls for a MediaPlayer. Typically contains the

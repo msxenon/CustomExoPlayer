@@ -30,6 +30,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.CastContext
@@ -334,8 +335,11 @@ internal class PlayerManager(
 			   sexo.setHandleAudioBecomingNoisy(true)
 
 			   localPlayerView().player = sexo
+
 			   exoPlayer =
 					localPlayerView().player as SimpleExoPlayer//SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build()
+			   exoPlayer.addAnalyticsListener(EventLogger(trackSelector))
+
 			   exoPlayer.addListener(localPlayerView().eventListener)
 			   exoPlayer.addListener(this)
 

@@ -193,8 +193,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  m.parameters = trackSelectorParameters
 		  return@lazy m
 	 }
-	 val trackSelectorParameters: DefaultTrackSelector.Parameters by lazy {
+	 val trackSelectorParameters by lazy {
 		  val x = DefaultTrackSelector.ParametersBuilder(context)
+			   .setExceedRendererCapabilitiesIfNecessary(true)
+			   .setExceedVideoConstraintsIfNecessary(true)
 			   .setRendererDisabled(C.TRACK_TYPE_VIDEO, false).setPreferredTextLanguage("ar")
 			   .setPreferredTextLanguage("en").build()
 

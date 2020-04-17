@@ -278,13 +278,14 @@ abstract class VideoControllerView : FrameLayout {
 		  updateFullScreen()
 		  mProgress =
 			   v.findViewById<View>(R.id.exo_progress) as? SeekBar
-		  if (mProgress != null) {
+		  if (mProgress != null)
 			   if (mProgress is SeekBar) {
 					val seeker = mProgress
 					seeker?.setOnSeekBarChangeListener(mSeekListener)
 					if (!ExoFactorySingeleton.isTv)
 						 mProgress?.max = 1000
 			   }
+
 		  mEndTime = v.findViewById<View>(R.id.exo_duration) as? TextView
 		  mCurrentTime = v.findViewById<View>(R.id.exo_position) as? TextView
 		  mDownPlayer = v.findViewById(R.id.downPlayer)

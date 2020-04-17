@@ -9,7 +9,6 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -50,8 +49,15 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    api 'com.google.android.exoplayer:exoplayer:2.11.1'
-      api 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    def ev = '2.11.1'
+    api "com.google.android.exoplayer:exoplayer-core:$ev"
+    api "com.google.android.exoplayer:exoplayer-dash:$ev"
+    api "com.google.android.exoplayer:exoplayer-ui:$ev"
+    api "com.google.android.exoplayer:exoplayer-hls:$ev"
+    api "com.google.android.exoplayer:exoplayer-smoothstreaming:$ev"
+
+
+    api 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
     implementation 'com.google.android.exoplayer:extension-cast:2.11.1'
 //    implementation 'com.github.vkay94:DoubleTapPlayerView:0.7.0'

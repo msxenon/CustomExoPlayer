@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
 import com.appchief.msa.floating_player.FloatingPLayerFragment
 import com.google.android.gms.cast.framework.*
 
@@ -107,6 +108,8 @@ open class BaseActivityFloatingNavigation : AppCompatActivity() {
 
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 fun canGoBack(): Boolean {
+		  if (ExoFactorySingeleton.isTv)
+			   return true
 		  val orientation = this.resources.configuration.orientation
 		  if (orientation != Configuration.ORIENTATION_PORTRAIT) {
 			   // code for landscape mode

@@ -13,7 +13,8 @@ class MLExts @JvmOverloads constructor(
 
 	 fun setTopy(newMarginTop: Int) {
 		  detailsView?.updateLayoutParams<ConstraintLayout.LayoutParams> {
-			   topMargin = newMarginTop.DpToPx()
+			   this.topMargin = newMarginTop.DpToPx()
+			   translationY
 		  }
 	 }
 }

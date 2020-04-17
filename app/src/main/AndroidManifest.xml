@@ -20,7 +20,6 @@
                 android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
                 android:label="@string/title_activity_main"
                 android:launchMode="singleInstance"
-                android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar"
                 tools:ignore="LockedOrientationActivity">
             <intent-filter>

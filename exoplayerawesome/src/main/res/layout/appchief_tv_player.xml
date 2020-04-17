@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/container_motionLayout_"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layoutDirection="ltr"
+        app:applyMotionScene="true"
+        app:currentState="@id/start"
+        app:layoutDescription="@xml/floating_player_scene_land"
+        app:showPaths="false">
+
+
+    <com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
+            android:id="@+id/motionInteractView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="#000000"
+            android:tag="player"
+            app:controller_layout_id="@layout/empty_layout_nothing"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:surface_type="texture_view"
+            app:use_controller="true">
+
+        <com.appchief.msa.youtube.YouTubeOverlay
+                android:id="@+id/ytController"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+    </com.appchief.msa.exoplayerawesome.CinamaticExoPlayer>
+
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

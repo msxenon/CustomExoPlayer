@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
+import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
+import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
 import com.appchief.msa.exoplayerawesome.R
 import com.appchief.msa.exoplayerawesome.databinding.VideoOverViewBinding
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
@@ -26,11 +28,16 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  super.onCreate(null)
 	 }
 
+	 fun getPlayer(): CinamaticExoPlayer? {
+		  return binding.videoOverlayView.playerContainer
+	 }
+
 	 abstract fun initPlayer(res: String? = null)
 
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 override fun forcePortrait() {
-		  activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+		  if (!ExoFactorySingeleton.isTv)
+			   activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 	 }
 
 	 override fun isInFullScreen(): Boolean {
@@ -50,9 +57,8 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  view?.requestFocus()
 	 }
 
-	 private var isFullScreen = false
+	 private var isFullScreen = ExoFactorySingeleton.isTv
 	 override fun onConfigurationChanged(newConfig: Configuration) {
-
 		  super.onConfigurationChanged(newConfig)
 		  isFullScreen = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
 		  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -93,9 +99,11 @@ abstract class FloatingPLayerFragment : Fragment(),
 
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 override fun setScreenOrentation() {
-		  Log.e("xx", "setScreenOrentation ${isInFullScreen()} ")
-		  activity?.requestedOrientation =
-			   if (isInFullScreen()) ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+		  if (!ExoFactorySingeleton.isTv) {
+			   Log.e("xx", "setScreenOrentation ${isInFullScreen()} ")
+			   activity?.requestedOrientation =
+					if (isInFullScreen()) ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+		  }
 	 }
 
 	 override fun onDissmiss(reason: CloseReason) {
@@ -123,6 +131,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  view.viewTreeObserver.addOnWindowFocusChangeListener {
 			   applyVisibility()
 		  }
+
 //		  val handler = Handler()
 //		  handler.post(Runnable {
 //			   var fm = fragmentManager?.findFragmentByTag("mini")
@@ -199,7 +208,7 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 fun canGoBack(): Boolean {
-		  return binding.videoOverlayView.isMinimized()
+		  return ExoFactorySingeleton.isTv || binding.videoOverlayView.isMinimized()
 	 }
 }
 

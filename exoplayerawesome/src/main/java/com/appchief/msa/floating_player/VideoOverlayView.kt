@@ -10,8 +10,10 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
+import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
 import com.appchief.msa.exoplayerawesome.R
 import com.appchief.msa.exoplayerawesome.databinding.AppchiefFloatingPlayerBinding
+import com.appchief.msa.exoplayerawesome.databinding.AppchiefTvPlayerBinding
 
 // https://medium.com/vrt-digital-studio/picture-in-picture-video-overlay-with-motionlayout-a9404663b9e7
 class VideoOverlayView @JvmOverloads constructor(
@@ -39,8 +41,15 @@ class VideoOverlayView @JvmOverloads constructor(
 		  //LayoutInflater.from(context).inflate(R.layout.layout_detail, this, false) as MotionLayout
 		  if (motionLayout == null) {
 			   //   (rootView as ViewGroup) .removeAllViews()
-			   motionLayout = AppchiefFloatingPlayerBinding.inflate(LayoutInflater.from(context))
-					.containerMotionLayout
+			   Log.e("VOV", "istv ${ExoFactorySingeleton.isTv}")
+			   motionLayout = (if (ExoFactorySingeleton.isTv) AppchiefTvPlayerBinding.inflate(
+					LayoutInflater.from(context)
+			   ).containerMotionLayout else AppchiefFloatingPlayerBinding.inflate(
+					LayoutInflater.from(
+						 context
+					)
+			   ).containerMotionLayout)
+
 
 
 			   addView(motionLayout)

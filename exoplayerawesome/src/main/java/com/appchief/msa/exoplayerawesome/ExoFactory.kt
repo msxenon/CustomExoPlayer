@@ -28,8 +28,13 @@ import java.io.File
 
 object ExoFactorySingeleton {
 	 private lateinit var value: ExoFactory
+	 var isTv = false
 	 fun init(context: Context?) {
 		  value = ExoFactory(context)
+		  try {
+			   isTv = Util.isTv(context!!)
+		  } catch (e: Exception) {
+		  }
 	 }
 
 	 fun getInstance(): ExoFactory {

@@ -766,10 +766,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 fun Int.DpToPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
 
 private fun CinamaticExoPlayer.getCastContext(): CastContext? {
-	 return (this.context.applicationContext as CastApp).mCastContext
+	 return (this.context.applicationContext as? CastApp)?.mCastContext
 }
 
 
 private fun Context.isCastConnected(): Boolean {
-	 return (this.applicationContext as CastApp).isCastConnected()
+	 return (this.applicationContext as? CastApp)?.isCastConnected() == true
 }

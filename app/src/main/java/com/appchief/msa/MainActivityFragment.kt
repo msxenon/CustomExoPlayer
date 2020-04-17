@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.appchief.msa.MainActivity.Companion.isChannel
+import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
@@ -22,11 +23,10 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 companion object {
 		  var isFirstVideo = true
 	 }
-
 	 private var snackBar: Snackbar? = null
 	 //	 private var loadingView: View? = null
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		  binding.videoOverlayView.playerContainer?.cinematicPlayerViews = CinematicOnce()
+		  getPlayer()?.cinematicPlayerViews = CinematicOnce()
 		  binding.videoOverlayView.playerContainer?.customController =
 			   object : VideoControllerView(context!!) {
 			   }
@@ -43,6 +43,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 		  initPlayer()
 		  // setDetails(DetailsFrag())
 		  isFirstVideo = !isFirstVideo
+
 	 }
 
 	 fun initPlayer() {
@@ -90,7 +91,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	 }
 
 	 override fun canMinimize(): Boolean {
-		  return true
+		  return !ExoFactorySingeleton.isTv
 	 }
 
 	 override fun hasPrevItem(): Boolean {

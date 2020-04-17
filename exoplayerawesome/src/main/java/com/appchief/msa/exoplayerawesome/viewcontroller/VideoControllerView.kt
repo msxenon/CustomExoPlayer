@@ -119,6 +119,7 @@ abstract class VideoControllerView : FrameLayout {
 	 public override fun onFinishInflate() {
 		  super.onFinishInflate()
 		  if (mRoot != null) initControllerView(mRoot!!)
+		  requestFocus()
 	 }
 
 	 fun setMediaPlayer(player: CinamaticExoPlayer?) {
@@ -248,24 +249,30 @@ abstract class VideoControllerView : FrameLayout {
 		  if (mPauseButton != null) {
 			   mPauseButton?.requestFocus()
 			   mPauseButton?.setOnClickListener(mPauseListener)
+			   mPauseButton.applyFocusStates()
 		  }
 
 		  mFfwdButton = v.findViewById<View>(R.id.exo_ffwd) as? ImageButton
 		  if (mFfwdButton != null) {
 			   mFfwdButton?.setOnClickListener(mFfwdListener)
+			   mFfwdButton?.applyFocusStates()
 		  }
 		  mRewButton = v.findViewById<View>(R.id.exo_rew) as? ImageButton
 		  if (mRewButton != null) {
 			   mRewButton?.setOnClickListener(mRewListener)
+			   mRewButton.applyFocusStates()
 		  }
 		  mNext = v.findViewById(R.id.mNext) as? ImageButton
 		  mNext?.setOnClickListener {
 			   mPlayer?.playerUiFinalListener?.playNext()
 		  }
+		  mNext.applyFocusStates()
+
 		  mPrev = v.findViewById(R.id.mPrev) as? ImageButton
 		  mPrev?.setOnClickListener {
 			   mPlayer?.playerUiFinalListener?.playPrev()
 		  }
+		  mPrev.applyFocusStates()
 		  fullscreenBtn = v.findViewById(R.id.toggle_fullscreen)
 //		  Log.e(
 //			   "VCV",
@@ -278,6 +285,7 @@ abstract class VideoControllerView : FrameLayout {
 			   if (mProgress is SeekBar) {
 					val seeker = mProgress
 					seeker?.setOnSeekBarChangeListener(mSeekListener)
+					mProgress.applyFocusStates()
 			   }
 			   mProgress?.max = 1000
 		  }
@@ -416,63 +424,16 @@ abstract class VideoControllerView : FrameLayout {
 		  if (mCurrentTime != null) mCurrentTime?.text = stringForTime(position)
 		  return position
 	 }
-
-	 //	 override fun onTouchEvent(event: MotionEvent): Boolean {
+////todo
+//	 	 override fun onTouchEvent(event: MotionEvent): Boolean {
 //		  show(sDefaultTimeout)
 //		  return true
 //	 }
-	 override fun onTrackballEvent(ev: MotionEvent): Boolean {
-		  show(sDefaultTimeout)
-		  return false
-	 }
-
-	 override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-		  if (mPlayer == null) {
-			   return true
-		  }
-		  val keyCode = event.keyCode
-		  val uniqueDown = (event.repeatCount == 0
-				  && event.action == KeyEvent.ACTION_DOWN)
-		  if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || keyCode == KeyEvent.KEYCODE_SPACE
-		  ) {
-			   if (uniqueDown) {
-					doPauseResume()
-					show(sDefaultTimeout)
-					if (mPauseButton != null) {
-						 mPauseButton?.requestFocus()
-					}
-			   }
-			   return true
-		  } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
-			   if (uniqueDown && player.isPlaying == true) {
-					mPlayer?.start()
-					updatePausePlay()
-					show(sDefaultTimeout)
-			   }
-			   return true
-		  } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
-			   || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE
-		  ) {
-			   if (uniqueDown && player.isPlaying == true) {
-					ExoIntent.paused = true
-					mPlayer?.pause()
-					updatePausePlay()
-					show(sDefaultTimeout)
-			   }
-			   return true
-		  } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE
-		  ) { // don't show the controls for volume adjustment
-			   return super.dispatchKeyEvent(event)
-		  } else if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU) {
-			   if (uniqueDown) {
-					hide()
-			   }
-			   return true
-		  }
-		  show(sDefaultTimeout)
-		  return super.dispatchKeyEvent(event)
-	 }
-
+//	 override fun onTrackballEvent(ev: MotionEvent): Boolean {
+//		  show(sDefaultTimeout)
+//		  return false
+//	 }
+//
 	 private val mPauseListener =
 		  OnClickListener {
 			   doPauseResume()
@@ -649,6 +610,57 @@ abstract class VideoControllerView : FrameLayout {
 		  private const val FADE_OUT = 1
 		  private const val SHOW_PROGRESS = 2
 	 }
+
+	 override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+		  Log.e("VCV", " dispatchKeyEvent $event")
+		  if (mPlayer == null) {
+			   return true
+		  }
+		  val keyCode = event.keyCode
+		  val uniqueDown = (event.repeatCount == 0
+				  && event.action == KeyEvent.ACTION_DOWN)
+		  if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || keyCode == KeyEvent.KEYCODE_SPACE
+		  ) {
+			   if (uniqueDown) {
+					doPauseResume()
+					show(sDefaultTimeout)
+					if (mPauseButton != null) {
+						 mPauseButton!!.requestFocus()
+					}
+			   }
+			   return true
+		  } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
+			   if (uniqueDown && !mPlayer!!.isPlaying) {
+					mPlayer!!.start()
+					updatePausePlay()
+					show(sDefaultTimeout)
+			   }
+			   return true
+		  } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
+			   || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE
+		  ) {
+			   if (uniqueDown && mPlayer!!.isPlaying) {
+					mPlayer!!.pause()
+					updatePausePlay()
+					show(sDefaultTimeout)
+			   }
+			   return true
+		  } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE
+		  ) { // don't show the controls for volume adjustment
+			   return super.dispatchKeyEvent(event)
+		  } else if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU) {
+			   if (uniqueDown) {
+					hide()
+			   }
+			   return true
+		  }
+		  show(sDefaultTimeout)
+		  return super.dispatchKeyEvent(event)
+	 }
+}
+
+fun View?.applyFocusStates() {
+	 this?.setBackgroundResource(R.drawable.btn_controller_states)
 }
 
 private fun ImageView?.setVector(icSettingsRemoteBlack24dp: Int) {

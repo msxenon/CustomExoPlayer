@@ -1,5 +1,6 @@
 package com.appchief.msa
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.appchief.msa.awesomeplayer.R
@@ -54,6 +55,10 @@ class MainActivity : BaseActivityFloatingNavigation() {
 	 }
 
 	 fun showFrag() {
+		  if (true) {
+			   startActivity(Intent(this, TVPlayer::class.java))
+			   return
+		  }
 		  val m = MainActivityFragment()
 		  supportFragmentManager.beginTransaction()
 			   .replace(R.id.you, m, "ff")

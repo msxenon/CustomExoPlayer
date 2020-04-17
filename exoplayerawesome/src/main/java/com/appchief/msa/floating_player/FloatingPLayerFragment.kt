@@ -51,12 +51,6 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  super.onDestroy()
 	 }
 
-	 override fun onActivityCreated(savedInstanceState: Bundle?) {
-		  super.onActivityCreated(savedInstanceState)
-		  view?.isFocusableInTouchMode = true
-		  view?.requestFocus()
-	 }
-
 	 private var isFullScreen = ExoFactorySingeleton.isTv
 	 override fun onConfigurationChanged(newConfig: Configuration) {
 		  super.onConfigurationChanged(newConfig)

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -22,7 +23,24 @@ class VideoOverlayView @JvmOverloads constructor(
 	 defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+	 init {
+		  //Set whether this view can receive the focus
+		  this.focusable = View.FOCUSABLE
+		  //When a view is focusable, it may not want to take focus when in touch mode.
+		  //For example, a button would like focus when the user is navigating via a D-pad
+		  //so that the user can click on it, but once the user starts touching the screen,
+		  //the button shouldn't take focus
+		  this.isFocusableInTouchMode = true
+	 }
+
+	 override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+		  playerContainer?.customController?.dispatchKeyEvent(event)
+
+		  return super.dispatchKeyEvent(event)
+	 }
+
 	 var motionLayout: MotionLayout? = null
+
 	 // var player: CinamaticExoPlayer? = null
 	 var playerContainer: CinamaticExoPlayer? = null
 	 private var startX: Float? = null
@@ -38,6 +56,7 @@ class VideoOverlayView @JvmOverloads constructor(
 	 }
 	 override fun onFinishInflate() {
 		  super.onFinishInflate()
+		  this.requestFocus()
 		  //LayoutInflater.from(context).inflate(R.layout.layout_detail, this, false) as MotionLayout
 		  if (motionLayout == null) {
 			   //   (rootView as ViewGroup) .removeAllViews()

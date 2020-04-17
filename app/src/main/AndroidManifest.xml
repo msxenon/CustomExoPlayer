@@ -35,6 +35,7 @@
                 android:screenOrientation="sensorLandscape"
                 tools:ignore="LockedOrientationActivity" />
         <activity android:name="com.appchief.msa.ExpandedControlsActivity" />
+        <activity android:name="com.appchief.msa.TVPlayer" />
 
         <meta-data
                 android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"

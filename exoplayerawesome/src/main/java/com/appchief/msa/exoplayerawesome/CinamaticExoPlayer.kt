@@ -403,12 +403,16 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  return null
 	 }
 
-	 fun checkHasSettings() {
-		 val m =  SettingsUtil.willHaveContent(trackSelector)
-		  hasSettings = m
-		  hasSettingsListener?.hasSettings(m)
-		  Log.e("CEP", "settings $hasSettings ${hasSettingsListener != null}")
-	 }
+//	 override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+//		  Log.e("keydown","$keyCode")
+//		  return super.onKeyDown(keyCode, event)
+//	 }
+fun checkHasSettings() {
+	 val m = SettingsUtil.willHaveContent(trackSelector)
+	 hasSettings = m
+	 hasSettingsListener?.hasSettings(m)
+	 Log.e("CEP", "settings $hasSettings ${hasSettingsListener != null}")
+}
 
 	 private var lastPos_ = 0L
 	 fun getLastPos(tag: String, force: Boolean = false): Long {

@@ -11,10 +11,7 @@ import android.view.View.OnClickListener
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
-import com.appchief.msa.exoplayerawesome.ExoIntent
-import com.appchief.msa.exoplayerawesome.R
-import com.appchief.msa.exoplayerawesome.SettingsListener
+import com.appchief.msa.exoplayerawesome.*
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.gms.cast.framework.CastButtonFactory
@@ -285,10 +282,9 @@ abstract class VideoControllerView : FrameLayout {
 			   if (mProgress is SeekBar) {
 					val seeker = mProgress
 					seeker?.setOnSeekBarChangeListener(mSeekListener)
-					mProgress.applyFocusStates()
+					if (!ExoFactorySingeleton.isTv)
+						 mProgress?.max = 1000
 			   }
-			   mProgress?.max = 1000
-		  }
 		  mEndTime = v.findViewById<View>(R.id.exo_duration) as? TextView
 		  mCurrentTime = v.findViewById<View>(R.id.exo_position) as? TextView
 		  mDownPlayer = v.findViewById(R.id.downPlayer)
@@ -579,17 +575,17 @@ abstract class VideoControllerView : FrameLayout {
 			   show(sDefaultTimeout)
 		  }
 
-	 private class MessageHandler internal constructor(viewX: VideoControllerView) :
-		  Handler(Looper.getMainLooper()) {
+		  private class MessageHandler(viewX: VideoControllerView) :
+			   Handler(Looper.getMainLooper()) {
 
-		  private val mView: WeakReference<VideoControllerView> = WeakReference(viewX)
-		  override fun handleMessage(msgj: Message) {
-			   var msg = msgj
-			   val view = mView.get()
-			   if (view?.mPlayer == null) {
-					return
-			   }
-			   //  Log.e("MessageHandler", "" + msg.toString() + " dragging${view.mDragging}")
+			   private val mView: WeakReference<VideoControllerView> = WeakReference(viewX)
+			   override fun handleMessage(msgj: Message) {
+					var msg = msgj
+					val view = mView.get()
+					if (view?.mPlayer == null) {
+						 return
+					}
+					//  Log.e("MessageHandler", "" + msg.toString() + " dragging${view.mDragging}")
 			   val pos: Long
 			   when (msg.what) {
 					FADE_OUT -> view.hide()

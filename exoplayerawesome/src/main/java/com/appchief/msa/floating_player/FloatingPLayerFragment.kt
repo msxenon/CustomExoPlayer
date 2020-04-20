@@ -3,6 +3,7 @@ package com.appchief.msa.floating_player
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -122,10 +123,11 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  initFloating()
 
 		  super.onViewCreated(view, savedInstanceState)
-		  view.viewTreeObserver.addOnWindowFocusChangeListener {
-			   applyVisibility()
+		  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+			   view.viewTreeObserver.addOnWindowFocusChangeListener {
+					applyVisibility()
+			   }
 		  }
-
 //		  val handler = Handler()
 //		  handler.post(Runnable {
 //			   var fm = fragmentManager?.findFragmentByTag("mini")
@@ -202,7 +204,10 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 }
 
 	 fun canGoBack(): Boolean {
-		  return ExoFactorySingeleton.isTv || binding.videoOverlayView.isMinimized()
+		  return if (ExoFactorySingeleton.isTv) {
+			   getPlayer()?.customController?.canGoBackInTV() != false
+		  } else
+			   binding.videoOverlayView.isMinimized()
 	 }
 }
 

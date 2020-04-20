@@ -351,10 +351,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 			   "$ VIDEO SIZEING ${cinematicPlayerViews?.resizeMode() != null} ${cinematicPlayerViews?.videoScalingMode() != null}"
 		  )
 
-		  setController(null)
+		  setController(if (ExoFactorySingeleton.isTv) nowPlaying?.title else null)
 		  Log.e("ApplySettings", "$ load${cinematicPlayerViews?.loadingView != null}")
 		  Log.e("ApplySettings", "$ load2 ${cinematicPlayerViews?.controlLayout != null}")
-
 	 }
 
 	 fun initializePlayer(force: Boolean): Boolean? {

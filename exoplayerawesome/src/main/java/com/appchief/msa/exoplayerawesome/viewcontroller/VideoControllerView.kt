@@ -72,8 +72,13 @@ abstract class VideoControllerView : FrameLayout {
 	 private var mDownPlayer: ImageButton? = null
 	 private var mCurrentTime: TextView? = null
 	 private var mVideoSettings: ImageButton? = null
+	 var lastShowingChange: Long = 0
 	 var isShowing = false
-		  private set
+		  private set(value) {
+			   field = value
+			   lastShowingChange = System.currentTimeMillis()
+			   Log.e("VCV", "isShowing $value")
+		  }
 	 private var mDragging = false
 	 private var mUseFastForward: Boolean = false
 	 private var mFromXml = false
@@ -282,8 +287,10 @@ abstract class VideoControllerView : FrameLayout {
 			   if (mProgress is SeekBar) {
 					val seeker = mProgress
 					seeker?.setOnSeekBarChangeListener(mSeekListener)
-					if (!ExoFactorySingeleton.isTv)
-						 mProgress?.max = 1000
+					mProgress?.max = 1000
+					if (ExoFactorySingeleton.isTv)
+						 mProgress?.keyProgressIncrement = 1
+					Log.e("VCV", "seekbar ${mProgress?.max} ${mProgress?.keyProgressIncrement}")
 			   }
 
 		  mEndTime = v.findViewById<View>(R.id.exo_duration) as? TextView
@@ -653,6 +660,13 @@ abstract class VideoControllerView : FrameLayout {
 		  }
 		  show(sDefaultTimeout)
 		  return super.dispatchKeyEvent(event)
+	 }
+
+	 fun canGoBackInTV(): Boolean {
+		  val ct = System.currentTimeMillis()
+		  val x = System.currentTimeMillis() - lastShowingChange
+		  Log.e("VCV", "$ct - $lastShowingChange = $x")
+		  return !isShowing && (x) > 3000
 	 }
 }
 

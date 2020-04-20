@@ -2,6 +2,7 @@ package com.appchief.msa.floating_player
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
@@ -25,7 +26,9 @@ class VideoOverlayView @JvmOverloads constructor(
 
 	 init {
 		  //Set whether this view can receive the focus
-		  this.focusable = View.FOCUSABLE
+		  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			   this.focusable = View.FOCUSABLE
+		  }
 		  //When a view is focusable, it may not want to take focus when in touch mode.
 		  //For example, a button would like focus when the user is navigating via a D-pad
 		  //so that the user can click on it, but once the user starts touching the screen,

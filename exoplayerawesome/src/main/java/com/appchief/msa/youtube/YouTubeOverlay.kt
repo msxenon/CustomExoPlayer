@@ -22,11 +22,12 @@ import kotlinx.android.synthetic.main.yt_overlay.view.*
  * animation and provides some configurations which can't be accomplished with the regular
  * Android Ripple (I didn't find any options in the documentation ...).
  */
-class YouTubeOverlay(context: Context?, private val attrs: AttributeSet?) :
-	 ConstraintLayout(context, attrs), PlayerDoubleTapListener {
+class YouTubeOverlay @JvmOverloads constructor(
+	 context: Context, private val attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) :
+	 ConstraintLayout(context, attrs, defStyleAttr), PlayerDoubleTapListener {
 
-	 constructor(context: Context?) : this(context, null) {
-		  // Hide overlay initially when added programmatically
+	 init {
 		  this.visibility = View.GONE
 	 }
 
@@ -34,7 +35,8 @@ class YouTubeOverlay(context: Context?, private val attrs: AttributeSet?) :
 		  const val TAG = ".YouTubeOverlay"
 		  const val DEBUG = BuildConfig.BUILD_TYPE != "release"
 	 }
-//    private var playerViewRef: Int = -1
+
+	 //    private var playerViewRef: Int = -1
 	 // Animations
 	 private var forwardAnimation: AnimationDrawable
 	 private var rewindAnimation: AnimationDrawable
@@ -51,7 +53,7 @@ class YouTubeOverlay(context: Context?, private val attrs: AttributeSet?) :
 		  LayoutInflater.from(context).inflate(R.layout.yt_overlay, this, true)
 		  // Initialize UI components
 		  forwardAnimation = ContextCompat.getDrawable(
-			   context!!,
+			   context,
 			   R.drawable.yt_forward_animation
 		  ) as AnimationDrawable
 		  rewindAnimation = ContextCompat.getDrawable(

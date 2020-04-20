@@ -66,11 +66,13 @@ class VideoOverlayView @JvmOverloads constructor(
 			   Log.e("VOV", "istv ${ExoFactorySingeleton.isTv}")
 			   motionLayout = (if (ExoFactorySingeleton.isTv) AppchiefTvPlayerBinding.inflate(
 					LayoutInflater.from(context)
-			   ).containerMotionLayout else AppchiefFloatingPlayerBinding.inflate(
-					LayoutInflater.from(
-						 context
-					)
-			   ).containerMotionLayout)
+			   ).containerMotionLayout
+			   else
+					AppchiefFloatingPlayerBinding.inflate(
+						 LayoutInflater.from(
+							  context
+						 )
+					).containerMotionLayout)
 
 
 

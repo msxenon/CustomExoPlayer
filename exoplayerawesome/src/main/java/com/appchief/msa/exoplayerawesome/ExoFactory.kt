@@ -29,10 +29,10 @@ import java.io.File
 object ExoFactorySingeleton {
 	 private lateinit var value: ExoFactory
 	 var isTv = false
-	 fun init(context: Context?) {
+	 fun init(context: Context?, istv: Boolean = false) {
 		  value = ExoFactory(context)
 		  try {
-			   isTv = Util.isTv(context!!)
+			   isTv = istv || Util.isTv(context!!)
 		  } catch (e: Exception) {
 		  }
 	 }

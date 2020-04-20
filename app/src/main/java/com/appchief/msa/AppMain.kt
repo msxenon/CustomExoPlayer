@@ -15,7 +15,7 @@ class AppMain : CastApp() {
 		  Shake.start(this)
 		  Shake.getReportConfiguration().isShowFloatingReportButton = false
 
-		  ExoFactorySingeleton.init(this)
+		  ExoFactorySingeleton.init(this, true)
 	 }
 
 }

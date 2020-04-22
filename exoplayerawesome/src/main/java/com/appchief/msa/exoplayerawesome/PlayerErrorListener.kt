@@ -105,6 +105,7 @@ class PlayerEventListener(
 						 cinemPlayer?.seekTo(0)
 					} else {
 						 cinemPlayer?.customController?.show(keep = true)
+						 cinemPlayer?.customController?.onItemEndReached()
 					}
 			   }
 			   cinemPlayer?.customController?.updateViews(playbackState == ExoPlayer.STATE_BUFFERING)

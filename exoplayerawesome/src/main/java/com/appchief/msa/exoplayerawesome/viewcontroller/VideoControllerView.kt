@@ -61,6 +61,10 @@ abstract class VideoControllerView : FrameLayout {
 			   field = value
 			   controlVis()
 		  }
+
+	 open fun onItemEndReached() {
+	 }
+
 	 var mPlayer: CinamaticExoPlayer? =
 		  null
 	 lateinit var player: Player
@@ -305,11 +309,14 @@ abstract class VideoControllerView : FrameLayout {
 		  }
 		  mPlayer?.hasSettingsListener = object : SettingsListener {
 			   override fun hasSettings(has: Boolean) {
-					settingsVisiability(has)
+					settingsVisiability(has && externalSettingsCondition())
 			   }
 		  }
 		  //  settingsVisiability()
+	 }
 
+	 open fun externalSettingsCondition(): Boolean {
+		  return true
 	 }
 
 	 //	 override fun onTouchEvent(event: MotionEvent?): Boolean {

@@ -7,10 +7,8 @@ import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.database.DatabaseProvider
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.MergingMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.SingleSampleMediaSource
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
@@ -97,21 +95,34 @@ class ExoFactory internal constructor(private val context: Context?) {
 					C.TYPE_DASH -> DashMediaSource.Factory(buildDataSourceFactory(noChache)!!).createMediaSource(
 						 uri
 					)
-					C.TYPE_SS -> SsMediaSource.Factory(buildDataSourceFactory(noChache)!!).createMediaSource(
-						 uri
-					)
-					C.TYPE_HLS -> {
-						 val m = HlsMediaSource.Factory(buildDataSourceFactory(noChache)!!)
-							  .setAllowChunklessPreparation(true)
-						 m.createMediaSource(
-						 uri
-					)
-					}
-					C.TYPE_OTHER -> ProgressiveMediaSource.Factory(buildDataSourceFactory(noChache)!!).createMediaSource(
-						 uri
-					)
-					else -> throw Throwable("Unsupported type: $type")
-			   }
+                   C.TYPE_SS -> SsMediaSource.Factory(buildDataSourceFactory(noChache)!!)
+                       .createMediaSource(
+                           uri
+                       )
+                   C.TYPE_HLS -> {
+                       val m = HlsMediaSource.Factory(buildDataSourceFactory(noChache)!!)
+                           .setAllowChunklessPreparation(true)
+                       m.createMediaSource(
+                           uri
+                       )
+                   }
+                   C.TYPE_OTHER -> {
+                       if (uri.path?.contains("http") != false)
+                           ProgressiveMediaSource.Factory(buildDataSourceFactory(noChache)!!)
+                               .createMediaSource(
+                                   uri
+                               )
+                       else
+                           ExtractorMediaSource(
+                               uri,
+                               DefaultDataSourceFactory(context, buildHttpDataSourceFactory()),
+                               DefaultExtractorsFactory(),
+                               null,
+                               null
+                           )
+                   }
+                   else -> throw Throwable("Unsupported type: $type")
+               }
 
 		  } catch (e: Exception) {
 			   e.printStackTrace()

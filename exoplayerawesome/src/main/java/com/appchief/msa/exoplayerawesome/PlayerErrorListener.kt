@@ -116,15 +116,15 @@ class PlayerEventListener(
 	 }
 }
 
-private fun Context?.getExoString(error: ExoPlaybackException): String? {
-	 if (this == null)
-		  return null
-	 return when (error.type) {
-		  ExoPlaybackException.TYPE_SOURCE -> this.getString(R.string.faild_to_connect)
-		  ExoPlaybackException.TYPE_RENDERER -> this.getString(R.string.player_render_issue)
-		  ExoPlaybackException.TYPE_UNEXPECTED -> this.getString(R.string.player_unknown)
-		  ExoPlaybackException.TYPE_REMOTE -> this.getString(R.string.videonotav)
-		  ExoPlaybackException.TYPE_OUT_OF_MEMORY -> this.getString(R.string.player_outofmem)
-		  else -> this.getString(R.string.player_unknown)
-	 }
+ fun Context?.getExoString(error: ExoPlaybackException): String? {
+     if (this == null)
+         return null
+     return when (error.type) {
+         ExoPlaybackException.TYPE_SOURCE -> this.getString(R.string.faild_to_connect)
+         ExoPlaybackException.TYPE_RENDERER -> this.getString(R.string.player_render_issue)
+         ExoPlaybackException.TYPE_UNEXPECTED -> this.getString(R.string.player_unknown)
+         ExoPlaybackException.TYPE_REMOTE -> this.getString(R.string.videonotav)
+         ExoPlaybackException.TYPE_OUT_OF_MEMORY -> this.getString(R.string.player_outofmem)
+         else -> this.getString(R.string.player_unknown)
+     }
 }

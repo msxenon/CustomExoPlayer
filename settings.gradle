@@ -1,2 +1,2 @@
-include ':app', ':exoplayerawesome'
+include ':exoplayerawesome'
 //rootProject.name='AwesomePLayer'

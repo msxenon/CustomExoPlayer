@@ -260,18 +260,18 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 		  playerUiFinalListener
 	 )
 	 fun setListeners() {
-		  setControllerVisibilityListener(this)
-		  setErrorMessageProvider(PlayerErrorMessageProvider())
-		  setPlaybackPreparer(this)
-		  player?.addListener(
-			   eventListener
-		  )
-		  controllerViiablilityListener =
-			   PlayerControlView.VisibilityListener { visibility ->
-					//	controlController(visibility)
-			   }
-		  player?.videoComponent?.addVideoListener(object : VideoListener {
-			   override fun onVideoSizeChanged(
+		 setControllerVisibilityListener(this)
+		 setErrorMessageProvider(PlayerErrorMessageProvider(context))
+		 setPlaybackPreparer(this)
+		 player?.addListener(
+			 eventListener
+		 )
+		 controllerViiablilityListener =
+			 PlayerControlView.VisibilityListener { visibility ->
+				 //	controlController(visibility)
+			 }
+		 player?.videoComponent?.addVideoListener(object : VideoListener {
+			 override fun onVideoSizeChanged(
 					width: Int,
 					height: Int,
 					unappliedRotationDegrees: Int,

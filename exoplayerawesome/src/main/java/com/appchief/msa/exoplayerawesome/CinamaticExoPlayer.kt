@@ -441,20 +441,24 @@ fun checkHasSettings() {
 		  mediaSource: MediaSource?,
 		  subTitlesUrl: String
 	 ): MediaSource {
-		  val textFormat = Format.createTextSampleFormat(
-			   null, MimeTypes.APPLICATION_SUBRIP,
-			   null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
-		  )
-		  val uri = Uri.parse(subTitlesUrl)
-		  Log.e("subtitleURI", uri.toString() + " ")
-		  val subtitleSource =
-			   SingleSampleMediaSource.Factory(
-					ExoFactorySingeleton.getInstance().buildDataSourceFactory(
-						 isSreaming()
-					)
-			   )
-					.createMediaSource(uri, textFormat, C.TIME_UNSET)
-		  return MergingMediaSource(mediaSource, subtitleSource)
+		 val textFormat = Format.Builder().setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
+			 .setSelectionFlags(Format.NO_VALUE).setAccessibilityChannel(Format.NO_VALUE)
+			 .setLanguage("en").setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE).build()
+
+//			  Format.createTextSampleFormat(
+//			   null, MimeTypes.APPLICATION_SUBRIP,
+//			   null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
+//		  )
+		 val uri = Uri.parse(subTitlesUrl)
+		 Log.e("subtitleURI", uri.toString() + " ")
+		 val subtitleSource =
+			 SingleSampleMediaSource.Factory(
+				 ExoFactorySingeleton.getInstance().buildDataSourceFactory(
+					 isSreaming()
+				 )
+			 )
+				 .createMediaSource(uri, textFormat, C.TIME_UNSET)
+		 return MergingMediaSource(mediaSource!!, subtitleSource)
 	 }
 
 	 override fun preparePlayback() {

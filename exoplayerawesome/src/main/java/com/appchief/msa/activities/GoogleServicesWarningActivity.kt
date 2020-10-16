@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import androidx.appcompat.content.res.AppCompatResources
 import com.appchief.msa.exoplayerawesome.R
 import com.google.android.gms.common.GooglePlayServicesUtil
 import kotlinx.android.synthetic.main.google_services_warning.*
@@ -44,6 +45,20 @@ class GoogleServicesWarningActivity : Activity() {
                 )
             }
         }
+        try {
+            setXDrawable()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setXDrawable() {
+        warning_image?.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.ic_baseline_warning_24
+            )
+        )
     }
 
     private fun isPlayStoreInstalled(): Boolean {

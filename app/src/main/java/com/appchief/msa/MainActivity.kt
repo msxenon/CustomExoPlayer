@@ -21,7 +21,7 @@ class MainActivity : BaseActivityFloatingNavigation() {
 	 override fun onCreate(savedInstanceState: Bundle?) {
 		 Timber.plant(Timber.DebugTree())
 		 super.onCreate(savedInstanceState)
-		 if (ExoFactorySingeleton.servicesNeedsToBeInstalled) {
+		 if (true || ExoFactorySingeleton.servicesNeedsToBeInstalled) {
 			 startActivity(Intent(this, GoogleServicesWarningActivity::class.java))
 		 }
 		 setContentView(R.layout.activity_main)

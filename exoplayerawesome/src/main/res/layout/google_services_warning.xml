@@ -23,6 +23,19 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
+        android:id="@+id/textVie3"
+        android:layout_width="347dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="يمكنك التحديث عبر"
+        android:textColor="#D0595959"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/google_play"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <TextView
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -33,7 +46,7 @@
         android:text="لن تتمتع بكل مميزات التطبيق من مشاهد الترجمه ومميزات اخرى بدون هذا التحديث"
         android:textColor="#D0950000"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/google_play"
+        app:layout_constraintBottom_toTopOf="@+id/textVie3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
@@ -43,7 +56,7 @@
         android:id="@+id/alternative_store"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ِApk Pure"
+        android:text="Apk Pure"
         app:layout_constraintBottom_toTopOf="@+id/skip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,13 +72,14 @@
         app:layout_constraintBottom_toTopOf="@+id/alternative_store"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/textVie3" />
 
     <Button
         android:id="@+id/skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
         android:text="تخطي"
         android:textColor="#B0B0B0"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -77,6 +91,7 @@
         android:id="@+id/warning_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

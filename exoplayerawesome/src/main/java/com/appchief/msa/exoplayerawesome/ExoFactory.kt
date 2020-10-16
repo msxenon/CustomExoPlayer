@@ -28,7 +28,7 @@ import javax.net.ssl.SSLContext
 
 object ExoFactorySingeleton {
 	private lateinit var value: ExoFactory
-	var servicesNeedsToBeInstalled = true
+	var servicesNeedsToBeInstalled = false
 	var isTv = false
 
 	fun init(context: Context, istv: Boolean = false) {
@@ -38,7 +38,7 @@ object ExoFactorySingeleton {
 			sslContext.init(null, null, null)
 			sslContext.createSSLEngine()
 		} catch (e: Exception) {
-			servicesNeedsToBeInstalled = false
+			servicesNeedsToBeInstalled = true
 			e.printStackTrace()
 		}
 		value = ExoFactory(context)

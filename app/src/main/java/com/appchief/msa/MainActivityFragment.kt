@@ -48,13 +48,13 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 	 fun initPlayer() {
 		  binding.videoOverlayView.playerContainer?.playLinkNSub(
-			   MainActivity.link,
-			   null,
-			   null,
-			   if (isChannel) PlayerType.CHANNEL else PlayerType.MOVIE,
-			   null,//"https://mkvtoolnix.download/samples/vsshort-en.srt",
-			   MainActivity.poster, "Action", MainActivity.movieName, 10000
-		  )
+              MainActivity.link,
+              null,
+              null,
+              if (isChannel) PlayerType.CHANNEL else PlayerType.MOVIE,
+              "https://mkvtoolnix.download/samples/vsshort-en.srt",
+              MainActivity.poster, "Action", MainActivity.movieName, 10000
+          )
 		  binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
 	 }
 

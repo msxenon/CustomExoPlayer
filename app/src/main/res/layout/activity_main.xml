@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/google_play"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:clickable="true"
@@ -55,9 +55,9 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:text="Dummy box"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/button3"
-            app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/google_play"
+        app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/seekBar" />
 

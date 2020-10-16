@@ -18,18 +18,18 @@ class DetailsFrag : Fragment() {
 	 }
 
 	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		  super.onViewCreated(view, savedInstanceState)
-		  button2?.setOnClickListener {
-			   MainActivity.isChannel = false
-			   MainActivity.movieName = "https"
-			   MainActivity.link =
-					"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-			   val m =
-					activity?.supportFragmentManager?.findFragmentByTag("ff") as? MainActivityFragment
-			   m!!.initPlayer()
-		  }
-		  button6?.setOnClickListener {
-			   MainActivity.isChannel = false
+         super.onViewCreated(view, savedInstanceState)
+         alternative_store?.setOnClickListener {
+             MainActivity.isChannel = false
+             MainActivity.movieName = "https"
+             MainActivity.link =
+                 "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+             val m =
+                 activity?.supportFragmentManager?.findFragmentByTag("ff") as? MainActivityFragment
+             m!!.initPlayer()
+         }
+         button6?.setOnClickListener {
+             MainActivity.isChannel = false
 			   MainActivity.movieName = "https"
 			   MainActivity.link =
 					"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"

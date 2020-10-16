@@ -11,8 +11,8 @@
             android:layout_height="match_parent">
 
         <Button
-                android:id="@+id/button2"
-                android:layout_width="0dp"
+                android:id="@+id/alternative_store"
+            android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Dummy Box"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -22,14 +22,14 @@
                 app:layout_constraintVertical_bias="0.060000002" />
 
         <Button
-                android:id="@+id/button6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Dummy Box"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button2" />
+            android:id="@+id/button6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Dummy Box"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/alternative_store" />
 
         <Button
                 android:id="@+id/button7"

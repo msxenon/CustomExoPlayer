@@ -22,12 +22,25 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
+import com.google.android.gms.security.ProviderInstaller
 import java.io.File
+import javax.net.ssl.SSLContext
 
 object ExoFactorySingeleton {
 	private lateinit var value: ExoFactory
+	var servicesNeedsToBeInstalled = false
 	var isTv = false
+
 	fun init(context: Context, istv: Boolean = false) {
+		try {
+			ProviderInstaller.installIfNeeded(context)
+			val sslContext: SSLContext = SSLContext.getInstance("TLSv1.2")
+			sslContext.init(null, null, null)
+			sslContext.createSSLEngine()
+		} catch (e: Exception) {
+			ExoFactorySingeleton.servicesNeedsToBeInstalled = true
+			e.printStackTrace()
+		}
 		value = ExoFactory(context)
 		try {
 			isTv = istv || Util.isTv(context)

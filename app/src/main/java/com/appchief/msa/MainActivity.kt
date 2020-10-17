@@ -19,19 +19,19 @@ class MainActivity : BaseActivityFloatingNavigation() {
 
 
 	 override fun onCreate(savedInstanceState: Bundle?) {
-		 Timber.plant(Timber.DebugTree())
-		 super.onCreate(savedInstanceState)
-		 if (true || ExoFactorySingeleton.servicesNeedsToBeInstalled) {
-			 startActivity(Intent(this, GoogleServicesWarningActivity::class.java))
-		 }
-		 setContentView(R.layout.activity_main)
+         Timber.plant(Timber.DebugTree())
+         super.onCreate(savedInstanceState)
+         if (ExoFactorySingeleton.servicesNeedsToBeInstalled) {
+             startActivity(Intent(this, GoogleServicesWarningActivity::class.java))
+         }
+         setContentView(R.layout.activity_main)
 
-		 button4?.setOnClickListener {
-			 isChannel = false
-			 link =
-				 "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_30MB.mp4"//	"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"//"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
-			 movieName = "Tiktok"
-			 poster =
+         button4?.setOnClickListener {
+             isChannel = false
+             link =
+                 "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_30MB.mp4"//	"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"//"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"//"http://tv.supercellnetwork.com:1935/bein1/1/playlist.m3u8"
+             movieName = "Tiktok"
+             poster =
 				 "https://kaboompics.com/cache/b/2/8/8/3/b2883703308df69a2c024a1eacae859cbf227364.jpeg"
 			 removeIfExist()
 		 }

@@ -56,8 +56,8 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-hls:$ev"
     api "com.google.android.exoplayer:exoplayer-smoothstreaming:$ev"
 
-
-    api 'androidx.constraintlayout:constraintlayout:2.0.2'
+//it was a problem with version 2.0.2
+    api 'androidx.constraintlayout:constraintlayout:2.0.1'
     api 'com.google.android.gms:play-services-cast-framework:19.0.0'
     api 'com.google.android.exoplayer:extension-cast:2.11.1'
 //    implementation 'com.github.vkay94:DoubleTapPlayerView:0.7.0'

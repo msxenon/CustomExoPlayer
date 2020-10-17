@@ -13,13 +13,13 @@ class AppMain : CastApp() {
 		  MultiDex.install(this)
 	 }
 	 override fun onCreate() {
-		 super.onCreate()
+         super.onCreate()
 
-		 Log.e("tag", "App Started")
-		 Shake.start(this)
-		 Shake.getReportConfiguration().isShowFloatingReportButton = false
+         Log.e("tag", "App Started")
+         Shake.start(this)
+         Shake.getReportConfiguration().isShowFloatingReportButton = false
 
-		 ExoFactorySingeleton.init(this)
-	 }
+         ExoFactorySingeleton.init(this, istv = true)
+     }
 
 }

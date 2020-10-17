@@ -36,27 +36,28 @@ class VideoOverlayView @JvmOverloads constructor(
 		  this.isFocusableInTouchMode = true
 	 }
 
-	 override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-		  playerContainer?.customController?.dispatchKeyEvent(event)
+	override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+		playerContainer?.customController?.dispatchKeyEvent(event)
 
-		  return super.dispatchKeyEvent(event)
-	 }
+		return super.dispatchKeyEvent(event)
+	}
 
-	 var motionLayout: MotionLayout? = null
+	var motionLayout: MotionLayout? = null
 
-	 // var player: CinamaticExoPlayer? = null
-	 var playerContainer: CinamaticExoPlayer? = null
-	 private var startX: Float? = null
-	 private var startY: Float? = null
-	 fun setPortraitVideoHight(height: Int) {
-		  Log.e("setPortraitVideoHightA", "$height")
-		  motionLayout?.getConstraintSet(R.id.start)?.let {
-			   it.constrainHeight(R.id.motionInteractView, height)
-			   motionLayout?.updateState()
-			   Log.e("setPortraitVideoHightB", "$height")
+	// var player: CinamaticExoPlayer? = null
+	var playerContainer: CinamaticExoPlayer? = null
+	private var startX: Float? = null
+	private var startY: Float? = null
+	fun setPortraitVideoHight(height: Int) {
+		Log.e("setPortraitVideoHightA", "$height")
+		if (!ExoFactorySingeleton.isTv)
+			motionLayout?.getConstraintSet(R.id.start)?.let {
+				it.constrainHeight(R.id.motionInteractView, height)
+				motionLayout?.updateState()
+				Log.e("setPortraitVideoHightB", "$height")
 
-		  }
-	 }
+			}
+	}
 	 override fun onFinishInflate() {
 		  super.onFinishInflate()
 		  this.requestFocus()

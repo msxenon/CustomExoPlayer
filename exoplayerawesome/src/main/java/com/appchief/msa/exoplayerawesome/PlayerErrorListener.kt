@@ -42,9 +42,9 @@ class PlayerEventListener(
 		  val m = isBehindLiveWindow(error)
 		  Log.e("PlayerEventListener", "err ${error.type} isbehind=$m")
 		  if (m) {
-			   val z = cinemPlayer?.initializePlayer(true)
-			   Log.e("PlayerEventListener", "err ${error.type} isReinit = $z")
-		  } else {
+              val z = cinemPlayer?.initializePlayer()
+              Log.e("PlayerEventListener", "err ${error.type} isReinit = $z")
+          } else {
 			   error.printStackTrace()
 			   // cinemPlayer?.useController = false
 			   val errMsg = context?.getExoString(error)

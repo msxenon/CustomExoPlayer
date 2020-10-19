@@ -1,30 +1,16 @@
-/*
- * Copyright (C) 2019 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package com.appchief.msa.exoplayerawesome
 
 import android.content.Context
 import android.util.Log
 import com.appchief.msa.exoplayerawesome.viewcontroller.ControllerVisState
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.Timeline
-import com.google.android.exoplayer2.ext.cast.*
+import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.ext.cast.DefaultMediaItemConverter
+import com.google.android.exoplayer2.ext.cast.MediaItemConverter
+import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -37,7 +23,6 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import java.util.*
 
-/** Manages players and an internal media queue for the demo app.  */ /* package */
 internal class PlayerManager(
 	 private val context: Context,
 	 private val listener: Listener,
@@ -46,68 +31,33 @@ internal class PlayerManager(
 	 private val castContext: CastContext?,
 	 private val trackSelectors: () -> DefaultTrackSelector
 ) : Player.EventListener, SessionAvailabilityListener {
-	 //  public MediaSource mediaSource;
-	 /** Listener for events.  */
 	 internal interface Listener {
-
-		  /** Called when the currently played item of the media queue changes.  */
-		  fun onQueuePositionChanged(previousIndex: Int, newIndex: Int)
-
-		  /**
-		   * Called when a track of type `trackType` is not supported by the player.
-		   *
-		   * @param trackType One of the [C]`.TRACK_TYPE_*` constants.
-		   */
-		  fun onUnsupportedTrack(trackType: Int)
+		 fun onQueuePositionChanged(previousIndex: Int, newIndex: Int)
+		 fun onUnsupportedTrack(trackType: Int)
 	 }
 
-	 private lateinit var trackSelector: DefaultTrackSelector
-	 lateinit var exoPlayer: SimpleExoPlayer
-	 private var castPlayer: CastPlayer? = null
-	 private lateinit var mediaQueue: ArrayList<MediaItem>
-	 private var concatenatingMediaSource: MediaSource? = null
-	 private lateinit var mediaItemConverter: MediaItemConverter
-//	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
-	 /** Returns the index of the currently played item.  */
-	 var currentItemIndex: Int = -1
-		  private set
-	 private var currentPlayer: Player? = null
-	 // Queue manipulation methods.
-	 /**
-	  * Plays a specified queue item in the current player.
-	  *
-	  * @param itemIndex The index of the item to play.
-	  */
-//	 fun selectQueueItem(itemIndex: Int) {
-//		  setCurrentItem(itemIndex, C.TIME_UNSET, true)
-//	 }
+	private lateinit var trackSelector: DefaultTrackSelector
+	lateinit var exoPlayer: SimpleExoPlayer
+	private var castPlayer: CastPlayer? = null
+	private lateinit var mediaQueue: ArrayList<MediaItem>
+	private var concatenatingMediaSource: MediaSource? = null
+	private lateinit var mediaItemConverter: MediaItemConverter
+	private var currentItemIndex: Int = -1
+	private var currentPlayer: Player? = null
 
-	 //  public void addItem(MediaItem item) {
-//    mediaQueue.add(item);
-//   concatenatingMediaSource.addMediaSource(mediaSource);
-//    if (currentPlayer == castPlayer) {
-//      castPlayer.addItems(mediaItemConverter.toMediaQueueItem(item));
-//    }
-//  }
-	 val tag = "PlayerManager"
-	 fun addItem(
-		  item: MediaSource?,
-		  castCurrent: Array<MediaQueueItem>
-	 ) {
-//			mediaQueue.clear()
-//		  mediaQueue.add(castCurrent)
-		  //concatenatingMediaSource.clear()
-		  //  concatenatingMediaSource.clear()
-		  concatenatingMediaSource = item!!
-		  val pos = localPlayerView().getLastPos("addItem")
-		  if (castPlayer != null && currentPlayer == castPlayer) {
-			   castPlayer?.loadItems(
-					castCurrent, 0, pos,
-					REPEAT_MODE_ALL
-			   )
+	val tag = "PlayerManager"
+	fun addItem(
+		item: MediaSource?,
+		castCurrent: Array<MediaQueueItem>
+	) {
+		concatenatingMediaSource = item!!
+		val pos = localPlayerView().getLastPos("addItem")
+		if (castPlayer != null && currentPlayer == castPlayer) {
+			castPlayer?.loadItems(
+				castCurrent, 0, pos,
+				REPEAT_MODE_ALL
+			)
 		  } else {
-			   // setCurrentItem(concatenatingMediaSource.size-1,pos,true)
-//todo			   this.currentPlayer?.stop()
 			   setCurrentPlayer(exoPlayer, pos, true)
 		  }
 		  Log.e(tag, " addItem")
@@ -146,22 +96,6 @@ internal class PlayerManager(
 		  trackGroups: TrackGroupArray,
 		  trackSelections: TrackSelectionArray
 	 ) {
-//		  if (currentPlayer === exoPlayer && trackGroups !== lastSeenTrackGroupArray) {
-//			   val mappedTrackInfo = trackSelector.currentMappedTrackInfo
-//			   if (mappedTrackInfo != null) {
-//					if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO)
-//						 == MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS
-//					) {
-//						 listener.onUnsupportedTrack(C.TRACK_TYPE_VIDEO)
-//					}
-//					if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_AUDIO)
-//						 == MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS
-//					) {
-//						 listener.onUnsupportedTrack(C.TRACK_TYPE_AUDIO)
-//					}
-//			   }
-//			   lastSeenTrackGroupArray = trackGroups
-//		  }
 	 }
 
 	 // CastPlayer.SessionAvailabilityListener implementation.
@@ -195,17 +129,22 @@ internal class PlayerManager(
 			   castControlView()?.hide()
 			   castControlView()?.currentState = ControllerVisState.Normal
 		  } else if (castPlayer != null) /* currentPlayer == castPlayer */ {
-			   castControlView()?.currentState = ControllerVisState.Cast
-			   castControlView()?.player = castPlayer!!
-			   localPlayerView().player = castPlayer
-			   castControlView()?.show()
-			   castPlayer?.loadItems(
-					localPlayerView().castCurrent(),
-					0,
-					pos ?: 0,
-					Player.REPEAT_MODE_ALL
-			   )
-			   localPlayerView().playerUiFinalListener?.forcePortrait()
+			  try {
+				  Log.e("isCastPlayer", " Null ${castPlayer == null}")
+				  castControlView()?.currentState = ControllerVisState.Cast
+				  castControlView()?.player = castPlayer!!
+				  localPlayerView()?.player = castPlayer!!
+				  castControlView()?.show()
+				  castPlayer?.loadItems(
+					  localPlayerView().castCurrent(),
+					  0,
+					  pos ?: 0,
+					  Player.REPEAT_MODE_ALL
+				  )
+				  localPlayerView().playerUiFinalListener?.forcePortrait()
+			  } catch (e: Exception) {
+				  localPlayerView().playerUiFinalListener?.onMessageRecived("حصل خطأ غير متوقع", 0)
+			  }
 		  }
 
 		  // Player state management.

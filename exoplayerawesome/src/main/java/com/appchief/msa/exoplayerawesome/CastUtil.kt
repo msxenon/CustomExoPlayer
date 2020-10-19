@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.webkit.MimeTypeMap
-import com.google.android.exoplayer2.ext.cast.MediaItem
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.common.images.WebImage
@@ -129,7 +129,8 @@ object CastUtil {
 			   runtime
 		  )
 		  val i = MediaItem.Builder().setUri(videoUrl!!).setMimeType(getMimeType(url = videoUrl))
-			   .setTitle(title ?: "X").build()
+			  //.setTitle(title ?: "X")
+			  .build()
 
 		  return Pair(i, getMediaArray(m))
 	 }

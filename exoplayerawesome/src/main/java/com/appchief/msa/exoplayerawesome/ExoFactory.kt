@@ -5,10 +5,13 @@ import android.net.Uri
 import android.util.Log
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Format
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.database.DatabaseProvider
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.*
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.MergingMediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.SingleSampleMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
@@ -55,6 +58,7 @@ object ExoFactorySingeleton {
 		try {
 			isTv = istv || Util.isTv(context)
 		} catch (e: Exception) {
+			e.printStackTrace()
 		}
 	}
 
@@ -109,47 +113,57 @@ class ExoFactory internal constructor(private val context: Context) {
 					 noChache
 				 )
 			 )
-				 .createMediaSource(uri, textFormat, C.TIME_UNSET)
+				 .createMediaSource(getSubtitle(uri), C.TIME_UNSET)
 
 		 return MergingMediaSource(mediaSource!!, subtitleSource)
 	 }
 
-	 fun buildMediaSource(uri: Uri, noChache: Boolean): MediaSource? {
-		  try {//here put url
-			   @C.ContentType val type = Util.inferContentType(uri, null)
-			   Log.e("exoFactory", "buildMediaSource $uri $type")
+	private fun getSubtitle(uri: Uri): MediaItem.Subtitle {
+		return MediaItem.Subtitle(uri, MimeTypes.APPLICATION_SUBRIP, null)
+	}
 
-			   return when (type) {
-				   C.TYPE_DASH -> DashMediaSource.Factory(buildDataSourceFactory(noChache))
-					   .createMediaSource(
-						   uri
-					   )
-				   C.TYPE_SS -> SsMediaSource.Factory(buildDataSourceFactory(noChache))
-					   .createMediaSource(
-						   uri
-					   )
-				   C.TYPE_HLS -> {
-					   val m = HlsMediaSource.Factory(buildDataSourceFactory(noChache))
-						   .setAllowChunklessPreparation(true)
-					   m.createMediaSource(
-						   uri
-					   )
-				   }
-				   C.TYPE_OTHER -> {
-					   if (uri.path?.contains("http") != false)
-						   ProgressiveMediaSource.Factory(buildDataSourceFactory(noChache))
-							   .createMediaSource(
-								   uri
-							   )
-					   else
-						   ExtractorMediaSource(
-							   uri,
-							   DefaultDataSourceFactory(context, buildHttpDataSourceFactory()),
-							   DefaultExtractorsFactory(),
-							   null,
-							   null
-						   )
-				   }
+	fun buildMediaSource(uri: Uri, noChache: Boolean): MediaSource? {
+		try {//here put url
+			@C.ContentType val type = Util.inferContentType(uri, null)
+			Log.e("exoFactory", "buildMediaSource $uri $type")
+
+			return when (type) {
+				C.TYPE_DASH -> DashMediaSource.Factory(buildDataSourceFactory(noChache))
+					.createMediaSource(
+						MediaItem.fromUri(uri)
+					)
+				C.TYPE_SS -> SsMediaSource.Factory(buildDataSourceFactory(noChache))
+					.createMediaSource(
+						MediaItem.fromUri(uri)
+					)
+				C.TYPE_HLS -> {
+					val m = HlsMediaSource.Factory(buildDataSourceFactory(noChache))
+						.setAllowChunklessPreparation(true)
+					m.createMediaSource(
+						MediaItem.fromUri(uri)
+					)
+				}
+				C.TYPE_OTHER -> {
+					//todo
+//					   if (uri.path?.contains("http") != false) {
+					ProgressiveMediaSource.Factory(buildDataSourceFactory(noChache))
+						.createMediaSource(
+							MediaItem.fromUri(uri)
+						)
+//					   } else {
+//						   ProgressiveMediaSource.Factory(
+//							   DefaultExtractorsFactory(),
+//							   ExtractorMediaSource(
+//								   uri,
+//								   DefaultDataSourceFactory(context, buildHttpDataSourceFactory()),
+//								   DefaultExtractorsFactory(),
+//								   null,
+//								   null
+//							   )
+//						   )
+//					   }
+
+				}
                    else -> throw Throwable("Unsupported type: $type")
                }
 

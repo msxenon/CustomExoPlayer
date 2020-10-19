@@ -231,20 +231,25 @@ abstract class VideoControllerView : FrameLayout {
 	  * @hide This doesn't work as advertised
 	  */
 	 internal fun makeControllerView(controllerLayout: Int?): View? {
-		  val inflate = LayoutInflater.from(mContext)
+         val inflate = LayoutInflater.from(mContext)
 
-		  mRoot = inflate.inflate(
-			   controllerLayout ?: com.appchief.msa.exoplayerawesome.R.layout.controllerui, null
-		  )
-		  initControllerView(mRoot!!)
-		  CastButtonFactory.setUpMediaRouteButton(context, mRoot!!.exo_cast)
-		  controllerLayout?.let {
-			   mRoot?.let {
-					mPlayer?.playerUiFinalListener?.addtionalControllerButtonsInit(mRoot)
-			   }
-		  }
-		  return mRoot
-	 }
+         mRoot = inflate.inflate(
+             controllerLayout ?: com.appchief.msa.exoplayerawesome.R.layout.controllerui, null
+         )
+         initControllerView(mRoot!!)
+         CastButtonFactory.setUpMediaRouteButton(context, mRoot!!.exo_cast)
+         if (mRoot?.exo_cast == null)
+             Log.e("makeControllerView", "Cast button is null")
+         else
+             Log.d("makeControllerView", "Cast button is good")
+
+         controllerLayout?.let {
+             mRoot?.let {
+                 mPlayer?.playerUiFinalListener?.addtionalControllerButtonsInit(mRoot)
+             }
+         }
+         return mRoot
+     }
 
 	 fun isNotCastingMode(): Boolean {
 		  return currentState != ControllerVisState.Cast

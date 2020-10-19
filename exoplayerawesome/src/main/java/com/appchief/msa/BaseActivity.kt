@@ -38,7 +38,8 @@ abstract class CastApp : Application() {
 			   )
 			   mCastContext?.addCastStateListener(castStateListener)
 		  } catch (e: Exception) {
-		  }
+              e.printStackTrace()
+          }
 	 }
 
 	 val mSessionManagerListener = object : SessionManagerListener<CastSession> {

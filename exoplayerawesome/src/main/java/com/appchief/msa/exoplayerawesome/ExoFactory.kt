@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.database.DatabaseProvider
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
@@ -92,14 +91,14 @@ class ExoFactory internal constructor(private val context: Context) {
 	 }
 
 	 private fun addSubTitlesToMediaSource(
-		  mediaSource: MediaSource?,
-		  subTitlesUrl: String,
-		  noChache: Boolean
+		 mediaSource: MediaSource?,
+		 subTitlesUrl: String,
+		 noChache: Boolean
 	 ): MediaSource {
-		 val textFormat =
-			 Format.Builder().setLanguage("en").setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
-				 .setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE)
-				 .setSelectionFlags(Format.NO_VALUE).build()
+//		 val textFormat =
+//			 Format.Builder().setLanguage("en").setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
+//				 .setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE)
+//				 .setSelectionFlags(Format.NO_VALUE).build()
 
 //		  val textFormat = Format.createTextSampleFormat(
 //			   null, MimeTypes.APPLICATION_SUBRIP,
@@ -119,7 +118,12 @@ class ExoFactory internal constructor(private val context: Context) {
 	 }
 
 	private fun getSubtitle(uri: Uri): MediaItem.Subtitle {
-		return MediaItem.Subtitle(uri, MimeTypes.APPLICATION_SUBRIP, null)
+		return MediaItem.Subtitle(
+			uri,
+			MimeTypes.APPLICATION_SUBRIP,
+			C.LANGUAGE_UNDETERMINED,
+			C.SELECTION_FLAG_DEFAULT
+		)
 	}
 
 	fun buildMediaSource(uri: Uri, noChache: Boolean): MediaSource? {

@@ -6,7 +6,8 @@ import android.util.Log
 import com.appchief.msa.exoplayerawesome.viewcontroller.ControllerVisState
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.Player.*
+import com.google.android.exoplayer2.Player.DiscontinuityReason
+import com.google.android.exoplayer2.Player.TimelineChangeReason
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.DefaultMediaItemConverter
 import com.google.android.exoplayer2.ext.cast.MediaItemConverter
@@ -18,7 +19,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
-import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import java.util.*
@@ -48,16 +48,15 @@ internal class PlayerManager(
 	val tag = "PlayerManager"
 	fun addItem(
 		item: MediaSource?,
-		castCurrent: Array<MediaQueueItem>
+		castCurrent: MutableList<MediaItem>
 	) {
 		concatenatingMediaSource = item!!
 		val pos = localPlayerView().getLastPos("addItem")
 		if (castPlayer != null && currentPlayer == castPlayer) {
-			castPlayer?.loadItems(
-				castCurrent, 0, pos,
-				REPEAT_MODE_ALL
+			castPlayer?.setMediaItems(
+				castCurrent, 0, pos
 			)
-		  } else {
+		} else {
 			   setCurrentPlayer(exoPlayer, pos, true)
 		  }
 		  Log.e(tag, " addItem")
@@ -96,6 +95,12 @@ internal class PlayerManager(
 		  trackGroups: TrackGroupArray,
 		  trackSelections: TrackSelectionArray
 	 ) {
+
+//		 Log.e("playmana","${trackSelections.length}")
+//		 for (i in 0 until  trackGroups.length){
+//			 Log.e("playmana","$i ${trackGroups[i].}")
+//		 }
+
 	 }
 
 	 // CastPlayer.SessionAvailabilityListener implementation.
@@ -135,6 +140,7 @@ internal class PlayerManager(
 				  castControlView()?.player = castPlayer!!
 				  localPlayerView()?.player = castPlayer!!
 				  castControlView()?.show()
+
 				  castPlayer?.loadItems(
 					  localPlayerView().castCurrent(),
 					  0,

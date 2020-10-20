@@ -198,8 +198,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         val x = DefaultTrackSelector.ParametersBuilder(context)
             .setExceedRendererCapabilitiesIfNecessary(true)
             .setExceedVideoConstraintsIfNecessary(true)
-            .setRendererDisabled(C.TRACK_TYPE_VIDEO, false).setPreferredTextLanguage("ar")
-            .setPreferredTextLanguage("en").build()
+            .setRendererDisabled(C.TRACK_TYPE_VIDEO, false)
+//            .setPreferredTextLanguage("ar")
+//            .setPreferredTextLanguage("en")
+            .build()
 
         return@lazy x
     }
@@ -390,9 +392,10 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                 nowPlaying!!.poster,
                 nowPlaying!!.runtime,
                 isSreaming(),
-                getLastPos("pairinit")
+                subtitleLink = nowPlaying?.srtLink,
+                position = getLastPos("pairinit"),
             )
-            playerManager?.addItem(mediaSource, x.second)
+            playerManager?.addItem(mediaSource, mutableListOf(x.first))
             return true
         } catch (e: Exception) {
             playerUiFinalListener?.onMessageRecived(
@@ -444,9 +447,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         mediaSource: MediaSource?,
         subTitlesUrl: String
     ): MediaSource {
-        val textFormat = Format.Builder().setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
-            .setSelectionFlags(Format.NO_VALUE).setAccessibilityChannel(Format.NO_VALUE)
-            .setLanguage("en").setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE).build()
+//        val textFormat = Format.Builder().setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
+//            .setSelectionFlags(Format.NO_VALUE).setAccessibilityChannel(Format.NO_VALUE)
+//            .setLanguage("en").setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE).build()
 
 //			  Format.createTextSampleFormat(
 //			   null, MimeTypes.APPLICATION_SUBRIP,
@@ -460,10 +463,14 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                     isSreaming()
                 )
             ).createMediaSource(
-                MediaItem.Subtitle(uri, MimeTypes.APPLICATION_SUBRIP, null),
+                MediaItem.Subtitle(
+                    uri,
+                    MimeTypes.APPLICATION_SUBRIP,
+                    C.LANGUAGE_UNDETERMINED,
+                    C.SELECTION_FLAG_DEFAULT
+                ),
                 C.TIME_UNSET
             )
-        //   .createMediaSource(uri, textFormat, C.TIME_UNSET)
         return MergingMediaSource(mediaSource!!, subtitleSource)
     }
 

@@ -25,7 +25,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 	}
 
 	final val subtitleLink =
-		"https://gist.githubusercontent.com/msxenon/562f71c9b619ecb231ad1071cbfd211f/raw/c9ba66de6b3fe78f6b7d5443c3624425d92b33c8/test.vtt"
+		"https://gist.githubusercontent.com/msxenon/562f71c9b619ecb231ad1071cbfd211f/raw/7c8af5b08551fb5a797c04cd4ee41894dbb60ee7/test.vtt"
 
 	//"https://mkvtoolnix.download/samples/vsshort-en.srt"
 	private var snackBar: Snackbar? = null

@@ -259,5 +259,8 @@ class ExoFactory internal constructor(private val context: Context) {
 			else
 				return MimeTypes.TEXT_VTT
 		}
+
+		final val testVideo =
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 	}
 }

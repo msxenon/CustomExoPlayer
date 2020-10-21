@@ -394,7 +394,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                 nowPlaying!!.runtime,
                 isSreaming(),
                 subtitleLink = nowPlaying!!.srtLink,//"https://raw.githubusercontent.com/ThePacielloGroup/AT-browser-tests/gh-pages/video/subtitles-en.vtt",//nowPlaying?.srtLink,
-                position = getLastPos("pairinit"),
+                position = getLastPos("pairinit")
             )
             playerManager?.addItem(mediaSource, mutableListOf(x.first))
             return true

@@ -64,7 +64,7 @@ object CastUtil {
 				 1 /* ID */,
 				 MediaTrack.TYPE_TEXT
 			 )
-				 .setName("Subtitle")
+				 .setName("Arabic")
 				 .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
 				 .setContentId(subtitleLink.encodeUrl())
 				 /* language is required for subtitle type but optional otherwise */
@@ -130,7 +130,7 @@ object CastUtil {
 		runtime: Long?,
 		isChannel: Boolean,
 		subtitleLink: String?,
-		position: Long?,
+		position: Long?
 	): Pair<MediaItem, Array<MediaQueueItem>> {
 		val m = loadRemoteMedia(
 			if (isChannel) MediaInfo.STREAM_TYPE_LIVE else MediaInfo.STREAM_TYPE_BUFFERED,

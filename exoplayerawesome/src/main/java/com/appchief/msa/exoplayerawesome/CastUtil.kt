@@ -52,23 +52,27 @@ object CastUtil {
 
 		 movieMetadata.addImage(WebImage(Uri.parse(poster)))
 		 val sd = duration * 60 * 1000
-		 val englishSubtitle = MediaTrack.Builder(
-			 1 /* ID */,
-			 MediaTrack.TYPE_TEXT
-		 )
-			 .setName("Subtitle")
-			 .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
-			 .setContentId(subtitleLink)
-			 /* language is required for subtitle type but optional otherwise */
-			 .setLanguage("en")
-			 .build()
-		  return MediaInfo.Builder(videoUrl)
-			   .setMediaTracks(listOf(englishSubtitle))
-			   .setStreamType(streamType)
-			   .setContentType(getMimeType(videoUrl))
-			   .setMetadata(movieMetadata)
-			   .setStreamDuration(sd)
-			   .build()
+
+		 var x = MediaInfo.Builder(videoUrl)
+			 .setStreamType(streamType)
+			 .setContentType(getMimeType(videoUrl))
+			 .setMetadata(movieMetadata)
+			 .setStreamDuration(sd)
+		 Log.e("castUtil", "subtitle ${subtitleLink}")
+		 if (subtitleLink?.endsWith("tt") == true) {
+			 val englishSubtitle = MediaTrack.Builder(
+				 1 /* ID */,
+				 MediaTrack.TYPE_TEXT
+			 )
+				 .setName("Subtitle")
+				 .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
+				 .setContentId(subtitleLink.encodeUrl())
+				 /* language is required for subtitle type but optional otherwise */
+				 .setLanguage("en")
+				 .build()
+			 x.setMediaTracks(listOf(englishSubtitle))
+		 }
+		 return x.build()
 	 }
 
 	 private fun loadRemoteMedia(

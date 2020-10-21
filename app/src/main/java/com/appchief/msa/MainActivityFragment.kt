@@ -20,17 +20,21 @@ import com.google.android.material.snackbar.Snackbar
  */
 class MainActivityFragment : FloatingPLayerFragment() {
 
-	 companion object {
-		  var isFirstVideo = true
-	 }
-	 private var snackBar: Snackbar? = null
-	 //	 private var loadingView: View? = null
-	 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		  getPlayer()?.cinematicPlayerViews = CinematicOnce()
-		  binding.videoOverlayView.playerContainer?.customController =
-			   object : VideoControllerView(context!!) {
-			   }
-		  super.onViewCreated(view, savedInstanceState)
+	companion object {
+		var isFirstVideo = true
+	}
+
+	final val subtitleLink =
+		"https://gist.githubusercontent.com/msxenon/562f71c9b619ecb231ad1071cbfd211f/raw/c9ba66de6b3fe78f6b7d5443c3624425d92b33c8/test.vtt"
+	private var snackBar: Snackbar? = null
+
+	//	 private var loadingView: View? = null
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		getPlayer()?.cinematicPlayerViews = CinematicOnce()
+		binding.videoOverlayView.playerContainer?.customController =
+			object : VideoControllerView(context!!) {
+			}
+		super.onViewCreated(view, savedInstanceState)
 //		  loadingView = LoadingScBinding.inflate(layoutInflater).root
 //		  binding.videoOverlayView.player?.addView(loadingView)
 //		  loadingView?.updateLayoutParams<FrameLayout.LayoutParams> {
@@ -48,13 +52,13 @@ class MainActivityFragment : FloatingPLayerFragment() {
 
 	 fun initPlayer() {
 		  binding.videoOverlayView.playerContainer?.playLinkNSub(
-              MainActivity.link,
-              null,
-              null,
-              if (isChannel) PlayerType.CHANNEL else PlayerType.MOVIE,
-              "https://mkvtoolnix.download/samples/vsshort-en.srt",
-              MainActivity.poster, "Action", MainActivity.movieName, 10000
-          )
+			  MainActivity.link,
+			  null,
+			  null,
+			  if (isChannel) PlayerType.CHANNEL else PlayerType.MOVIE,
+			  subtitleLink,//"https://mkvtoolnix.download/samples/vsshort-en.srt",
+			  MainActivity.poster, "Action", MainActivity.movieName, 10000
+		  )
 		  binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
 	 }
 

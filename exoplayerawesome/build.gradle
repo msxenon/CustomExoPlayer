@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+
     //android
 //it was a problem with version 2.0.2
     api 'androidx.constraintlayout:constraintlayout:2.0.1'

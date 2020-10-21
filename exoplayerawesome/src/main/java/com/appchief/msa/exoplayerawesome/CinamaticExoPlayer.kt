@@ -29,15 +29,13 @@ import com.appchief.msa.youtube.SeekListener
 import com.appchief.msa.youtube.YouTubeOverlay
 import com.appchief.msa.youtube.YouTubeOverlay.Companion.TAG
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C.ROLE_FLAG_TRICK_PLAY
 import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.MergingMediaSource
-import com.google.android.exoplayer2.source.SingleSampleMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.video.VideoListener
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.CastContext
@@ -99,6 +97,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         if (playerManager == null) {
             playerManager = PlayerManager(context, object : PlayerManager.Listener {
                 override fun onUnsupportedTrack(trackType: Int) {
+
                 }
 
                 override fun onQueuePositionChanged(previousIndex: Int, newIndex: Int) {
@@ -191,6 +190,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         val trackSelectionFactory: com.google.android.exoplayer2.trackselection.TrackSelection.Factory
         trackSelectionFactory = AdaptiveTrackSelection.Factory()
         val m = DefaultTrackSelector(context, trackSelectionFactory)
+
         m.parameters = trackSelectorParameters
         return@lazy m
     }
@@ -199,8 +199,9 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
             .setExceedRendererCapabilitiesIfNecessary(true)
             .setExceedVideoConstraintsIfNecessary(true)
             .setRendererDisabled(C.TRACK_TYPE_VIDEO, false)
-//            .setPreferredTextLanguage("ar")
-//            .setPreferredTextLanguage("en")
+            .setSelectUndeterminedTextLanguage(true)
+            .setPreferredTextLanguage("en")
+            .setPreferredTextRoleFlags(ROLE_FLAG_TRICK_PLAY)
             .build()
 
         return@lazy x
@@ -392,7 +393,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                 nowPlaying!!.poster,
                 nowPlaying!!.runtime,
                 isSreaming(),
-                subtitleLink = nowPlaying?.srtLink,
+                subtitleLink = nowPlaying!!.srtLink,//"https://raw.githubusercontent.com/ThePacielloGroup/AT-browser-tests/gh-pages/video/subtitles-en.vtt",//nowPlaying?.srtLink,
                 position = getLastPos("pairinit"),
             )
             playerManager?.addItem(mediaSource, mutableListOf(x.first))
@@ -434,45 +435,17 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
     private fun buildMediaSource(uri: Uri, srtLink: String?, noCache: Boolean): MediaSource? {
         return if (!srtLink.isNullOrBlank()) {
-            addSubTitlesToMediaSource(
+            ExoFactory.addSubTitlesToMediaSource(
                 ExoFactorySingeleton.getInstance().buildMediaSource(uri, noCache),
-                srtLink.encodeUrl()
+                srtLink.encodeUrl(),
+                noCache
             )
         } else {
             ExoFactorySingeleton.getInstance().buildMediaSource(uri, noCache)
         }
     }
 
-    private fun addSubTitlesToMediaSource(
-        mediaSource: MediaSource?,
-        subTitlesUrl: String
-    ): MediaSource {
-//        val textFormat = Format.Builder().setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
-//            .setSelectionFlags(Format.NO_VALUE).setAccessibilityChannel(Format.NO_VALUE)
-//            .setLanguage("en").setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE).build()
 
-//			  Format.createTextSampleFormat(
-//			   null, MimeTypes.APPLICATION_SUBRIP,
-//			   null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
-//		  )
-        val uri = Uri.parse(subTitlesUrl)
-        Log.e("subtitleURI", uri.toString() + " ")
-        val subtitleSource =
-            SingleSampleMediaSource.Factory(
-                ExoFactorySingeleton.getInstance().buildDataSourceFactory(
-                    isSreaming()
-                )
-            ).createMediaSource(
-                MediaItem.Subtitle(
-                    uri,
-                    MimeTypes.APPLICATION_SUBRIP,
-                    C.LANGUAGE_UNDETERMINED,
-                    C.SELECTION_FLAG_DEFAULT
-                ),
-                C.TIME_UNSET
-            )
-        return MergingMediaSource(mediaSource!!, subtitleSource)
-    }
 
     override fun preparePlayback() {
     }
@@ -706,7 +679,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
             nowPlaying!!.poster,
             nowPlaying!!.runtime,
             isSreaming(),
-            getLastPos("castcurrent")
+            getLastPos("castcurrent"),
+            subtitleLink = nowPlaying!!.srtLink
         )
     }
 

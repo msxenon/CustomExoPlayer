@@ -90,41 +90,9 @@ class ExoFactory internal constructor(private val context: Context) {
 		  }
 	 }
 
-	 private fun addSubTitlesToMediaSource(
-		 mediaSource: MediaSource?,
-		 subTitlesUrl: String,
-		 noChache: Boolean
-	 ): MediaSource {
-//		 val textFormat =
-//			 Format.Builder().setLanguage("en").setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
-//				 .setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE)
-//				 .setSelectionFlags(Format.NO_VALUE).build()
 
-//		  val textFormat = Format.createTextSampleFormat(
-//			   null, MimeTypes.APPLICATION_SUBRIP,
-//			   null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
-//		  )
-		 val uri = Uri.parse(subTitlesUrl)
-		 Log.e("subtitleURI", uri.toString() + " ")
-		 val subtitleSource =
-			 SingleSampleMediaSource.Factory(
-				 ExoFactorySingeleton.getInstance().buildDataSourceFactory(
-					 noChache
-				 )
-			 )
-				 .createMediaSource(getSubtitle(uri), C.TIME_UNSET)
 
-		 return MergingMediaSource(mediaSource!!, subtitleSource)
-	 }
 
-	private fun getSubtitle(uri: Uri): MediaItem.Subtitle {
-		return MediaItem.Subtitle(
-			uri,
-			MimeTypes.APPLICATION_SUBRIP,
-			C.LANGUAGE_UNDETERMINED,
-			C.SELECTION_FLAG_DEFAULT
-		)
-	}
 
 	fun buildMediaSource(uri: Uri, noChache: Boolean): MediaSource? {
 		try {//here put url
@@ -242,5 +210,54 @@ class ExoFactory internal constructor(private val context: Context) {
 ////			   /* eventListener= */ null,
 ////			   CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null
 //		  )
+	}
+
+	companion object {
+		fun addSubTitlesToMediaSource(
+			mediaSource: MediaSource?,
+			subTitlesUrl: String,
+			noChache: Boolean
+		): MediaSource {
+//		 val textFormat =
+//			 Format.Builder().setLanguage("en").setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
+//				 .setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE)
+//				 .setSelectionFlags(Format.NO_VALUE).build()
+
+//		  val textFormat = Format.createTextSampleFormat(
+//			   null, MimeTypes.APPLICATION_SUBRIP,
+//			   null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
+//		  )
+			val uri = Uri.parse(subTitlesUrl)
+			Log.e("subtitleURI", uri.toString() + " ")
+			val subtitleSource =
+				SingleSampleMediaSource.Factory(
+					ExoFactorySingeleton.getInstance().buildDataSourceFactory(
+						noChache
+					)
+				)
+					.createMediaSource(getSubtitle(uri), C.TIME_UNSET)
+
+			return MergingMediaSource(mediaSource!!, subtitleSource)
+		}
+
+		fun getSubtitle(uri: Uri): MediaItem.Subtitle {
+			return MediaItem.Subtitle(
+				uri,
+				getSubtitleMimeType(uri.path),
+				"en",
+				C.SELECTION_FLAG_DEFAULT
+			)
+		}
+
+		fun getSubtitle(link: String?): MediaItem.Subtitle {
+			return getSubtitle(Uri.parse(link?.encodeUrl()))
+		}
+
+		private fun getSubtitleMimeType(subtitle: String?): String {
+			if (subtitle?.endsWith("srt") == true)
+				return MimeTypes.APPLICATION_SUBRIP
+			else
+				return MimeTypes.TEXT_VTT
+		}
 	}
 }

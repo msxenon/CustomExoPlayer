@@ -230,7 +230,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         lastPos_ = getLastPos("init", true)
 
         // if (playerUiFinalListener?.isConnectedToCast() != true) {
-        initializePlayer(false)
+        initializePlayer()
 //		  } else {
 //			   castCurrent()
 //		  }
@@ -268,7 +268,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
             eventListener
         )
         controllerViiablilityListener =
-            PlayerControlView.VisibilityListener { visibility ->
+            PlayerControlView.VisibilityListener { _ ->
                 //	controlController(visibility)
             }
         player?.videoComponent?.addVideoListener(object : VideoListener {
@@ -279,18 +279,18 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                 pixelWidthHeightRatio: Float
             ) {
                 Log.e("sizeChanged", " $unappliedRotationDegrees $pixelWidthHeightRatio")
-                videoSize(height, ((width * pixelWidthHeightRatio).roundToInt()), true)
+                true.videoSize(height, ((width * pixelWidthHeightRatio).roundToInt()))
 
             }
         })
     }
 
-    private fun videoSize(height: Int, width: Int = 0, respectAspectRatio: Boolean = false) {
+    private fun Boolean.videoSize(height: Int, width: Int = 0) {
         val screenHeightPx = Resources.getSystem().displayMetrics.heightPixels
         val screenWPx = Resources.getSystem().displayMetrics.widthPixels
         val aspectRatio = screenWPx.toFloat() / width.toFloat()
 
-        val actualHeight = if (respectAspectRatio && width > 0) {
+        val actualHeight = if (this && width > 0) {
             (height * aspectRatio).toInt()
         } else
             height
@@ -309,7 +309,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
 
         Log.e(
             "videoSizeCHanged",
-            " $width $height  $respectAspectRatio $aspectRatio $actualHeight $screenHeightPx , $screenWPx }"
+            " $width $height  ${this} $aspectRatio $actualHeight $screenHeightPx , $screenWPx }"
         )
         realHeight = min(screenHeightPx.div(2), actualHeight)
         applyHeight(realHeight)
@@ -347,7 +347,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         resizeMode =
             cinematicPlayerViews?.resizeMode() ?: AspectRatioFrameLayout.RESIZE_MODE_FIT
         player?.videoComponent?.videoScalingMode =
-            cinematicPlayerViews?.videoScalingMode() ?: C.VIDEO_SCALING_MODE_SCALE_TO_FIT
+            cinematicPlayerViews?.videoScalingMode() ?: Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT
         Log.e(
             "ApplySettings",
             "$ VIDEO SIZEING ${cinematicPlayerViews?.resizeMode() != null} ${cinematicPlayerViews?.videoScalingMode() != null}"
@@ -358,7 +358,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         Log.e("ApplySettings", "$ load2 ${cinematicPlayerViews?.controlLayout != null}")
     }
 
-    fun initializePlayer(force: Boolean): Boolean? {
+    fun initializePlayer(): Boolean? {
         mediaSource = null
         if (nowPlaying?.videoLink == null)
             return null
@@ -390,8 +390,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                 nowPlaying!!.poster,
                 nowPlaying!!.runtime,
                 isSreaming(),
-                getLastPos("pairinit"),
-                srtLink = nowPlaying?.srtLink
+                getLastPos("pairinit")
             )
             playerManager?.addItem(mediaSource, x.second)
             return true
@@ -445,11 +444,14 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         mediaSource: MediaSource?,
         subTitlesUrl: String
     ): MediaSource {
-        val textFormat =
-            Format.createTextSampleFormat(
-                null, MimeTypes.APPLICATION_SUBRIP,
-                null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
-            )
+        val textFormat = Format.Builder().setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
+            .setSelectionFlags(Format.NO_VALUE).setAccessibilityChannel(Format.NO_VALUE)
+            .setLanguage("en").setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE).build()
+
+//			  Format.createTextSampleFormat(
+//			   null, MimeTypes.APPLICATION_SUBRIP,
+//			   null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
+//		  )
         val uri = Uri.parse(subTitlesUrl)
         Log.e("subtitleURI", uri.toString() + " ")
         val subtitleSource =
@@ -457,8 +459,11 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                 ExoFactorySingeleton.getInstance().buildDataSourceFactory(
                     isSreaming()
                 )
+            ).createMediaSource(
+                MediaItem.Subtitle(uri, MimeTypes.APPLICATION_SUBRIP, null),
+                C.TIME_UNSET
             )
-                .createMediaSource(uri, textFormat, C.TIME_UNSET)
+        //   .createMediaSource(uri, textFormat, C.TIME_UNSET)
         return MergingMediaSource(mediaSource!!, subtitleSource)
     }
 
@@ -694,8 +699,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
             nowPlaying!!.poster,
             nowPlaying!!.runtime,
             isSreaming(),
-            getLastPos("castcurrent"),
-            srtLink = "https://raw.githubusercontent.com/ThePacielloGroup/AT-browser-tests/gh-pages/video/subtitles-en.vtt"//nowPlaying?.srtLink
+            getLastPos("castcurrent")
         )
     }
 

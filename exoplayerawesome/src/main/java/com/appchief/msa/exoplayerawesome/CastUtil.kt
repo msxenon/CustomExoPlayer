@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.webkit.MimeTypeMap
-import com.google.android.exoplayer2.ext.cast.MediaItem
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.common.images.WebImage
@@ -14,19 +14,18 @@ object CastUtil {
 	 fun getMediaArray(mediaInfo: MediaInfo): Array<MediaQueueItem> {
 		  val queueItem = MediaQueueItem.Builder(mediaInfo).setAutoplay(
 			  true
-		  ).setPreloadTime(PRELOAD_TIME_S.toDouble())
-			  .build()
+		  ).setPreloadTime(PRELOAD_TIME_S.toDouble()).build()
 		  return arrayOf(queueItem)
 	 }
 
 	 private fun sendToConnectedTV(context: Context, mediaInfo: MediaInfo, position: Long) {
-		  val castSession = CastContext.getSharedInstance(context).sessionManager.currentCastSession
-		  if (castSession == null || !castSession.isConnected) {
-			   return
-		  }
+		 val castSession = CastContext.getSharedInstance(context).sessionManager.currentCastSession
+		 if (castSession == null || !castSession.isConnected) {
+			 return
+		 }
 		 val remoteMediaClient = castSession.remoteMediaClient
 		 if (remoteMediaClient == null) {
-			 Log.w("castutil", "showQueuePopup(): null RemoteMediaClient")
+			 Log.w("TAG", "showQueuePopup(): null RemoteMediaClient")
 			 return
 		 }
 
@@ -34,26 +33,15 @@ object CastUtil {
 			 getMediaArray(mediaInfo), 0,
 			 MediaStatus.REPEAT_MODE_REPEAT_OFF, position, null
 		 )
-		 remoteMediaClient.setActiveMediaTracks(longArrayOf(1)).setResultCallback {
-			 if (!it.getStatus().isSuccess()) {
-				 Log.e(
-					 "castutil", "Failed with status code:" +
-							 it.getStatus().getStatusCode()
-				 );
-			 }
-		 }
-		 Log.w("castutil", "set  RemoteMediaClient")
-
 	 }
 
 	 private fun buildMediaInfo4Movie(
 		 streamType: Int,
 		 videoUrl: String,
 		 title: String,
-		 subtitle: String?,
+		 subtitle: String,
 		 poster: String,
-		 duration: Long,
-		 srtLink: String?
+		 duration: Long
 	 ): MediaInfo {
 		 val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_GENERIC)
 		 movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, subtitle)
@@ -61,26 +49,23 @@ object CastUtil {
 
 		 movieMetadata.addImage(WebImage(Uri.parse(poster)))
 		 val sd = duration * 60 * 1000
-		 val x = MediaInfo.Builder(videoUrl)
-			 .setStreamType(streamType)
-			 .setContentType(getMimeType(videoUrl))
-			 .setMetadata(movieMetadata)
-			 .setStreamDuration(sd)
 		 val englishSubtitle = MediaTrack.Builder(
 			 1 /* ID */,
 			 MediaTrack.TYPE_TEXT
 		 )
-			 .setName("Subtitle")
+			 .setName("English Subtitle")
 			 .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
-			 .setContentId(srtLink)
+			 .setContentId(subtitle)
 			 /* language is required for subtitle type but optional otherwise */
-			 .setLanguage("en")
-
+			 .setLanguage("en-US")
 			 .build()
-		 x.setMediaTracks(listOf(englishSubtitle))
-		 Log.d("castUtil", "subtitle setted")
-
-		 return x.build()
+		 return MediaInfo.Builder(videoUrl)
+			 .setMediaTracks(listOf(englishSubtitle))
+			 .setStreamType(streamType)
+			 .setContentType(getMimeType(videoUrl))
+			 .setMetadata(movieMetadata)
+			 .setStreamDuration(sd)
+			 .build()
 	 }
 
 	 private fun loadRemoteMedia(
@@ -90,17 +75,15 @@ object CastUtil {
 		 subtitle: String?,
 		 poster: String?,
 		 duration: Long?,
-		 position: Long = 0L,
-		 srtLink: String?
+		 position: Long = 0L
 	 ): MediaInfo {
 		  val m = buildMediaInfo4Movie(
 			  streamType,
 			  videoUrl ?: "",
 			  title ?: "",
-			  subtitle,
+			  subtitle ?: "",
 			  poster ?: "",
-			  duration ?: 0,
-			  srtLink
+			  duration ?: 0
 		  )
 		  return m
 	 }
@@ -113,8 +96,7 @@ object CastUtil {
 		 poster: String,
 		 runtime: Long?,
 		 isChannel: Boolean,
-		 position: Long?,
-		 srtLink: String?
+		 position: Long?
 	 ): Array<MediaQueueItem> {
 		 val m = loadRemoteMedia(
 			 if (isChannel) MediaInfo.STREAM_TYPE_LIVE else MediaInfo.STREAM_TYPE_BUFFERED,
@@ -122,25 +104,9 @@ object CastUtil {
 			 title,
 			 geners ?: "",
 			 poster,
-			 runtime,
-			 srtLink = srtLink
+			 runtime
 		 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		 sendToConnectedTV(context, m, position ?: 0L)
+		 // sendToConnectedTV(context, m, position ?: 0L)
 		 return getMediaArray(m)
 	 }
 
@@ -152,8 +118,7 @@ object CastUtil {
 		 poster: String,
 		 runtime: Long?,
 		 isChannel: Boolean,
-		 position: Long?,
-		 srtLink: String?
+		 position: Long?
 	 ): Pair<MediaItem, Array<MediaQueueItem>> {
 		  val m = loadRemoteMedia(
 			  if (isChannel) MediaInfo.STREAM_TYPE_LIVE else MediaInfo.STREAM_TYPE_BUFFERED,
@@ -161,11 +126,10 @@ object CastUtil {
 			  title,
 			  geners ?: "",
 			  poster,
-			  runtime,
-			  srtLink = srtLink
+			  runtime
 		  )
 		  val i = MediaItem.Builder().setUri(videoUrl!!).setMimeType(getMimeType(url = videoUrl))
-			  .setTitle(title ?: "X")
+			  //.setTitle(title ?: "X")
 			  .build()
 
 		  return Pair(i, getMediaArray(m))

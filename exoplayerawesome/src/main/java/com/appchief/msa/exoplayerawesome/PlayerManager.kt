@@ -5,12 +5,12 @@ import android.content.Context
 import android.util.Log
 import com.appchief.msa.exoplayerawesome.viewcontroller.ControllerVisState
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.*
-import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.ext.cast.DefaultMediaItemConverter
-import com.google.android.exoplayer2.ext.cast.MediaItemConverter
-import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.Timeline
+import com.google.android.exoplayer2.ext.cast.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -31,10 +31,10 @@ internal class PlayerManager(
 	 private val castContext: CastContext?,
 	 private val trackSelectors: () -> DefaultTrackSelector
 ) : Player.EventListener, SessionAvailabilityListener {
-	 internal interface Listener {
-		 fun onQueuePositionChanged(previousIndex: Int, newIndex: Int)
-		 fun onUnsupportedTrack(trackType: Int)
-	 }
+	internal interface Listener {
+		fun onQueuePositionChanged(previousIndex: Int, newIndex: Int)
+		fun onUnsupportedTrack(trackType: Int)
+	}
 
 	private lateinit var trackSelector: DefaultTrackSelector
 	lateinit var exoPlayer: SimpleExoPlayer
@@ -42,8 +42,20 @@ internal class PlayerManager(
 	private lateinit var mediaQueue: ArrayList<MediaItem>
 	private var concatenatingMediaSource: MediaSource? = null
 	private lateinit var mediaItemConverter: MediaItemConverter
-	private var currentItemIndex: Int = -1
+//	 private var lastSeenTrackGroupArray: TrackGroupArray? = null
+	/** Returns the index of the currently played item.  */
+	var currentItemIndex: Int = -1
+		private set
 	private var currentPlayer: Player? = null
+	// Queue manipulation methods.
+	/**
+	 * Plays a specified queue item in the current player.
+	 *
+	 * @param itemIndex The index of the item to play.
+	 */
+//	 fun selectQueueItem(itemIndex: Int) {
+//		  setCurrentItem(itemIndex, C.TIME_UNSET, true)
+//	 }
 
 	val tag = "PlayerManager"
 	fun addItem(

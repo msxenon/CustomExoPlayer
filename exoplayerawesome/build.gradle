@@ -56,7 +56,7 @@ dependencies {
     api 'com.google.android.gms:play-services-cast-framework:19.0.0'
 
     //ExoPlayer
-    def ev = '2.12.0'
+    def ev = '2.11.1'
     api "com.google.android.exoplayer:extension-cast:$ev"
     api "com.google.android.exoplayer:exoplayer-core:$ev"
     api "com.google.android.exoplayer:exoplayer-dash:$ev"

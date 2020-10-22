@@ -125,8 +125,8 @@ object CastUtil {
 			subtitleLink = subtitleLink
 		) ?: throw Exception("data null")
 		val i = MediaItem.Builder().setUri(videoUrl!!).setMimeType(getMimeType(url = videoUrl))
-		Log.e("castUtil", subtitleLink)
 		if (!subtitleLink.isNullOrBlank()) {
+			Log.e("castUtil", subtitleLink)
 			i.setSubtitles(listOf(ExoFactory.getSubtitle(subtitleLink)))
 		}
 

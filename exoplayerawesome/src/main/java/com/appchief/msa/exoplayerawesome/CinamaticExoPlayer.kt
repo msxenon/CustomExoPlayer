@@ -393,7 +393,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                 nowPlaying!!.poster,
                 nowPlaying!!.runtime,
                 isSreaming(),
-                subtitleLink = nowPlaying!!.srtLink,//"https://raw.githubusercontent.com/ThePacielloGroup/AT-browser-tests/gh-pages/video/subtitles-en.vtt",//nowPlaying?.srtLink,
+                subtitleLink = nowPlaying!!.srtLink?.replace(".srt", ".vtt"),
                 position = getLastPos("pairinit")
             )
             playerManager?.addItem(mediaSource, mutableListOf(x.first))
@@ -680,7 +680,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
             nowPlaying!!.runtime,
             isSreaming(),
             getLastPos("castcurrent"),
-            subtitleLink = nowPlaying!!.srtLink
+            subtitleLink = nowPlaying!!.srtLink?.replace(".srt", ".vtt")
         )
     }
 

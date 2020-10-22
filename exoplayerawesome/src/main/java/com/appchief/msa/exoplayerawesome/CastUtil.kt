@@ -37,64 +37,46 @@ object CastUtil {
 		 )
 	 }
 
-	 private fun buildMediaInfo4Movie(
-		 streamType: Int,
-		 videoUrl: String,
-		 title: String,
-		 subtitle: String,
-		 poster: String,
-		 duration: Long,
-		 subtitleLink: String?
-	 ): MediaInfo {
-		 val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_GENERIC)
-		 movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, subtitle)
-		 movieMetadata.putString(MediaMetadata.KEY_TITLE, title)
 
-		 movieMetadata.addImage(WebImage(Uri.parse(poster)))
-		 val sd = duration * 60 * 1000
+	private fun loadRemoteMedia(
+		streamType: Int,
+		videoUrl: String?,
+		title: String?,
+		subtitle: String?,
+		poster: String?,
+		duration: Long?,
+		position: Long = 0L,
+		subtitleLink: String?
+	): MediaInfo? {
+		if (videoUrl == null)
+			return null
+		val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_GENERIC)
+		movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, subtitle)
+		movieMetadata.putString(MediaMetadata.KEY_TITLE, title)
 
-		 var x = MediaInfo.Builder(videoUrl)
-			 .setStreamType(streamType)
-			 .setContentType(getMimeType(videoUrl))
-			 .setMetadata(movieMetadata)
-			 .setStreamDuration(sd)
-		 Log.e("castUtil", "subtitle ${subtitleLink}")
-		 if (subtitleLink?.endsWith("tt") == true) {
-			 val englishSubtitle = MediaTrack.Builder(
-				 1 /* ID */,
-				 MediaTrack.TYPE_TEXT
-			 )
-				 .setName("Arabic")
-				 .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
-				 .setContentId(subtitleLink.encodeUrl())
-				 /* language is required for subtitle type but optional otherwise */
-				 .setLanguage("en")
-				 .build()
+		movieMetadata.addImage(WebImage(Uri.parse(poster)))
+		val sd = duration ?: 0 * 60 * 1000
+
+		var x = MediaInfo.Builder(videoUrl)
+			.setStreamType(streamType)
+			.setContentType(getMimeType(videoUrl))
+			.setMetadata(movieMetadata)
+			.setStreamDuration(sd)
+		Log.e("castUtil", "subtitle $subtitleLink")
+		if (subtitleLink != null) {
+			val englishSubtitle = MediaTrack.Builder(
+				1 /* ID */,
+				MediaTrack.TYPE_TEXT
+			)
+				.setName("Arabic")
+				.setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
+				.setContentId(subtitleLink.encodeUrl())
+				/* language is required for subtitle type but optional otherwise */
+				.setLanguage("en")
+				.build()
 			 x.setMediaTracks(listOf(englishSubtitle))
 		 }
 		 return x.build()
-	 }
-
-	 private fun loadRemoteMedia(
-		 streamType: Int,
-		 videoUrl: String?,
-		 title: String?,
-		 subtitle: String?,
-		 poster: String?,
-		 duration: Long?,
-		 position: Long = 0L,
-		 subtitleLink: String?
-	 ): MediaInfo {
-		  val m = buildMediaInfo4Movie(
-			  streamType,
-			  videoUrl ?: "",
-			  title ?: "",
-			  subtitle ?: "",
-			  poster ?: "",
-			  duration ?: 0,
-			  subtitleLink
-		  )
-		  return m
 	 }
 
 	 fun castThis(
@@ -117,6 +99,7 @@ object CastUtil {
 			 runtime,
 			 subtitleLink = subtitleLink
 		 )
+			 ?: return arrayOf()
 		 sendToConnectedTV(context, m, position ?: 0L)
 		 return getMediaArray(m)
 	 }
@@ -140,9 +123,9 @@ object CastUtil {
 			poster,
 			runtime,
 			subtitleLink = subtitleLink
-		)
+		) ?: throw Exception("data null")
 		val i = MediaItem.Builder().setUri(videoUrl!!).setMimeType(getMimeType(url = videoUrl))
-		Log.e("castUtil", "${subtitleLink.encodeUrl()}")
+		Log.e("castUtil", subtitleLink)
 		if (!subtitleLink.isNullOrBlank()) {
 			i.setSubtitles(listOf(ExoFactory.getSubtitle(subtitleLink)))
 		}

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.appchief.msa.MainActivity.Companion.isChannel
+import com.appchief.msa.exoplayerawesome.ExoFactory
 import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
 import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
 import com.appchief.msa.exoplayerawesome.listeners.PlayerType
@@ -24,8 +25,6 @@ class MainActivityFragment : FloatingPLayerFragment() {
 		var isFirstVideo = true
 	}
 
-	final val subtitleLink =
-		"https://gist.githubusercontent.com/msxenon/562f71c9b619ecb231ad1071cbfd211f/raw/7c8af5b08551fb5a797c04cd4ee41894dbb60ee7/test.vtt"
 
 	//"https://mkvtoolnix.download/samples/vsshort-en.srt"
 	private var snackBar: Snackbar? = null
@@ -59,7 +58,7 @@ class MainActivityFragment : FloatingPLayerFragment() {
 			  null,
 			  if (isChannel) PlayerType.CHANNEL else PlayerType.MOVIE,
 
-			  subtitleLink,
+			  ExoFactory.srt,
 			  MainActivity.poster, "Action", MainActivity.movieName, 10000
 		  )
 		  binding.videoOverlayView.playerContainer?.setDoubleTapActivated()

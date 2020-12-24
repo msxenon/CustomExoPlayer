@@ -1,7 +1,6 @@
 package com.appchief.msa
 
 import android.content.Context
-import android.util.Log
 import androidx.core.net.toUri
 import com.google.android.gms.cast.CastMediaControlIntent
 import com.google.android.gms.cast.LaunchOptions
@@ -46,20 +45,17 @@ class CastOptionsProvider : OptionsProvider {
 
 	 private class ImagePickerImpl : ImagePicker() {
 		  override fun onPickImage(p0: MediaMetadata?, p1: ImageHints): WebImage {
-			   Log.e("onCaster", "${p1.heightInPixels} hint hassss ")
 			   return super.onPickImage(p0, p1)
 		  }
 		  override fun onPickImage(
 			   mediaMetadata: MediaMetadata,
 			   type: Int
 		  ): WebImage {
-			   Log.e("onCaster", "${mediaMetadata.hasImages()} hassss ")
 
 			   if (!mediaMetadata.hasImages()) {
 					return WebImage("".toUri())
 			   }
 			   val images = mediaMetadata.images
-			   Log.e("onCaster", "$mediaMetadata $type ${images.size} ${images.get(0).height}")
 
 			   return if (images.size == 1) {
 					images[0]

@@ -29,7 +29,6 @@ import com.google.android.exoplayer2.ui.TrackSelectionView
 import com.google.android.exoplayer2.util.Assertions
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -198,7 +197,6 @@ class TrackSelectionDialog : DialogFragment() {
 					listOf(initialOverride)
 			   this.allowAdaptiveSelections = allowAdaptiveSelections
 			   this.allowMultipleOverrides = allowMultipleOverrides
-			   Timber.e("mama 8")
 		  }
 
 		  private var trackSelectionView: TrackSelectionView? = null
@@ -216,7 +214,6 @@ class TrackSelectionDialog : DialogFragment() {
 			   container: ViewGroup?,
 			   savedInstanceState: Bundle?
 		  ): View? {
-			   Timber.e("mama 7")
 			   val rootView = inflater.inflate(
 					R.layout.exo_track_selection_dialog_, container, /* attachToRoot= */ false
 			   )

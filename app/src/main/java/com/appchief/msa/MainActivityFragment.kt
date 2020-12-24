@@ -2,136 +2,136 @@ package com.appchief.msa
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Resources
+import android.content.res.Resources.Theme
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.appchief.msa.MainActivity.Companion.isChannel
-import com.appchief.msa.exoplayerawesome.ExoFactory
+import androidx.core.content.res.ResourcesCompat
 import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
-import com.appchief.msa.exoplayerawesome.listeners.NowPlaying
-import com.appchief.msa.exoplayerawesome.listeners.PlayerType
+import com.appchief.msa.exoplayerawesome.NowPlaying
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.appchief.msa.floating_player.FloatingPLayerFragment
 import com.google.android.material.snackbar.Snackbar
 
-/**
- * A placeholder fragment containing a simple view.
- */
-class MainActivityFragment : FloatingPLayerFragment() {
 
-	companion object {
-		var isFirstVideo = true
-	}
+class MainActivityFragment(val externalVideoData: NowPlaying) : FloatingPLayerFragment() {
+    private var snackBar: Snackbar? = null
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        //set data CinematicOnce
+        getPlayer()?.cinematicPlayerViews = CinematicOnce()
 
-	//"https://mkvtoolnix.download/samples/vsshort-en.srt"
-	private var snackBar: Snackbar? = null
+        //viewcontroller can be customized here
+        binding.videoOverlayView.playerContainer?.customController =
+            object : VideoControllerView(context!!) {
+            }
+        super.onViewCreated(view, savedInstanceState)
+        initPlayer()
+        setDetails()
+    }
 
-	//	 private var loadingView: View? = null
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		getPlayer()?.cinematicPlayerViews = CinematicOnce()
-		binding.videoOverlayView.playerContainer?.customController =
-			object : VideoControllerView(context!!) {
-			}
-		super.onViewCreated(view, savedInstanceState)
-//		  loadingView = LoadingScBinding.inflate(layoutInflater).root
-//		  binding.videoOverlayView.player?.addView(loadingView)
-//		  loadingView?.updateLayoutParams<FrameLayout.LayoutParams> {
-//			   width = 160
-//			   width = 160
-//			   this.gravity = Gravity.CENTER
-//		  }
-//		  val video =
-//			   "http://tv.supercellnetwork.com:1935/nile3/mbc3.stream_360p/playlist.m3u8"//"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4"
-		  initPlayer()
-		  // setDetails(DetailsFrag())
-		  isFirstVideo = !isFirstVideo
+    //Fragment Shows below player
+    private fun setDetails() {
+        childFragmentManager.beginTransaction()
+            .replace(com.appchief.msa.exoplayerawesome.R.id.detailsView, DetailsFrag())
+            .commitAllowingStateLoss()
+    }
 
-	 }
+    override fun onMessageRecived(msg: String?, state: Int) {
+        msg?.takeIf { view != null && state >= 0 }?.let {
+            snackBar = Snackbar.make(view!!, msg, Snackbar.LENGTH_INDEFINITE)
+            snackBar?.setAction("Try Again") {
+                snackBar?.dismiss()
+                initPlayer()
+            }
+            snackBar?.show()
+        } ?: kotlin.run {
+            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+        }
+    }
 
-	 fun initPlayer() {
-		  binding.videoOverlayView.playerContainer?.playLinkNSub(
-			  MainActivity.link,
-			  null,
-			  null,
-			  if (isChannel) PlayerType.CHANNEL else PlayerType.MOVIE,
+    override fun initPlayer(res: String?) {
+        binding.videoOverlayView.playerContainer?.playLinkNSub(
+            externalVideoData.videoLink,
+            null,
+            null,
+            externalVideoData.type,
+            TestVars.srt,
+            externalVideoData.poster,
+            externalVideoData.geners,
+            externalVideoData.title,
+            externalVideoData.runtime
+        )
+        //add this line if you want to support double taps to forward / rewind
+        binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
+    }
 
-			  ExoFactory.srt,
-			  MainActivity.poster, "Action", MainActivity.movieName, 10000
-		  )
-		  binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
-	 }
+    override fun onDestroy() {
+        snackBar?.dismiss()
+        super.onDestroy()
+    }
 
-	 override fun onMessageRecived(msg: String?, state: Int) {
-		  msg?.takeIf { view != null && state >= 0 }?.let {
-			   snackBar = Snackbar.make(view!!, msg, Snackbar.LENGTH_INDEFINITE)
-			   snackBar?.setAction("Retry") {
-					snackBar?.dismiss()
-					initPlayer()
-			   }
-			   snackBar?.show()
-		  } ?: kotlin.run {
-			   Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-		  }
+    //Use your local db to return last position for this NowPLaying item
+    override fun getLastPosition(modelId: NowPlaying?): Long {
+        return 0
+    }
 
-		  Log.e("main", "$msg $state")
-	 }
+    //Use your local db to save last position for this NowPlaying item
+    override fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long) {
+    }
 
-	 override fun initPlayer(res: String?) {
-	 }
+    //controlls if player can be floated / minimized
+    override fun canMinimize(): Boolean {
+        return !ExoFactorySingeleton.isTv
+    }
 
-	 override fun onDestroy() {
-		  snackBar?.dismiss()
+    override fun hasPrevItem(): Boolean {
+        return false
+    }
 
-		  super.onDestroy()
-	 }
+    override fun hasNextItem(): Boolean {
+        return true
+    }
 
-	 override fun getLastPosition(modelId: NowPlaying?): Long {
-		  Log.e("main", "getLastPosition $modelId")
-		  return 0
-	 }
+    //play next item binding.videoOverlayView.playerContainer?.playLinkNSub(....
+    override fun playNext() {
+    }
 
-	 override fun savePlayPosition(nowWasPlaying: NowPlaying?, position: Long, duration: Long) {
-	 }
+    //play Prev. item binding.videoOverlayView.playerContainer?.playLinkNSub(....
+    override fun playPrev() {
+    }
 
-	 override fun canMinimize(): Boolean {
-		  return !ExoFactorySingeleton.isTv
-	 }
+    //when Settings icon clicked inside the player
+    override fun showSettings(forCasting: Boolean) {
+        if (!forCasting) {
+            TrackSelectionDialog.createForTrackSelector(childFragmentManager,
+                activity,
+                binding.videoOverlayView.playerContainer!!.trackSelector,
+                DialogInterface.OnDismissListener { })
+        } else {
+            activity?.startActivity(Intent(activity, ExpandedControlsActivity::class.java))
+        }
+    }
 
-	 override fun hasPrevItem(): Boolean {
-		  return false
-	 }
+    //sets poster blurred on player bg if its in Casting mode (ChromeCast)
+    override fun setMoviePoster(result: (it: Drawable?) -> Unit) {
+        val myIcon =
+            getDrawable(context!!.resources, com.appchief.msa.awesomeplayer.R.drawable.castbg, null)
+        result(myIcon)
+    }
 
-	 override fun hasNextItem(): Boolean {
-		  return true
-	 }
+    fun getDrawable(res: Resources, id: Int, theme: Theme?): Drawable? {
+        val version = Build.VERSION.SDK_INT
+        return if (version >= 21) {
+            ResourcesCompat.getDrawable(res, id, theme)
+        } else {
+            res.getDrawable(id)
+        }
+    }
 
-	 override fun playNext() {
-	 }
-
-	 override fun playPrev() {
-	 }
-
-	 override fun showSettings(forCasting: Boolean) {
-//		  Log.e("smdd", "showsettttt ${binding.videoOverlayView.player != null}")
-		  if (!forCasting) {
-			   TrackSelectionDialog.createForTrackSelector(childFragmentManager,
-					activity,
-					binding.videoOverlayView.playerContainer!!.trackSelector,
-					DialogInterface.OnDismissListener { })
-		  } else {
-			   activity?.startActivity(Intent(activity, ExpandedControlsActivity::class.java))
-		  }
-	 }
-
-	 override fun setMoviePoster(result: (it: Drawable) -> Unit) {
-		  val myIcon =
-			   resources.getDrawable(com.appchief.msa.awesomeplayer.R.drawable.castbg)
-		  result(myIcon)
-	 }
-
-	 override fun addtionalControllerButtonsInit(view: View?) {
-	 }
+    override fun addtionalControllerButtonsInit(view: View?) {
+    }
 }

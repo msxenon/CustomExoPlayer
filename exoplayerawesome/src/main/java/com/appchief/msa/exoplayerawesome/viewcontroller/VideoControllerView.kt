@@ -166,7 +166,9 @@ abstract class VideoControllerView : FrameLayout {
 
 		  if (currentState == ControllerVisState.Cast) {
 			   mPlayer?.playerUiFinalListener?.setMoviePoster {
-					moviePoster?.setImageDrawable(it)
+				   it?.let {
+					   moviePoster?.setImageDrawable(it)
+				   }
 			   }
 		  }
 

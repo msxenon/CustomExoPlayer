@@ -116,24 +116,10 @@ class ExoFactory internal constructor(private val context: Context) {
 					)
 				}
 				C.TYPE_OTHER -> {
-					//todo
-//					   if (uri.path?.contains("http") != false) {
 					ProgressiveMediaSource.Factory(buildDataSourceFactory(noChache))
 						.createMediaSource(
 							MediaItem.fromUri(uri)
 						)
-//					   } else {
-//						   ProgressiveMediaSource.Factory(
-//							   DefaultExtractorsFactory(),
-//							   ExtractorMediaSource(
-//								   uri,
-//								   DefaultDataSourceFactory(context, buildHttpDataSourceFactory()),
-//								   DefaultExtractorsFactory(),
-//								   null,
-//								   null
-//							   )
-//						   )
-//					   }
 
 				}
                    else -> throw Throwable("Unsupported type: $type")
@@ -203,13 +189,6 @@ class ExoFactory internal constructor(private val context: Context) {
 			CacheDataSource.FLAG_BLOCK_ON_CACHE
 		return CacheDataSource.Factory().setUpstreamDataSourceFactory(upstreamFactory)
 			.setCache(cache!!).setFlags(cacheFlags)
-//		  return CacheDataSourceFactory(
-//			   cache,
-//			   upstreamFactory, cacheFlags
-////			   FileDataSource.Factory(),
-////			   /* eventListener= */ null,
-////			   CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null
-//		  )
 	}
 
 	companion object {
@@ -218,15 +197,6 @@ class ExoFactory internal constructor(private val context: Context) {
 			subTitlesUrl: String,
 			noChache: Boolean
 		): MediaSource {
-//		 val textFormat =
-//			 Format.Builder().setLanguage("en").setSampleMimeType(MimeTypes.APPLICATION_SUBRIP)
-//				 .setSubsampleOffsetUs(Format.OFFSET_SAMPLE_RELATIVE)
-//				 .setSelectionFlags(Format.NO_VALUE).build()
-
-//		  val textFormat = Format.createTextSampleFormat(
-//			   null, MimeTypes.APPLICATION_SUBRIP,
-//			   null, Format.NO_VALUE, Format.NO_VALUE, "en", null, Format.OFFSET_SAMPLE_RELATIVE
-//		  )
 			val uri = Uri.parse(subTitlesUrl)
 			Log.e("subtitleURI", uri.toString() + " ")
 			val subtitleSource =
@@ -259,17 +229,5 @@ class ExoFactory internal constructor(private val context: Context) {
 			else
 				return MimeTypes.TEXT_VTT
 		}
-
-		const val testVideo =
-			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-
-		const val testWebVtt =
-			"https://gist.githubusercontent.com/msxenon/54ed7645d4b618c156defae29ba5cb90/raw/294bc5d8d97365d771195cc9e880c2d8ec5de05e/subtitle.webvtt"
-		const val testWebvttSec =
-			"https://gist.githubusercontent.com/msxenon/76248c49d2d5608cc6c47a039d4b92ec/raw/11e72149e1b972c83ca37d5ccf1bb6cf3c87433e/WEBVTT.webvtt"
-		const val testVtt =
-			"https://gist.githubusercontent.com/msxenon/562f71c9b619ecb231ad1071cbfd211f/raw/7c8af5b08551fb5a797c04cd4ee41894dbb60ee7/test.vtt"
-		const val srt =
-			"https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.srt"
 	}
 }

@@ -12,11 +12,11 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import com.appchief.msa.exoplayerawesome.CinamaticExoPlayer
+import com.appchief.msa.exoplayerawesome.CloseReason
 import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
 import com.appchief.msa.exoplayerawesome.R
 import com.appchief.msa.exoplayerawesome.databinding.VideoOverViewBinding
 import com.appchief.msa.exoplayerawesome.listeners.CineamaticPlayerScreen
-import com.appchief.msa.exoplayerawesome.listeners.CloseReason
 
 abstract class FloatingPLayerFragment : Fragment(),
 	 CineamaticPlayerScreen {
@@ -128,21 +128,6 @@ abstract class FloatingPLayerFragment : Fragment(),
 					applyVisibility()
 			   }
 		  }
-//		  val handler = Handler()
-//		  handler.post(Runnable {
-//			   var fm = fragmentManager?.findFragmentByTag("mini")
-//			   Log.e("max11111 ","=== $fm")
-//			   if (fm != null){
-//					fragmentManager?.beginTransaction()?.remove(fm)?.commitNow()
-//					fragmentManager?.executePendingTransactions()
-//
-//			   }
-//			   cast_minicontroller_?.inflate()
-//
-//			   fm = fragmentManager?.findFragmentByTag("mini")
-//			   Log.e("max2222 ","  === $fm")
-//		  })
-
 	 }
 
 	 @SuppressLint("SourceLockedOrientationActivity")

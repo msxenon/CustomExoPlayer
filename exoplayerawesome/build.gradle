@@ -30,10 +30,11 @@ android {
             targetCompatibility JavaVersion.VERSION_1_8
         }
     buildFeatures {
-        viewBinding = true
         dataBinding = true
+        viewBinding true
     }
-    compileOptions {
+
+     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -45,8 +46,8 @@ android {
 dependencies {
 
     //android
-//it was a problem with version 2.0.2
-    api 'androidx.constraintlayout:constraintlayout:2.0.1'
+// was a problem with version 2.0.2+
+    api 'androidx.constraintlayout:constraintlayout:2.0.4'
     api 'androidx.appcompat:appcompat:1.2.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.13.1'

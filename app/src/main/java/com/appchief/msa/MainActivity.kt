@@ -2,20 +2,15 @@ package com.appchief.msa
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import com.appchief.msa.Common.Companion.floatingPLayerFragmentNameTag
 import com.appchief.msa.activities.GoogleServicesWarningActivity
 import com.appchief.msa.awesomeplayer.R
 import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
+import com.appchief.msa.exoplayerawesome.NowPlaying
+import com.appchief.msa.exoplayerawesome.PlayerType
 import kotlinx.android.synthetic.main.activity_main.*
-import timber.log.Timber
 
 class MainActivity : BaseActivityFloatingNavigation() {
-	companion object {
-		var link = ""
-		var poster = ""
-		var movieName = ""
-		var isChannel = true
-	}
 
 	val videos = listOf<String>(
 		"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" //long video 9 mins,
@@ -24,52 +19,61 @@ class MainActivity : BaseActivityFloatingNavigation() {
 	)
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-		Timber.plant(Timber.DebugTree())
 		super.onCreate(savedInstanceState)
 		if (ExoFactorySingeleton.servicesNeedsToBeInstalled) {
 			startActivity(Intent(this, GoogleServicesWarningActivity::class.java))
 		}
 		setContentView(R.layout.activity_main)
 
-		button4?.setOnClickListener {
-			isChannel = false
-			link = videos[0]
-			movieName = "Tiktok"
-             poster =
-				 "https://kaboompics.com/cache/b/2/8/8/3/b2883703308df69a2c024a1eacae859cbf227364.jpeg"
-			 removeIfExist()
-		 }
-		 google_play?.setOnClickListener {
-			 isChannel = false
-			 link = videos[0]
-			 movieName = "TigBunny"
-			 poster =
-				 "https://kaboompics.com/cache/c/b/2/1/f/cb21f5aca64890d7d13ce9e8387c23c6883e71e9.jpeg"
-			 removeIfExist()
-		 }
-	 }
+		video1?.setOnClickListener {
 
-	 fun removeIfExist() {
 
-		  val x = supportFragmentManager.findFragmentById(R.id.you)
-		  x?.let {
-			   supportFragmentManager.beginTransaction().remove(x).runOnCommit {
-					showFrag()
-			   }.commitNow()
-			   Log.e("main", "old frag removed")
-		  } ?: kotlin.run {
-			   showFrag()
-		  }
-	 }
+			navigateToPLayer(
+				NowPlaying(
+					82828,
+					type = PlayerType.MOVIE,
+					poster = "https://kaboompics.com/cache/b/2/8/8/3/b2883703308df69a2c024a1eacae859cbf227364.jpeg",
+					videoLink = videos[0],
+					title = "Big Buck Bunny",
+					srtLink = TestVars.srt,
+					runtime = 10000,
+					geners = "",
+					episode = null
+				)
+			)
+		}
+		video2?.setOnClickListener {
+			navigateToPLayer(
+				NowPlaying(
+					82828,
+					type = PlayerType.MOVIE,
+					poster = "https://kaboompics.com/cache/c/b/2/1/f/cb21f5aca64890d7d13ce9e8387c23c6883e71e9.jpeg",
+					videoLink = videos[1],
+					title = "Big Buck Bunny",
+					srtLink = TestVars.srt,
+					runtime = 10000,
+					geners = "",
+					episode = null
+				)
+			)
+		}
+	}
 
-	 fun showFrag() {
-		  if (true) {
-			   startActivity(Intent(this, TVPlayer::class.java))
-			   return
-		  }
-		  val m = MainActivityFragment()
-		  supportFragmentManager.beginTransaction()
-			   .replace(R.id.you, m, "ff")
-			   .commit()
-	 }
+	fun navigateToPLayer(nowPlaying: NowPlaying) {
+		val x = supportFragmentManager.findFragmentById(R.id.you)
+		x?.let {
+			supportFragmentManager.beginTransaction().remove(x).runOnCommit {
+				showFrag(nowPlaying)
+			}.commitNow()
+		} ?: kotlin.run {
+			showFrag(nowPlaying)
+		}
+	}
+
+	fun showFrag(nowPlaying: NowPlaying) {
+		val m = MainActivityFragment(nowPlaying)
+		supportFragmentManager.beginTransaction()
+			.replace(R.id.you, m, floatingPLayerFragmentNameTag)
+			.commit()
+	}
 }

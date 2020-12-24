@@ -12,8 +12,6 @@ interface MediaPlayerControl {
 	 fun canPause(): Boolean
 	 fun canSeekBackward(): Boolean
 	 fun canSeekForward(): Boolean
-//	 fun hasNext(): Boolean
-//	 fun hasPrev(): Boolean
 val canHaveFullScreen: Boolean
 	 fun toggleFullScreen()
 	 fun canShowController(useController: Boolean)

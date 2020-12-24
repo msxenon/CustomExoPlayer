@@ -69,7 +69,6 @@ class YouTubeOverlay @JvmOverloads constructor(
 		  )
 		  textview_rewind.setCompoundDrawablesWithIntrinsicBounds(null, rewindAnimation, null, null)
 
-		  initializeAttributes()
 		  // This code snipped is executed when the circle scale animation is finished
 		  circle_clip_tap_view.performAtEnd = {
 			   performListener?.onAnimationEnd()
@@ -82,58 +81,8 @@ class YouTubeOverlay @JvmOverloads constructor(
 		  }
 	 }
 
-	 /**
-	  * Sets all optional XML attributes and defaults
-	  */
-	 private fun initializeAttributes() {
-//		  if (attrs != null) {
-//			   val a = context.obtainStyledAttributes(
-//					attrs,
-//					R.styleable.YouTubeOverlay, 0, 0
-//			   )
-//			   // PlayerView => see onAttackToWindow
-////            playerViewRef = a.getResourceId(R.styleable.YouTubeOverlay_yt_playerView, -1)
-//			   // Durations
-//			   circle_clip_tap_view.animationDuration = a.getInt(
-//					R.styleable.YouTubeOverlay_yt_animationDuration, 650
-//			   ).toLong()
-//
-//			   fastForwardRewindDuration = a.getInt(
-//					R.styleable.YouTubeOverlay_yt_ffrDuration, 10000
-//			   )
-//			   // Arc size
-//			   circle_clip_tap_view.arcSize = a.getDimensionPixelSize(
-//					R.styleable.YouTubeOverlay_yt_arcSize,
-//					context.resources.getDimensionPixelSize(R.dimen.dtpv_yt_arc_size)
-//			   ).toFloat()
-//			   // Colors
-//			   circle_clip_tap_view.circleColor = a.getColor(
-//					R.styleable.YouTubeOverlay_yt_tapCircleColor,
-//					ContextCompat.getColor(context, R.color.dtpv_yt_tap_circle_color)
-//			   )
-//
-//			   circle_clip_tap_view.circleBackgroundColor = a.getColor(
-//					R.styleable.YouTubeOverlay_yt_backgroundCircleColor,
-//					ContextCompat.getColor(context, R.color.dtpv_yt_background_circle_color)
-//			   )
-//
-//			   a.recycle()
-//		  } else {
-//			   // Set defaults
-//			   circle_clip_tap_view.animationDuration = 650
-//
-//			   circle_clip_tap_view.arcSize =
-//					context.resources.getDimensionPixelSize(R.dimen.dtpv_yt_arc_size).toFloat()
-//
-//			   circle_clip_tap_view.circleColor =
-//					ContextCompat.getColor(context, R.color.dtpv_yt_tap_circle_color)
-//
-//			   circle_clip_tap_view.circleBackgroundColor =
-//					ContextCompat.getColor(context, R.color.dtpv_yt_background_circle_color)
-//		  }
-	 }
 
-	 override fun onAttachedToWindow() {
+    override fun onAttachedToWindow() {
 		  super.onAttachedToWindow()
 		  // If the PlayerView is set by XML then call the corresponding setter method
 		  setPlayerView(this.parent as CinamaticExoPlayer)

@@ -19,7 +19,7 @@ import com.google.android.exoplayer2.text.CaptionStyleCompat
 import com.google.android.material.snackbar.Snackbar
 
 
-class MainActivityFragment(val externalVideoData: NowPlaying) : FloatingPLayerFragment() {
+class PLayerFragment(val externalVideoData: NowPlaying) : FloatingPLayerFragment() {
     private var snackBar: Snackbar? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

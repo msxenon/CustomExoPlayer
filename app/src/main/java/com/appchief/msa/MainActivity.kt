@@ -71,7 +71,7 @@ class MainActivity : BaseActivityFloatingNavigation() {
 	}
 
 	fun showFrag(nowPlaying: NowPlaying) {
-		val m = MainActivityFragment(nowPlaying)
+		val m = PLayerFragment(nowPlaying)
 		supportFragmentManager.beginTransaction()
 			.replace(R.id.you, m, floatingPLayerFragmentNameTag)
 			.commit()

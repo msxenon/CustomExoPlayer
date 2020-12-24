@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +42,6 @@ abstract class FloatingPLayerFragment : Fragment(),
 
 	 override fun isInFullScreen(): Boolean {
 		  val x = isFullScreen
-		  Log.e("isin", "isInFullScreen $x ${activity?.requestedOrientation}")
 		  return x
 	 }
 
@@ -95,7 +93,6 @@ abstract class FloatingPLayerFragment : Fragment(),
 	 @SuppressLint("SourceLockedOrientationActivity")
 	 override fun setScreenOrentation() {
 		  if (!ExoFactorySingeleton.isTv) {
-			   Log.e("xx", "setScreenOrentation ${isInFullScreen()} ")
 			   activity?.requestedOrientation =
 					if (isInFullScreen()) ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
 		  }
@@ -142,7 +139,6 @@ abstract class FloatingPLayerFragment : Fragment(),
 		  }
 	 }
 	 fun initFloating() {
-		  Log.e("FPF", "${binding.videoOverlayView.motionLayout != null}")
 		  binding.videoOverlayView.playerContainer?.init(this)
 		  binding.videoOverlayView.motionLayout?.setTransitionListener(object :
 			   MotionLayout.TransitionListener {
@@ -152,21 +148,16 @@ abstract class FloatingPLayerFragment : Fragment(),
 					p2: Boolean,
 					p3: Float
 			   ) {
-					Log.e("FPF", "onTransitionTrigger $p2 ===== $p3")
-
 					binding.videoOverlayView.playerContainer?.canShowController(p3 == 0f || p3 == 1f || p3 == -1f)
 			   }
 
 			   override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-					Log.e("FPF", "onTransitionStarted ")
 					binding.videoOverlayView.playerContainer?.hideController()
 			   }
 
 			   override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-					Log.e("FPF", "onTransitionChange second$p2 prog=$p3")
 					binding.videoOverlayView.playerContainer?.customController?.hide()
 					if (p2 == com.appchief.msa.exoplayerawesome.R.id.finish_left && p3 > 0.8) {
-						 Log.e("FPF", "onTransitionChange dissmisscall prog=$p3")
 						 callDissmiss()
 					}
 			   }
@@ -177,8 +168,6 @@ abstract class FloatingPLayerFragment : Fragment(),
 					}
 					val isMain =
 						 p1 == com.appchief.msa.exoplayerawesome.R.id.start || p1 == R.id.fullScreen
-					Log.e("FPF", "onTransitionCompleted $isMain")
-
 					binding.videoOverlayView.playerContainer?.canShowController(isMain)
 			   }
 		  })

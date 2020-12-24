@@ -1,7 +1,9 @@
 # Android Floating player (ExoPLayer)
-[Demo in Youtube](https://www.youtube.com/watch?v=T9i0sm2FAk8){:target="_blank"}
+A floating player i have created one year ago to use it with my previous apps, decided to publish it as open source project :)
 
-[![](https://jitpack.io/v/msxenon/CustomExoPlayer.svg)](https://jitpack.io/#msxenon/CustomExoPlayer){:target="_blank"}
+[Demo in Youtube](https://www.youtube.com/watch?v=T9i0sm2FAk8)
+
+[![](https://jitpack.io/v/msxenon/CustomExoPlayer.svg)](https://jitpack.io/#msxenon/CustomExoPlayer)
 
 # Install
 Add it in your root build.gradle at the end of repositories:

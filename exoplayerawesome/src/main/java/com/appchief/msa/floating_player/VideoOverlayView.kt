@@ -32,7 +32,7 @@ class VideoOverlayView @JvmOverloads constructor(
 		  //For example, a button would like focus when the user is navigating via a D-pad
 		  //so that the user can click on it, but once the user starts touching the screen,
 		  //the button shouldn't take focus
-		  this.isFocusableInTouchMode = true
+		 this.isFocusableInTouchMode = true
 	 }
 
 	override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -42,7 +42,7 @@ class VideoOverlayView @JvmOverloads constructor(
 	}
 
 	var motionLayout: MotionLayout? = null
-	var playerContainer: CinamaticExoPlayer? = null
+	internal var playerContainer: CinamaticExoPlayer? = null
 	private var startX: Float? = null
 	private var startY: Float? = null
 	fun setPortraitVideoHight(height: Int) {
@@ -52,7 +52,8 @@ class VideoOverlayView @JvmOverloads constructor(
 				motionLayout?.updateState()
 			}
 	}
-	 override fun onFinishInflate() {
+
+	override fun onFinishInflate() {
 		  super.onFinishInflate()
 		  this.requestFocus()
 		  if (motionLayout == null) {

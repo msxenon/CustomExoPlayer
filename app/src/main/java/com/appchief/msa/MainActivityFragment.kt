@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
 import android.content.res.Resources.Theme
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import com.appchief.msa.exoplayerawesome.ExoFactorySingeleton
 import com.appchief.msa.exoplayerawesome.NowPlaying
 import com.appchief.msa.exoplayerawesome.viewcontroller.VideoControllerView
 import com.appchief.msa.floating_player.FloatingPLayerFragment
+import com.google.android.exoplayer2.text.CaptionStyleCompat
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -25,12 +27,52 @@ class MainActivityFragment(val externalVideoData: NowPlaying) : FloatingPLayerFr
         getPlayer()?.cinematicPlayerViews = CinematicOnce()
 
         //viewcontroller can be customized here
-        binding.videoOverlayView.playerContainer?.customController =
+        getPlayer()?.customController =
             object : VideoControllerView(context!!) {
+//                override fun onItemEndReached() {
+//                    super.onItemEndReached()
+//                }
+//
+//                override fun onFinishInflate() {
+//                    super.onFinishInflate()
+//                }
+//
+//                override fun controlVis() {
+//                    super.controlVis()
+//                }
+//
+//                override fun initControllerView(v: View) {
+//                    super.initControllerView(v)
+//                }
+//
+//                override fun externalSettingsCondition(): Boolean {
+//                    return super.externalSettingsCondition()
+//                }
+//
+//                override fun updateDownBtn() {
+//                    super.updateDownBtn()
+//                }
+//
+//                override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+//                    return super.dispatchKeyEvent(event)
+//                }
             }
         super.onViewCreated(view, savedInstanceState)
         initPlayer()
         setDetails()
+        //subtitle styling
+        getPlayer()?.subtitleView?.setStyle(
+            CaptionStyleCompat(
+                Color.WHITE,
+                Color.BLACK,
+                Color.TRANSPARENT,
+                CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW,
+                Color.TRANSPARENT,
+                null
+            )
+        )
+        //subtitle typeFace
+//        getPlayer()?.getSubtitleView()?.setFixedTextSize(TypedValue.COMPLEX_UNIT_PX, 80f)
     }
 
     //Fragment Shows below player
@@ -54,7 +96,7 @@ class MainActivityFragment(val externalVideoData: NowPlaying) : FloatingPLayerFr
     }
 
     override fun initPlayer(res: String?) {
-        binding.videoOverlayView.playerContainer?.playLinkNSub(
+        getPlayer()?.playLinkNSub(
             externalVideoData.videoLink,
             null,
             null,
@@ -66,7 +108,7 @@ class MainActivityFragment(val externalVideoData: NowPlaying) : FloatingPLayerFr
             externalVideoData.runtime
         )
         //add this line if you want to support double taps to forward / rewind
-        binding.videoOverlayView.playerContainer?.setDoubleTapActivated()
+        getPlayer()?.setDoubleTapActivated()
     }
 
     override fun onDestroy() {
@@ -109,7 +151,7 @@ class MainActivityFragment(val externalVideoData: NowPlaying) : FloatingPLayerFr
         if (!forCasting) {
             TrackSelectionDialog.createForTrackSelector(childFragmentManager,
                 activity,
-                binding.videoOverlayView.playerContainer!!.trackSelector,
+                getPlayer()!!.trackSelector,
                 DialogInterface.OnDismissListener { })
         } else {
             activity?.startActivity(Intent(activity, ExpandedControlsActivity::class.java))

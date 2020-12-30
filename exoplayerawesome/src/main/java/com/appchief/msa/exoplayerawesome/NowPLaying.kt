@@ -9,5 +9,6 @@ data class NowPlaying(
     val geners: String,
     val title: String,
     val runtime: Long,
-    val srtLink: String?
+    val srtLink: String?,
+    val vttLink: String?
 )

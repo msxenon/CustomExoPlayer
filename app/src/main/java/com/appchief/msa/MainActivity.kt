@@ -38,7 +38,8 @@ class MainActivity : BaseActivityFloatingNavigation() {
 					srtLink = TestVars.srt,
 					runtime = 10000,
 					geners = "",
-					episode = null
+					episode = null,
+					vttLink = TestVars.testVtt
 				)
 			)
 		}
@@ -53,7 +54,8 @@ class MainActivity : BaseActivityFloatingNavigation() {
 					srtLink = TestVars.srt,
 					runtime = 10000,
 					geners = "",
-					episode = null
+					episode = null,
+					vttLink = TestVars.testVtt
 				)
 			)
 		}

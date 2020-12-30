@@ -218,7 +218,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         playerType: PlayerType,
         SrtLink: String?,
         poster: String,
-        geners: String, title: String, runtime: Long
+        geners: String, title: String, runtime: Long,
+        vttLink: String?
     ) {
         if (videoLink == null)
             return
@@ -228,7 +229,8 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
         nowPlaying =
             NowPlaying(
                 movieId, episode, playerType, poster,
-                videoLink.encodeUrl(), geners, title, runtime, SrtLink?.encodeUrl()
+                videoLink.encodeUrl(), geners, title, runtime, SrtLink?.encodeUrl(),
+                vttLink = vttLink
             )
         lastPos_ = getLastPos("init", true)
 
@@ -393,7 +395,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
                 nowPlaying!!.poster,
                 nowPlaying!!.runtime,
                 isSreaming(),
-                subtitleLink = nowPlaying!!.srtLink?.replace(".srt", ".vtt"),
+                subtitleLink = nowPlaying!!.vttLink,
                 position = getLastPos("pairinit")
             )
             playerManager?.addItem(mediaSource, mutableListOf(x.first))
@@ -680,7 +682,7 @@ class CinamaticExoPlayer : PlayerView, PlaybackPreparer, PlayerControlView.Visib
             nowPlaying!!.runtime,
             isSreaming(),
             getLastPos("castcurrent"),
-            subtitleLink = nowPlaying!!.srtLink?.replace(".srt", ".vtt")
+            subtitleLink = nowPlaying!!.vttLink
         )
     }
 

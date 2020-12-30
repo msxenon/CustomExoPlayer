@@ -105,7 +105,8 @@ class PLayerFragment(val externalVideoData: NowPlaying) : FloatingPLayerFragment
             externalVideoData.poster,
             externalVideoData.geners,
             externalVideoData.title,
-            externalVideoData.runtime
+            externalVideoData.runtime,
+            externalVideoData.vttLink
         )
         //add this line if you want to support double taps to forward / rewind
         getPlayer()?.setDoubleTapActivated()

@@ -1,3 +1,6 @@
+[This repository is no longer maintained, code still needs to be cleaned well, adding Unit tests ... etc]
+
+
 # Android Floating player (ExoPLayer)
 A floating player i have created one year ago to use it with my previous apps, decided to publish it as open source project :)
 
